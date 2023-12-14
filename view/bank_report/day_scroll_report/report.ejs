@@ -1,0 +1,213 @@
+<div class="main-panel">
+    <div class="content-wrapper" >
+      
+      <div class="card col-12" id="">
+        <div class="card-body" id="tableData">
+
+          
+
+          <div class="titleSec">
+              <div class="row">
+                <div class="col-12">
+                    <h4 style="text-align: center;"><%= user.user_data.msg[0].bank_name %></h4>
+                    <h5 style="text-align: center;"><%= user.user_data.msg[0].bank_address %></h5>
+                    <h6 style="text-align: center;">Day Scroll Report Form Date: <%= fdate %> To Date: <%= tdate %></h6>
+                </div>
+                <div class="col-6">
+                    <h6 style="text-align: left;">Branch Name: <%= user.user_data.msg[0].branch_code %></h6>
+                </div>
+                <div class="col-6">
+                    <h6 style="text-align: right;">Date: <%= datetime %></h6>
+                </div>
+                <!-- <div class="col-6">
+                    <h6 style="text-align: left;">Form Date: <%= fdate %></h6>
+                </div>
+                <div class="col-6">
+                    <h6 style="text-align: right;">To Date: <%= tdate %></h6>
+                </div> -->
+            </div>
+          </div>
+          <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+          <div id="printTag">
+            <style>
+              @media print {
+                .print-inline {
+                  display: flex;
+                  justify-content: space-between;
+                }
+              }
+            </style>
+          <table class="table" >
+            <thead>
+              <tr>
+                <th>Sl. No.</th>
+                <th>Date</th>
+                <th>Agent Code</th>
+                <th>Account Type</th>
+                <th>Account No</th>
+                <th>Name</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+
+                <% 
+                function formatDate(inputDate) {
+                    const date = new Date(inputDate);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${day}/${month}/${year}`;
+                 } 
+                 var total_amount=0.0
+                 data.forEach(function(item,index) { 
+                    total_amount+=item.deposit_amount
+                    %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= formatDate(item.date) %></td>
+                <td><%= item.agent_code %></td>
+                <td><%= (item.account_type=='D')?"Daily Deposit":'' %></td>
+                <td><%= item.account_number %></td>
+                <td><%= item.account_holder_name %></td>
+                <td><%= item.deposit_amount %></td>    
+               
+              </tr>
+              <% }); %>
+
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Total</td>
+                <td><%=total_amount%></td>    
+               
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+
+          <div class="mt-2" id="btnclass">
+            <div class="row">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-primary" id="printMe" onclick="printDiv()">
+                      Print
+                    </button>
+                    <button id="downloadBtn" class="btn btn-primary">Download Excel</button>
+                </div>
+            </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  <script>
+    function printDiv() {
+      $("#btnclass").hide();
+        var divToPrint = document.getElementById('printTag');
+
+        var WindowObject = window.open('', 'Print-Window');
+        WindowObject.document.open();
+        WindowObject.document.writeln('<!DOCTYPE html>');
+        WindowObject.document.writeln('<html><head><title></title><style type="text/css">');
+
+
+        WindowObject.document.writeln('@media print { .center { text-align: center;}' +
+                '.inline { display: inline; }' +
+                '.underline { text-decoration: underline; }' +
+                '.left { margin-left: 315px;} ' +
+                '.right { margin-right: 375px; display: inline; }' +
+                'table { border-collapse: collapse; font-size: 17px;}' +
+                'th, td { border: 1px solid black; border-collapse: collapse; padding: 6px;}' +
+                'th, td { }' +
+                '.border { border: 1px solid black; } ' +
+                '.bottom { bottom: 5px; width: 100%; position: fixed; }' +
+                ' footer { position: fixed; bottom: 0;text-align: center; }' +
+'} </style>');
+        WindowObject.document.writeln('</head><body onload="window.print()">');
+// WindowObject.document.writeln('<center><img src="assets/images/logo.png" alt=""/>');
+ WindowObject.document.writeln('<h3 style="margin:0; padding:0;text-align:center"><%= user.user_data.msg[0].bank_name %></h3>');
+
+ WindowObject.document.writeln('<h4 style="margin:0; padding:0;text-align:center"><%= user.user_data.msg[0].bank_address %></h4>');
+
+ WindowObject.document.writeln('<div class="print-inline"> <h4 style="text-align: left;">Branch Name: <%= user.user_data.msg[0].branch_code %></h4> <h4 style="text-align: right;">Date: <%= datetime %></h4></div>');
+ WindowObject.document.writeln('<div class="print-inline"><h4 style="text-align: left;">Form Date: <%= fdate %></h4> <h4 style="text-align: right;">To Date: <%= tdate %></h4> </div>');
+
+
+
+// WindowObject.document.writeln('<p style="margin:0; padding:0"><b><small>(Regd. No. 41/Cal. of 1963)</small></b></p>');
+// WindowObject.document.writeln('<p style="margin:0; padding:0">DK Block, Sector- II, Salt Lake City, Kolkata - 700 091, West Bengal</p></center>');
+        WindowObject.document.writeln(divToPrint.innerHTML);
+// WindowObject.document.writeln('<footer><small>This is an electronically generated report, hence does not require a signature</small></footer>');
+        //WindowObject.document.writeln(divToPrint.innerHTML);
+        WindowObject.document.writeln('</body></html>');
+        WindowObject.document.close();
+        setTimeout(function () {
+            WindowObject.close();
+        }, 10);
+
+
+        $("#btnclass").show();
+
+    }
+</script>
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+
+
+
+<script>
+  function exportTableToExcel(tableID, filename) {
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.table_to_sheet(document.getElementById(tableID));
+
+    // Add a new row with the name "hello"
+    XLSX.utils.sheet_add_aoa(ws, [['<%= user.user_data.msg[0].bank_name %>', '', '', '', '', '', ''],['Day Scroll Report', '', '', '', '', '', '', ''],
+    ['Branch Name: <%= user.user_data.msg[0].branch_name %>', '', '', '', '', '', '', ''],['Form Date: <%= fdate %>', '', '', '', '', '', '', ''],
+    ['To Date: <%= tdate %>', '', '', '', ''],['Sl. No.', 'Date','Agent Code','Account Type',  'Account No', 'Name', 'Amount']]);
+
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    XLSX.writeFile(wb, filename);
+    exit()
+
+      const wbout = XLSX.write(ws, {
+          bookType: 'xlsx',
+          bookSST: true,
+          type: 'binary'
+      });
+
+      function s2ab(s) {
+          const buf = new ArrayBuffer(s.length);
+          const view = new Uint8Array(buf);
+          for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+          return buf;
+      }
+
+      const blob = new Blob([s2ab(wbout)], {
+          type: 'application/octet-stream'
+      });
+      saveAs(blob, filename);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const downloadBtn = document.getElementById('downloadBtn');
+      downloadBtn.addEventListener('click', function() {
+          // Call the exportTableToExcel function, passing the table ID and desired filename
+          exportTableToExcel('tableData', 'Day_Scroll_Report.xlsx');
+      });
+  });
+</script>
+  

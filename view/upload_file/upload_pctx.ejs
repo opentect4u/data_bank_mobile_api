@@ -1,0 +1,264 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-8">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+          <h2>UPLOAD PCTX</h2>
+        </div>
+        <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+        <div class="row">
+          <div class="form-group col-12 progressbar_viw">
+            <div
+              class="progress"
+              role="progressbar"
+              aria-label="Animated striped example"
+              aria-valuenow="75"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <div
+                id="progressBar"
+                class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+
+          <!-- <div class="progress">
+                <progress class="progress-bar" id="progressBar" value="0" max="100"></progress>
+              </div> -->
+
+          <div class="col-sm-12 row">
+            <div class="form-group col-12">
+              <label for="agent">Select Agent:</label>
+              <select name="" class="form-control s2id" id="agent">
+                <option value="">Select Agent</option>
+
+                <% data.forEach(function(item) { %>
+                <option value="<%= item.user_id %>"><%= item.user_id %></option>
+
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="col-12 form-group" id="agent_info">
+              <div class="form-group row">
+                <label for="showAgentname" class="col-sm-3 col-form-label"
+                  >Name:</label
+                >
+                <div class="col-sm-9">
+                  <p class="form-control-plaintext" id="showAgentname"></p>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="showBranch" class="col-sm-3 col-form-label"
+                  >Branch:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showBranch" class="form-control-plaintext"></p>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="showAgent" class="col-sm-3 col-form-label"
+                  >Agent Code:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showAgent" class="form-control-plaintext"></p>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="showPhone_no" class="col-sm-3 col-form-label"
+                  >Mobile No:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showPhone_no" class="form-control-plaintext"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 form-group">
+              <div class="drop-zone">
+                <span class="drop-zone__message"
+                  >Drop file here or click to upload</span
+                >
+                <input
+                  type="file"
+                  name="myFile"
+                  class="drop-zone__input"
+                  id="pctxFile"
+                />
+              </div>
+            </div>
+
+            <div class="form-group col-12">
+              <input
+                type="submit"
+                value="UPLOAD PCTX"
+                class="btn btn-primary btn-block"
+                id="uploadButton"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#uploadButton").attr("disabled", true);
+    $(".progressbar_viw").hide();
+    $("#progressBar").css("width", "0%");
+    $("#uploadButton").click(function () {
+      var agent_code = $("#agent").val();
+      $.ajax({
+        type: "POST",
+        url: "/admin/check_and_collection",
+        data: JSON.stringify({ agent_code: agent_code }),
+        contentType: "application/json",
+        success: function (response) {
+          console.log(response);
+          if (response == 1) {
+            //alert("Not terminating in collection, an agent");
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Not terminating in collection, an agent !",
+            });
+          } else {
+            const fileInput = document.getElementById("pctxFile");
+            const file = fileInput.files[0];
+
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function (event) {
+                const content = event.target.result;
+                const rows = content.split("@");
+                const firstRow = rows.shift(); // Remove and store the first row
+
+                sendBatches(rows, firstRow);
+              };
+              reader.readAsText(file);
+            } else {
+              console.error("No file selected.");
+            }
+          }
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    });
+
+    function sendBatches(rows, firstRow) {
+      const batchSize = 50;
+      const totalBatches = Math.ceil(rows.length / batchSize);
+      let batchCount = 0;
+      delete_agent_oldData();
+      function processNextBatch() {
+        const batch = rows.splice(0, batchSize);
+        sendAjaxRequest(batch, firstRow, function () {
+          batchCount++;
+          const progress = (batchCount / totalBatches) * 100;
+          $("#progressBar").css("width", progress + "%");
+          if (batchCount < totalBatches) {
+            processNextBatch();
+          } else {
+            insert_agent_trans();
+            Swal.fire("Success", "pctx file upload successful !", "success").then((result) => {
+              window.location.replace('/admin/show_upload_account');
+            });
+
+
+          }
+        });
+      }
+      processNextBatch();
+    }
+    function sendAjaxRequest(batch, firstRow, callback) {
+      $(".progressbar_viw").show();
+      var agent_id = $("#agent").val();
+      $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: "/admin/upload_pctx_file_data",
+        data: JSON.stringify({
+          batch: batch,
+          firstRow: firstRow,
+          agent_id: agent_id,
+        }),
+        success: function (response) {
+          console.log("AJAX Success:", response);
+          $("#uploadButton").attr("disabled", true);
+          callback(); // Call the callback function to process the next batch
+        },
+        error: function (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "This File Data Not Uploaded !",
+          });
+          console.error("AJAX Error:", error);
+        },
+      });
+    }
+    function insert_agent_trans() {
+      var agent_id = $("#agent").val();
+      $.ajax({
+        type: "POST",
+        url: "/admin/create_agent_trans",
+        data: { agent_code: agent_id },
+        success: function (response) {
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+    $("#agent_info").hide();
+    $("#agent").change(function () {
+      var agent_id = $(this).val();
+
+      $("#showAgentname").text("");
+      $("#showBranch").text("");
+      $("#showAgent").text("");
+      $("#showPhone_no").text("");
+      $("#agent_info").hide();
+
+      $.ajax({
+        type: "POST",
+        url: "/admin/agent_info",
+        data: { agent_code: agent_id },
+        success: function (response) {
+          console.log(response);
+          $("#agent_info").show();
+          $("#showAgentname").text(response.SUCCESS.msg[0].agent_name);
+          $("#showBranch").text(response.SUCCESS.msg[0].branch_name);
+          $("#showAgent").text(response.SUCCESS.msg[0].user_id);
+          $("#showPhone_no").text(response.SUCCESS.msg[0].phone_no);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    });
+    function delete_agent_oldData() {
+      var agent_id = $("#agent").val();
+      $.ajax({
+        type: "POST",
+        url: "/admin/del_all_pctx_file_data",
+        data: { agent_code: agent_id },
+        success: function (response) {
+          console.log(response);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
+</script>

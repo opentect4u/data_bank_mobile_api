@@ -1,0 +1,91 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+          <h2>Page Title</h2>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12 row">
+            <div class="form-group col-6">
+              <label for="email">Select Agent:</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                placeholder="Enter email"
+                name="email"
+              />
+            </div>
+
+            <div class="form-group col-6">
+              <label for="pctxFile">Upload File:</label>
+              <input
+                type="file"
+                class="form-control"
+                id="pctxFile"
+                placeholder="Select File"
+                name="pctxFile"
+              />
+            </div>
+
+            <div class="form-group col-6">
+                
+                <input type="submit" value="UPLOAD PCTRX" class="btn btn-primary" id="uploadButton">
+              </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+ 
+  $(document).ready(function () {
+    $("#uploadButton").click(function () {
+      const fileInput = document.getElementById("pctxFile");
+      const file = fileInput.files[0];
+  
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const content = event.target.result;
+          const rows = content.split("@");
+          const firstRow = rows[0];
+  
+          sendBatches(rows, firstRow);
+        };
+        reader.readAsText(file);
+      } else {
+        console.error("No file selected.");
+      }
+    });
+  
+    function sendBatches(rows, firstRow) {
+      const batchSize = 50;
+      for (let i = 0; i < rows.length; i += batchSize) {
+        const batch = rows.slice(i, i + batchSize);
+        sendAjaxRequest(batch, firstRow);
+      }
+    }
+  
+    function sendAjaxRequest(batch, firstRow) {
+      $.ajax({
+        type: "POST", // or 'GET' depending on your requirements
+        url: "/admin/upload_pctx_file_data", // Replace with your server endpoint
+        data: { batch: batch, firstRow: firstRow },
+        success: function (response) {
+          console.log("AJAX Success:", response);
+        },
+        error: function (error) {
+          console.error("AJAX Error:", error);
+        },
+      });
+    }
+  });
+</script>

@@ -1,0 +1,144 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-12">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary" id="myBtn">Add</button> -->
+          <h2>Active Agent</h2>
+        </div>
+        <div class="row">
+          <div class="col-md-12 mb-2">
+            <div class="form-inline">
+              <select class="form-control mr-sm-2" placeholder="Search" id="bank" aria-label="Search">
+                <option value="">Select Branch</option>
+
+                <% bank.msg.forEach(function(item2,index) { %>
+                  <option value="<%=item2.bank_id%>"><%=item2.bank_name%></option>
+                  <% }); %>
+                
+              </select>
+                <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="submitBtn">Submit</button> -->
+            </div>
+        </div>
+
+
+
+
+        <div class="col-12 form-group row" id="bank_info" style="">
+          <div class="col-6">
+          <div class="form-group row">
+            <label for="showAgentname" class="col-sm-3 col-form-label">Total User:</label>
+            <div class="col-sm-9">
+              <p class="form-control-plaintext" id="no_of_users"></p>
+            </div>
+          </div>
+          </div>
+          <!-- <div class="col-6">
+          <div class="form-group row">
+            <label for="showBranch" class="col-sm-3 col-form-label">Branch:</label>
+            <div class="col-sm-9">
+              <p id="showBranch" class="form-control-plaintext">Bhgalapur</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group row">
+            <label for="showAgent" class="col-sm-3 col-form-label">Agent Code:</label>
+            <div class="col-sm-9">
+              <p id="showAgent" class="form-control-plaintext">101000081</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+
+          <div class="form-group row">
+            <label for="showPhone_no" class="col-sm-3 col-form-label">Mobile No:</label>
+            <div class="col-sm-9">
+              <p id="showPhone_no" class="form-control-plaintext">8540860914</p>
+            </div>
+          </div>
+        </div> -->
+        </div>
+      </div>
+        <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+        <table class="table table_bank" style="width:100%">
+          <thead>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Branch Name</th>
+              <!-- <th>No of users</th> -->
+              <th>Active</th>
+              <th>Inactive</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+  $("#bank_info").hide()
+  $('#bank').change(function(){
+    var bank_id=$(this).val();
+
+
+    getData(bank_id)
+
+
+  })
+
+
+
+  function getData(bank_id) {
+   
+    var tbody = $(".table_bank tbody");
+    $.ajax({
+      type: "POST",
+      url: "/super-admin/fetch_bank_info",
+      data: { bank_id: bank_id },
+      success: function (response) {
+        console.log(response.SUCCESS.msg);
+        tbody.empty();
+        response.SUCCESS.branchData.msg.forEach(function (item,index) {
+          var row =
+            "<tr>" +
+              "<td>" +
+                (index+1) +
+              "</td>" +
+            "<td>" +
+            item.branch_name +
+            "</td>" +
+            "<td>" +
+            item.active +
+            "</td>" +
+            "<td>" +
+              item.inactive +
+              "</td>" +
+            "</tr>";
+          tbody.append(row);
+          $("#no_of_users").empty()
+          $("#no_of_users").text(response?.SUCCESS?.md_subscription?.msg[0]?.no_of_users)
+          $("#bank_info").show()
+        });
+      },
+      error: function (error) {
+        console.log(error);
+        tbody.empty();
+        $("#bank_info").hide()
+      },
+    });
+  }
+
+
+
+
+</script>
+
+
+

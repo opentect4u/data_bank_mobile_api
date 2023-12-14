@@ -1,0 +1,130 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-8">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+          <h2>UPLOAD PCTX</h2>
+        </div>
+        <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+        <div class="row">
+
+            <div class="form-group col-12 progressbar_viw">
+                <div class="progress" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 0%"></div>
+                  </div>
+              </div>
+              
+
+
+            <!-- <div class="progress">
+                <progress class="progress-bar" id="progressBar" value="0" max="100"></progress>
+              </div> -->
+
+
+          <div class="col-sm-12 row">
+            <div class="form-group col-12">
+              <label for="agent">Select Agent:</label>
+              <select name=""  class="form-control s2id" id="agent">
+                <option value="">Select Agent</option>
+
+                <% data.forEach(function(item) { %>
+                <option value="<%= item.user_id %>"><%= item.user_id %></option>
+
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="col-12 form-group">
+              <div class="drop-zone">
+                <span class="drop-zone__message">Drop file here or click to upload</span>
+                <input type="file" name="myFile" class="drop-zone__input" id="pctxFile">
+              </div>
+            </div>
+            
+            <div class="form-group col-12">
+                
+                <input type="submit" value="UPLOAD PCTRX" class="btn btn-primary btn-block" id="uploadButton">
+              </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+      $("#uploadButton").attr("disabled", true);
+        $(".progressbar_viw").hide();
+        $("#progressBar").css("width", "0%");
+
+        //$("#uploadButton").change(function () {
+          //if($(this).val==null||$(this).val==""){
+          //  $("#uploadButton").attr("disabled", true);
+         // }else{
+          //  $("#uploadButton").attr("disabled", false);
+          //}
+        //});
+        
+        $("#uploadButton").click(function () {
+          const fileInput = document.getElementById("pctxFile");
+          const file = fileInput.files[0];
+      
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+              const content = event.target.result;
+              const rows = content.split("@");
+              const firstRow = rows.shift(); // Remove and store the first row
+      
+              sendBatches(rows, firstRow);
+            };
+            reader.readAsText(file);
+          } else {
+            console.error("No file selected.");
+          }
+        });
+      
+        function sendBatches(rows, firstRow) {
+          const batchSize = 50;
+          const totalBatches = Math.ceil(rows.length / batchSize);
+          let batchCount = 0;
+      
+          function processNextBatch() {
+            const batch = rows.splice(0, batchSize);
+            sendAjaxRequest(batch, firstRow);
+      
+            batchCount++;
+            const progress = (batchCount / totalBatches) * 100;
+            // $("#progressBar").val(progress);
+            $("#progressBar").css("width", progress+"%");
+      
+            if (batchCount < totalBatches) {
+              setTimeout(processNextBatch, 100); // Delay between batches (if needed)
+            }
+          }
+      
+          processNextBatch();
+        }
+      
+        function sendAjaxRequest(batch, firstRow) {
+            $(".progressbar_viw").show();
+           var agent_id=$("#agent").val();
+          $.ajax({
+            type: "POST", // or 'GET' depending on your requirements
+            contentType: "application/json",
+            url: "/admin/upload_pctx_file_data", // Replace with your server endpoint
+            data: JSON.stringify({ batch: batch, firstRow: firstRow,agent_id:agent_id}),
+            success: function (response) {
+              console.log("AJAX Success:", response);
+            },
+            error: function (error) {
+              console.error("AJAX Error:", error);
+            },
+          });
+        }
+      });
+</script>

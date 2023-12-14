@@ -1,0 +1,59 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+            <h2>Account Type Wise Report</h2>
+          </div>
+          <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Sl. No.</th>
+                <th>Date</th>
+                <th>Account No</th>
+                <th>Name</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+
+                <% 
+                function formatDate(inputDate) {
+                    const date = new Date(inputDate);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${day}/${month}/${year}`;
+                 } 
+                 var total_amount=0.0
+                 data.forEach(function(item,index) { 
+                    total_amount+=item.deposit_amount
+                    %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= formatDate(item.date) %></td>
+                <td><%= item.account_number %></td>
+                <td><%= item.account_holder_name %></td>
+                <td><%= item.deposit_amount %></td>    
+               
+              </tr>
+              <% }); %>
+
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>Total</td>
+                <td><%=total_amount%></td>    
+               
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  

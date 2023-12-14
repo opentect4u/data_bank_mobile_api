@@ -1,0 +1,169 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <button type="button" class="btn btn-primary" id="myBranch">Add</button>
+            <h2>Branch</h2>
+          </div>
+          <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Sl. No.</th>
+                <th>Branch Name</th>
+                <th>Branch Code</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.msg.forEach(function(item, index) { %>
+                <tr>
+                  <td><%= (index + 1) %></td>
+                  <td><%= item.branch_name %></td>
+                  <td><%= item.branch_code %></td>
+                  <td>
+                    <a href="/bank/edit_branch/<%= item.branch_id %>" class="btn btn-info">Edit</a>
+                  </td>
+                </tr>
+              <% }); %>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- The Modal -->
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add Branch</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form action="/bank/add_branch" method="post" id="myForm">
+            <div class="row">
+              <div class="form-group col-6">
+                <label for="branch_c">Branch Code:</label>
+                <input
+                  type="text"
+                  id="branch_c"
+                  name="branch_c"
+                  class="form-control"
+                  value=""
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-6">
+                <label for="branchname">Branch Name:</label>
+                <input
+                  type="text"
+                  name="branchname"
+                  id="branchname"
+                  class="form-control"
+                  placeholder="Enter Branch Name"
+                  required
+                />
+              </div>
+
+              <div class="form-group col-4">
+                <label for="contactperson">Contact Person:</label>
+                <input
+                  type="text"
+                  name="contactperson"
+                  id="contactperson"
+                  class="form-control"
+                  placeholder="Enter Name"
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-4">
+                <label for="email">Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  id="email"
+                  required
+                />
+              </div>
+              <div class="form-group col-4">
+                <label for="mobile">Mobile No.:</label>
+                <input
+                  type="text"
+                  name="mobile"
+                  class="form-control"
+                  id="mobile"
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-6">
+                <label for="pin">Password:</label>
+                <input
+                  type="password"
+                  name="password"
+                  class="form-control"
+                  id="pin"
+                  maxlength="4"
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-6">
+                <label for="cid">Confirm Password:</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  class="form-control"
+                  id="cid"
+                  maxlength="4"
+                  required
+                />
+              </div>
+             
+            
+              <div class="form-group col-12">
+                <label for="branch_address">Address :</label>
+                <textarea name="branch_address" class="form-control" id="branch_address"></textarea>
+              </div>
+  
+              <div class="form-group col-12">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    $(document).ready(function () {
+      $("#myBranch").click(function () {
+        $("#myModal").modal();
+      });
+    });
+  </script>
+  

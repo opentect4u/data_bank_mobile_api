@@ -1,0 +1,207 @@
+<% 
+function getCurrentDate() { 
+  const today=new Date();
+  const year=today.getFullYear(); 
+  const month=String(today.getMonth() + 1).padStart(2, '0' );
+  const day=String(today.getDate()).padStart(2, '0' ); 
+  return `${year}-${month}-${day}`; 
+} 
+const currentDate=getCurrentDate(); 
+%>
+
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+            <h2>DOWNLOAD PCRX</h2>
+          </div>
+          <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+          <div class="row">
+            <div class="col-sm-12 row">
+              <div class="form-group col-5">
+                <label for="agent">From Date:</label>
+                <input type="date" name="fdate" class="form-control" id="fdate" value="<%= currentDate %>" />
+              </div>
+              <div class="form-group col-5">
+                <label for="agent">To Date:</label>
+                <input type="date" name="tdate" class="form-control" id="tdate" value="<%= currentDate %>" />
+              </div>
+              <div class="form-group col-2">
+                <label for="agent"> </label>
+                <input type="button" name="" class="btn btn-primary form-control" id="subbtn" value="Submit" />
+              </div>
+
+              <table class="table pcrxTable">
+                <thead>
+                  <tr>
+                    <th>Sl. No.</th>
+                    <th>Agent Name</th>
+                    <th>Date</th>
+                    <th>Trans No</th>
+                    <th>Total Collection</th>
+                    <th>Total Amount</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- <div class="form-group col-12">
+              <input
+                type="submit"
+                value="DOWNLOAD PCRX"
+                class="btn btn-primary btn-block"
+                id="downloadButton"
+              />
+            </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    var tbody = $(".pcrxTable tbody");
+
+
+    function formatDate(date) {
+      var date = new Date(date);
+      var day = date.getDate();
+      var month = date.getMonth() + 1;
+      var year = date.getFullYear();
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      return day + "/" + month + "/" + year;
+    }
+
+
+
+    // $("#fdate").change(function () {
+    //   transitionNumber();
+    // });
+
+    // $("#tdate").change(function () {
+    //   transitionNumber();
+    // });
+
+    $("#subbtn").click(function () {
+      transitionNumber();
+    });
+
+    function transitionNumber() {
+      var fDate = $("#fdate").val();
+      var tDate = $("#tdate").val();
+      var agentcode = $("#agCode").val();
+      $("#transitionNumber option:not(:first)").remove();
+      $.ajax({
+        type: "POST",
+        url: "/admin/fetch_trans_number",
+        data: { fDate: fDate, tDate: tDate },
+		beforeSend: function(){
+		  $(".loader_div").show()
+		},
+        success: function (response) {
+          console.log(response.SUCCESS);
+
+          console.log(response.SUCCESS);
+          tbody.empty();
+          response.SUCCESS.msg.forEach(function (item, index) {
+            var row =
+              "<tr>" +
+              "<td>" +
+              (index + 1) +
+              "</td>" +
+              "<td>" +
+              item.agent_name +
+              "</td>" +
+              "<td>" +
+              formatDate(item.received_date) +
+              "</td>" +
+              "<td>" +
+              item.agent_trans_no +
+              "</td>" +
+              "<td>" +
+              item.count_account +
+              "</td>" +
+              "<td>" +
+              item.amount +
+              "</td>" +
+              "<td>" +
+              '<button agent_code="' + item.agent_code + '" transaction_number="' + item.agent_trans_no + '" id="fetchDataBtn" class="fetchDataBtn dwnbtn btn btn-' + (item.download_flag == "Y" ? "danger" : "primary") + '"><i class="fa fa-upload"></i> Send Data</button>' +
+              "</td>" +
+              "</tr>";
+            tbody.append(row);
+          });
+        },
+		  complete: function(){
+			  $(".loader_div").hide()
+		  },
+        error: function (error) {
+          console.log(error);
+          $("#transitionNumber option:not(:first)").remove();
+        },
+      });
+    }
+
+
+
+    transitionNumber();
+
+
+
+
+    // $("#fetchDataBtn").click(function () {
+    $(document).on('click', '.fetchDataBtn', function () {
+      $(".loader_div").show();
+      let transaction_number = $(this).attr('transaction_number');
+      var fDate = $("#fdate").val();
+      var tDate = $("#tdate").val();
+      var agentcode = $(this).attr('agent_code');
+
+
+      $.ajax({
+        type: "GET",
+        url: "/admin/fetch_pcrx_file?agent_code=" + agentcode + "&fDate=" + fDate + "&tDate=" + tDate + '&transaction_number=' + transaction_number,
+        success: function (data) {
+          $(".loader_div").hide();
+          console.log(data)
+          Swal.fire("SUCCESS", "Send data Successful", "success").then((result) => {
+
+          });
+        },
+        error: function (error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Send Data failed !",
+          });
+          $(".loader_div").hide();
+        }
+      });
+
+
+
+
+
+
+
+      // href="/admin/fetch_pcrx_file?agent_code=' + item.agent_code + '&fDate=' + fDate + '&tDate=' + tDate + '&transaction_number=' + item.agent_trans_no + ';
+
+    });
+  </script>

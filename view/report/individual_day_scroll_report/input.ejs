@@ -1,0 +1,83 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-8">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+          <h2>Individual Day scroll report</h2>
+        </div>
+        <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+        <div class="row">
+          <form action="/admin/individual_day_scroll_report_post" method="post">
+            <div class="col-sm-12 row">
+              <div class="form-group col-6">
+                <label for="agent">Form Date:</label>
+                <input type="date" name="from_date" class="form-control" value="<%=nowdate%>" required/>
+              </div>
+
+              <div class="form-group col-6">
+                <label for="agent">To Date:</label>
+                <input type="date" name="to_date" class="form-control" value="<%=nowdate%>" required/>
+              </div>
+
+              <div class="form-group col-6">
+                <label for="agent">Select Agent:</label>
+                <select name="agent_code" class="form-control s2id" id="agent_code" required>
+                  <option value="">Select Agent</option>
+
+                  <% data.forEach(function(item) { %>
+                    <option value="<%= item.user_id %>">
+                      <%= item.user_id %>
+                    </option>
+
+                    <% }); %>
+                </select>
+              </div>
+              <div class="form-group col-6">
+                <label for="account">Select Account:</label>
+                <select name="account" class="form-control s2id" id="account" required>
+                  <option value="">Select Account</option>
+                </select>
+              </div>
+
+              <div class="form-group col-12">
+                <input type="submit" value="SUBMIT" class="btn btn-primary btn-block" id="downloadButton" />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $('#agent_code').change(function () {
+    var agent_code = $(this).val();
+
+    $.ajax({
+      type: 'POST',
+      url: '/admin/fetch_account',
+      data: { agent_code: agent_code },
+      success: function (response) {
+        var selectElement = $("#account");
+        selectElement.empty();
+        selectElement.append($('<option>', {
+                value: "",
+                text: "Select Account"
+            }));
+        response.SUCCESS.msg.forEach(function(item) {
+            selectElement.append($('<option>', {
+                value: item.account_number,
+                text: item.account_number
+            }));
+        });
+
+      },
+      error: function (xhr, status, error) {
+        console.error(status, error);
+      }
+    });
+
+  })
+</script>

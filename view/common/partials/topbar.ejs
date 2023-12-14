@@ -1,0 +1,65 @@
+<div class="topSec">
+  <div class="topSec_1">
+    <div class="container-fluid topSecSub pl-0 pr-0">
+      <div class="topLeftSec">
+        <div class="logoTop">
+          <img src="/admin_assets/images/logo_new.png" alt="" />
+        </div>
+      </div>
+
+      <div class="topSecName">
+        <ul>
+          <li>
+            <div class="hambarger_res_menu">
+              <a href="#" id="hambarMobileOpenBtn"><i class="fa fa-bars" aria-hidden="true"></i></a>
+            </div>
+          </li>
+          <li>
+			  <%= user.user_data.msg[0].bank_name %><br/>
+            <% if (user.user_data.msg[0].branch_name) { %>
+              <span style="font-size: 14px !important;">
+                <%= user.user_data.msg[0].branch_name %>
+              </span>
+            <% } %>
+			</li>
+          <!-- <li><span>Location: Location</span></li> -->
+          <!-- {{-- <li><span>Location: Kolkata</span></li> --}} -->
+        </ul>
+      </div>
+
+      <div class="topRightSec">
+        <ul>
+          <li class="thumbnailLi">
+            <a
+              href="javascript:void(0)"
+              class="dropbtn loginThumb profileThum"
+              onclick="myFunction()"
+              >user Name</a
+            >
+            <!--		<a href="javascript:void(0)" onclick="myFunction()" class="dropbtn loginThumb"><img src="/admin_assets/images/thum.png"alt=""/></a>-->
+
+            <div id="myDropdown" class="dropdown-content">
+              <a
+                href="javascript:void(0)"
+                data-toggle="modal"
+                data-target="#myAccount"
+                ><i class="fa fa-user-o" aria-hidden="true"></i> My Profile</a
+              >
+              <a
+                href="javascript:void(0);"
+                data-toggle="modal"
+                data-target="#myModal"
+              >
+                <i class="fa fa-unlock-alt" aria-hidden="true"></i> Change
+                Password</a
+              >
+              <a href="/admin/logout"
+                ><i class="fa fa-sign-out" aria-hidden="true"></i> Log Out</a
+              >
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

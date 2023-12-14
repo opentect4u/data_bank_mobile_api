@@ -1,0 +1,187 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-12">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary" id="myBtn">Add</button> -->
+          <h2>Edit Agent Details</h2>
+        </div>
+        <form action="/admin/update_agent/<%=data[0].id%>" id="myForm" method="post">
+          <div class="row">
+            <div class="form-group col-6">
+              <label for="agent_c">Agent Code:</label>
+              <input type="text" id="agent_c" name="user_id" class="form-control" value="<%=data[0].user_id%>" required readonly/>
+            </div>
+
+            <div class="form-group col-6">
+              <label for="name">Name:</label>
+              <input
+              id="name"
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Enter Name"
+                value="<%=data[0].agent_name%>"
+                required
+                <%=(data[0].active_flag=='N')?'readonly':''%>
+              />
+            </div>
+
+            <div class="form-group col-6">
+              <label for="email">Email:</label>
+              <input type="email" id="email" name="email" class="form-control" value="<%=data[0].email_id%>" <%=(data[0].active_flag=='N')?'readonly':''%> required/>
+            </div>
+
+            <div class="form-group col-6">
+              <label for="mobile">Mobile No.:</label>
+              <input type="text" id="mobile" name="mobile" class="form-control" value="<%=data[0].phone_no%>" <%=(data[0].active_flag=='N')?'readonly':''%> required/>
+            </div>
+
+
+
+            <% if(user.user_data.msg[0].sec_amt_type=='A'){ %>
+
+          
+
+              <div class="form-group col-6">
+                <div class="row">
+                  <div class="col">
+                    <label for="agent_account_no">Savings Account No :</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      required
+                      value="<%=data[0].account_no%>"
+                      readonly
+                    />
+                  </div>
+                  
+                </div>
+              </div>
+            <% } %>
+
+
+            <div class="form-group col-6">
+              <label for="max_amt">MAX Allowable Collection Amount :</label>
+              <input
+              id="max_amt"
+                type="number"
+                name="max_amt"
+                class="form-control"
+                value="<%=data[0].max_amt%>"
+                required
+                <%=(data[0].active_flag=='N')?'readonly':''%>
+              />
+            </div>
+            <div class="form-group col-6">
+              <label for="allow_collection_days">Max allowable no.of days :</label>
+              <input
+                type="number"
+                name="allow_collection_days"
+                class="form-control"
+                id="allow_collection_days"
+                value="<%=data[0].allow_collection_days%>"
+                required
+                <%=(data[0].active_flag=='N')?'readonly':''%>
+              />
+            </div>
+
+            
+            <!-- <div class="form-group col-6">
+              <label for="agent">Serial NO. :</label>
+              <input
+                type="text"
+                name="device_sl_no"
+                class="form-control"
+                value="<%=data[0].device_sl_no%>"
+              />
+            </div> -->
+            <div class="form-group col-6">
+              <label for="deviceId">Device Id. :</label>
+              <input
+              id="deviceId"
+                type="text"
+                name="device_id"
+                class="form-control"
+                value="<%=data[0].device_id%>"
+                required
+                <%=(data[0].active_flag=='N')?'readonly':''%>
+              />
+            </div>
+
+
+
+            <div class="form-group col-6">
+              <label for="abc"></label>
+              <h4><span class="badge badge-<%=(data[0].active_flag=='Y')?"success":"danger"%>"><%=(data[0].active_flag=='Y')?"Active":"Deactive"%></span></h4> 
+            </div>
+            
+
+            <!-- <div class="form-group col-6">
+                <label for="agent">Profile Pic. :</label>
+                <input
+                  type="file"
+                  name="profile_pic"
+                  class="form-control"
+                  value=""
+                />
+              </div> -->
+
+            <!-- <div class="form-group col-8">
+              <label for="agent">Address :</label>
+              <textarea name="adress" class="form-control" id=""><%=data[0].agent_address%></textarea>
+            </div> -->
+
+            <div class="form-group col-12">
+              <input
+                type="submit"
+                value="SUBMIT"
+                class="btn btn-primary btn-block"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+  $(document).ready(function () {
+    $("#myForm").validate({
+      rules: {
+        agent_c: "required",
+        name: "required",
+        mobile: "required",
+        max_amt: {
+          required: true,
+          digits: true 
+        },
+        deviceId: "required",
+        email: {
+          required: true,
+          email: true,
+        },
+      },
+      messages: {
+        agent_c: "Please enter Agent Code",
+        name: "Please enter name",
+        mobile: "Please enter Mobile No",
+        max_amt: {
+          required: "Please enter Max Allowable Collection Amount",
+          digits: "Max Allowable Collection Amount must contain only digits" 
+        },
+       
+        deviceId: "Please enter Device Id",
+        email: {
+          required: "Please enter email",
+          email: "Please enter a valid email address",
+        },
+        
+      },
+    });
+  });
+</script>

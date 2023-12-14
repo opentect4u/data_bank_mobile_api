@@ -1,0 +1,42 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-12">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+          <h2>Settings</h2>
+        </div>
+        <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Agent Code</th>
+              <th>Agent Name</th>
+              <th>Device Id</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data.msg.forEach(function(item,index) { %>
+            <tr>
+              <td><%=(index+1)%></td>
+              <td><%=item.user_id%></td>
+              <td><%=item.agent_name%></td>
+              <td><%=item.device_id%></td>
+              <td><%=(item.active_flag=='Y')?"Active":""%></td>
+
+              <td>
+                <a href="/admin/edit_settings/<%=item.id%>" class="btn btn-info"
+                  >Edit</a
+                >
+              </td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

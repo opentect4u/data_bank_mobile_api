@@ -1,0 +1,257 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-12">
+      <div class="card-body">
+        <div class="titleSec">
+          <button type="button" class="btn btn-primary" id="myBtn">Add</button>
+          <h2>Bank Details</h2>
+        </div>
+        <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+        <table id="example2" class="table table-striped table-bordered" style="width:100%">
+          <thead>
+            <tr>
+              <th>Sl. No.</th>
+              <th>Bank Name</th>
+              <th>Contact Person</th>
+              <th>Phone NO</th>
+              <th>Email</th>
+              <th>Active Status</th>
+              <!-- <th>Action</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <% data.msg.forEach(function(item,index) { %>
+
+            <tr>
+              <td><%=(index+1)%></td>
+              <td><%=item.bank_name%></td>
+              <td><%=item.contact_person%></td>
+              <td><%=item.phone_no%></td>
+              <td><%=item.email_id%></td>
+              <td>
+                <h5><span class="badge badge-<%=(item.active_flag=='Y')?"success":"danger"%>"><%=(item.active_flag=='Y')?"Active":"Deactive"%></span></h5> 
+              </td>
+              <!-- <td>
+                <a href="/super-admin/edit_bank/<%=item.bank_id%>" class="btn btn-info"
+                  >Edit</a
+                >
+              </td> -->
+            </tr>
+
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="myBank">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Create Bank</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form action="/super-admin/add_bank" method="post" id="myForm">
+          <div class="row">
+            <div class="form-group col-12">
+              <label for="bank_name">Bank Name:</label>
+              <input
+                type="text"
+                id="bank_name"
+                name="bank_name"
+                class="form-control"
+                value=""
+                required
+              />
+            </div>
+
+            
+
+            <div class="form-group col-4">
+              <label for="contact_person">Contact Person:</label>
+              <input
+                type="contact_person"
+                name="contact_person"
+                class="form-control"
+                id="contact_person"
+                required
+              />
+            </div>
+            <div class="form-group col-4">
+              <label for="mobile">Mobile No.:</label>
+              <input
+                type="number"
+                name="mobile"
+                class="form-control"
+                id="mobile"
+                required
+              />
+            </div>
+
+            <div class="form-group col-4">
+              <label for="email">Email.:</label>
+              <input
+                type="text"
+                name="email"
+                class="form-control"
+                id="email"
+                required
+              />
+            </div>
+            <div class="form-group col-4">
+              <label for="device_type">Device Type.:</label>
+              <select name="device_type"
+              class="form-control"
+              id="device_type"
+              required>
+                <option value="">Select Device Type</option>
+                <option value="Mobile">Mobile</option>
+              </select>
+            </div>
+
+            <div class="form-group col-4">
+              <label for="data_version">Data Version.:</label>
+              
+              <select name="data_version"
+              class="form-control"
+              id="data_version"
+              required>
+                <option value="">Select Data Version</option>
+                <option value="S">Cochin Version with Mobile No</option>
+                <option value="C">Cochin Version without Mobile(applicable in DDS Mc)</option>
+                <option value="N">Normal Version(applicable in DDS Mc)</option>
+              </select>
+            </div>
+
+
+            <div class="form-group col-4">
+              <label for="data_transfer_type">Data transfer types.:</label>
+              <select name="data_transfer_type"
+                class="form-control"
+                id="data_transfer_type"
+                required>
+                <option value="">Select Data transfer types</option>
+                <option value="M">Manual (upload & download data manually) </option>
+                <option value="A">Automatically transfer data through API</option>
+              </select>
+            </div>
+
+
+            <div class="form-group col-4">
+              <label for="receipt_type">Receipt type.:</label>
+              <select  name="receipt_type"
+              class="form-control"
+              id="receipt_type"
+              required>
+              <option value="">Select Receipt type</option>
+              <option value="S">SMS </option>
+              <option value="P">Print</option>
+              <option value="B">Both</option>
+            </select>
+
+
+
+            </div>
+
+
+
+            <div class="form-group col-4">
+              <label>Active flag:</label>
+            
+              <div class="form-check form-check-inline">
+                <input
+                  type="radio"
+                  name="active_flag"
+                  class="form-check-input"
+                  id="active_option"
+                  value="Y"
+                  required
+                />
+                <label class="form-check-label" for="active_option">Active</label>
+              </div>
+            
+              <div class="form-check form-check-inline">
+                <input
+                  type="radio"
+                  name="active_flag"
+                  class="form-check-input"
+                  id="inactive_option"
+                  value="N"
+                  required
+                />
+                <label class="form-check-label" for="inactive_option">Inactive</label>
+              </div>
+            </div>
+            <div class="form-group col-6">
+              <label for="pin">Password:</label>
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                id="pin"
+                maxlength="4"
+                required
+              />
+            </div>
+
+            <div class="form-group col-6">
+              <label for="cid">Confirm PIN:</label>
+              <input
+                type="password"
+                name="confirmPassword"
+                class="form-control"
+                id="cid"
+                maxlength="4"
+                required
+              />
+            </div>
+           
+
+
+            <div class="form-group col-12">
+              <label for="bank_address">Bank Address:</label>
+              <textarea  name="bank_address"
+              id="bank_address"
+              class="form-control"
+              placeholder="Enter bank address"
+              required cols="30" rows="3"></textarea>
+              
+            </div>
+
+            <div class="form-group col-12">
+              <input
+                type="submit"
+                value="SUBMIT"
+                class="btn btn-primary btn-block"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#myBtn").click(function () {
+      $("#myBank").modal();
+    });
+  });
+</script>

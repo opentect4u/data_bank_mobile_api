@@ -1,0 +1,280 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-12">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+          <h2>DOWNLOAD PCRX</h2>
+        </div>
+        <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+        <div class="row">
+          <div class="col-sm-12 row">
+            <div class="form-group col-12">
+              <label for="agent">Select Agent:</label>
+              <select name="" class="form-control s2id" id="agCode">
+                <option value="">Select Agent</option>
+
+                <% data.forEach(function(item) { %>
+                <option value="<%= item.user_id %>"><%= item.user_id %></option>
+
+                <% }); %>
+              </select>
+            </div>
+            <div class="col-12 row form-group" id="agent_info">
+              <div class="col-6">
+              <div class="form-group row">
+                <label for="showAgentname" class="col-sm-3 col-form-label"
+                  >Name:</label
+                >
+                <div class="col-sm-9">
+                  <p class="form-control-plaintext" id="showAgentname"></p>
+                </div>
+              </div>
+              </div>
+
+              <div class="col-6">
+              <div class="form-group row">
+                <label for="showBranch" class="col-sm-3 col-form-label"
+                  >Branch:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showBranch" class="form-control-plaintext"></p>
+                </div>
+              </div>
+              </div>
+
+              <div class="col-6">
+              <div class="form-group row">
+                <label for="showAgent" class="col-sm-3 col-form-label"
+                  >Agent Code:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showAgent" class="form-control-plaintext"></p>
+                </div>
+              </div>
+              </div>
+
+              <div class="col-6">
+              <div class="form-group row">
+                <label for="showPhone_no" class="col-sm-3 col-form-label"
+                  >Mobile No:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showPhone_no" class="form-control-plaintext"></p>
+                </div>
+              </div>
+              </div>
+
+            </div>
+
+
+            <div class="form-group col-6">
+              <label for="agent">From Date:</label>
+              <input type="date" name="fdate" class="form-control" id="fdate">
+              
+            </div>
+            <div class="form-group col-6">
+              <label for="agent">To Date:</label>
+              <input type="date" name="tdate" class="form-control" id="tdate">
+              
+            </div>
+
+
+            <div class="form-group col-12">
+              <label for="agent">Transaction Number:</label>
+              <select name="transitionNumber" class="form-control s2id"  id="transitionNumber">
+                <option value="">Select Transition Number</option>
+              </select>
+            </div>
+
+
+
+            <table class="table pcrxTable">
+              <thead>
+                <tr>
+                  <th>Sl. No.</th>
+                  <th>Agent Name</th>
+                  <th>Date</th>
+                  <th>Trans No</th>
+                  <th>Total Amount</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+  
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>    
+                 
+                </tr>
+               
+  
+              </tbody>
+            </table>
+
+
+            <div class="form-group col-12">
+              <input
+                type="submit"
+                value="DOWNLOAD PCRX"
+                class="btn btn-primary btn-block"
+                id="downloadButton"
+              />
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var tbody = $(".pcrxTable tbody");
+  $("#downloadButton").click(function () {
+    var agent_code = $("#agCode").val();
+
+    var fDate= $('#fdate').val();
+    var tDate= $('#tdate').val();
+    var transitionNumber=$("#transitionNumber").val();
+
+
+    if (agent_code == null || agent_code == "" && fDate == null || fDate == "" && tDate == null || tDate == "" && transitionNumber == null || transitionNumber == "") {
+      alert("kindly choose an agent, From Date, To Date & Transaction Number");
+    } else {
+     /* $.ajax({
+        type: "POST",
+        url: "/admin/check_and_collection",
+        data: JSON.stringify({ agent_code: agent_code }),
+        contentType: "application/json",
+        success: function (response) {
+          console.log(response);
+          if (response == 1) {
+            alert("Not terminating in collection, an agent");
+          } else {
+            window.location.href =
+              "/admin/download_pcrx_file?agent_code=" + agent_code;
+          }
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });*/
+
+      window.location.href = "/admin/download_pcrx_file?agent_code=" + agent_code+"&fDate="+fDate+"&tDate="+tDate+"&transaction_number="+transitionNumber;
+
+      Swal.fire("Success", "PCRX file Download successful !", "success").then((result) => {
+        window.location.replace('/admin/download_pcrx');
+      });
+    }
+
+
+
+   
+    //window.location.href = '/admin/download_pcrx_file?agent_code='+agent_code;
+    
+  });
+
+
+
+  $("#agent_info").hide();
+  $("#agCode").change(function () {
+    var agent_id = $(this).val();
+
+    $("#showAgentname").text("");
+    $("#showBranch").text("");
+    $("#showAgent").text("");
+    $("#showPhone_no").text("");
+    $("#agent_info").hide();
+    transitionNumber()
+    $.ajax({
+      type: "POST",
+      url: "/admin/agent_info",
+      data: { agent_code: agent_id },
+      success: function (response) {
+        console.log(response);
+        $("#agent_info").show();
+        $("#showAgentname").text(response.SUCCESS.msg[0].agent_name);
+        $("#showBranch").text(response.SUCCESS.msg[0].branch_name);
+        $("#showAgent").text(response.SUCCESS.msg[0].user_id);
+        $("#showPhone_no").text(response.SUCCESS.msg[0].phone_no);
+
+      },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  });
+
+  $('#fdate').change(function(){
+    transitionNumber()
+  })
+
+  $('#tdate').change(function(){
+    transitionNumber()
+  })
+  
+  function transitionNumber(){
+    var fDate= $('#fdate').val();
+    var tDate= $('#tdate').val();
+    var agentcode=$("#agCode").val();
+    $('#transitionNumber option:not(:first)').remove();
+    $.ajax({
+      type: "POST",
+      url: "/admin/fetch_trans_number",
+      data: { agent_code: agentcode,fDate:fDate,tDate:tDate },
+      success: function (response) {
+        console.log(response.SUCCESS);
+
+        console.log(response.SUCCESS);
+          tbody.empty();
+          response.SUCCESS.forEach(function (item,index) {
+            var row =
+              "<tr>" +
+                "<td>" +
+                  (index+1) +
+                "</td>" +
+              "<td>" +
+              item.agent_name +
+              "</td>" +
+              "<td>" +
+              item.received_date +
+              "</td>" +
+              "<td>" +
+              item.agent_trans_no +
+              "</td>" +
+              "<td>" +
+              item.amount +
+              "</td>" +
+              "</tr>";
+            tbody.append(row);
+          });
+
+
+
+        $('#transitionNumber option:not(:first)').remove();
+        $.each(response.SUCCESS, function (index, item) {
+          
+          var option = $('<option>', {
+            value: item.agent_trans_no,
+            text: item.agent_trans_no
+          });
+
+          // Append the <option> to the <select>
+          $('#transitionNumber').append(option);
+        });
+
+      },
+      error: function (error) {
+        console.log(error);
+        $('#transitionNumber option:not(:first)').remove();
+      },
+    });
+
+  }
+</script>

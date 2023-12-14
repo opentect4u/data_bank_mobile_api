@@ -1,0 +1,211 @@
+const Joi = require("joi");
+const { db_Select, db_Insert } = require("../../model/MasterModule");
+const dateFormat = require('dateformat');
+const datetime = dateFormat(new Date(), "yyyy-mm-dd")
+
+
+const day_scroll_report = async(req,res)=>{      
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd")
+    const user_data = req.session.user.user_data.msg[0];
+    var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
+        selectData = "user_id";
+    let dbuser_data = await db_Select(selectData, "md_user", whrDAta, null);
+    var viewData = {
+        title: "Day Scroll Report",
+        page_path: "/report/day_scroll_report/input",
+        data: dbuser_data.msg,
+        nowdate:datetime
+    };
+    res.render('common/layouts/main', viewData)
+}
+const day_scroll_report_post = async(req,res)=>{
+    try {
+        const schema = Joi.object({
+            agent_code: Joi.string().required(),
+            // account_type: Joi.string().valid('D', 'R', 'L').required(),
+            // product_code: Joi.string().required(),
+            from_date: Joi.string().required(),
+            to_date: Joi.string().required(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+        const user_data = req.session.user.user_data.msg[0];
+        let select = "transaction_date as date,account_type,account_number, account_holder_name,deposit_amount",
+            where = `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}' AND transaction_date BETWEEN '${value.from_date}' AND '${value.to_date}'`;
+            let order=`ORDER BY transaction_date ASC`;
+        let resData = await db_Select(select, "td_collection", where, order);
+
+        let resData2 = await db_Select('*', "md_agent", `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}'`, null);
+
+        console.log("resData============",resData2);
+        delete resData.sql
+        var viewData = {
+            title: "Day Scroll Report",
+            page_path: "/report/day_scroll_report/report",
+            data: resData.msg,
+            fdate:value.from_date,
+            tdate:value.to_date,
+            datetime : dateFormat(new Date(), "dd-mm-yyyy hh:MM:ss"),
+            agent_info:resData2.msg[0]
+        };
+        res.render('common/layouts/main', viewData)
+
+
+    } catch (error) {
+        res.json({
+            "success": error,
+            "status": false
+        });
+    }
+}
+
+
+
+
+
+const individual_day_scroll_report = async(req,res)=>{
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd")
+    const user_data = req.session.user.user_data.msg[0];
+    var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
+        selectData = "user_id";
+    let dbuser_data = await db_Select(selectData, "md_user", whrDAta, null);
+    var viewData = {
+        title: "Day Scroll Report",
+        page_path: "/report/individual_day_scroll_report/input",
+        data: dbuser_data.msg,
+        nowdate:datetime
+    };
+    res.render('common/layouts/main', viewData)
+}
+const individual_day_scroll_report_post = async(req,res)=>{
+    try {
+        const schema = Joi.object({
+            agent_code: Joi.string().required(),
+            account: Joi.string().required(),
+            // account_type: Joi.string().valid('D', 'R', 'L').required(),
+            // product_code: Joi.string().required(),
+            from_date: Joi.string().required(),
+            to_date: Joi.string().required(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+        const user_data = req.session.user.user_data.msg[0];
+        let select = "transaction_date as date,account_type,account_number, account_holder_name,deposit_amount",
+            where = `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}'AND account_number='${value.account}' AND transaction_date BETWEEN '${value.from_date}' AND '${value.to_date}'`;
+            let order=`ORDER BY transaction_date ASC`;
+        let resData = await db_Select(select, "td_collection", where, order);
+        delete resData.sql
+        var viewData = {
+            title: "Day Scroll Report",
+            page_path: "/report/individual_day_scroll_report/report",
+            data: resData.msg,
+            fdate:value.from_date,
+            tdate:value.to_date
+        };
+        res.render('common/layouts/main', viewData)
+
+
+
+
+        
+
+
+    } catch (error) {
+        res.json({
+            "success": error,
+            "status": false
+        });
+    }
+}
+
+
+
+const account_type_wise_report = async(req,res)=>{
+    try {
+        
+    
+    const user_data = req.session.user.user_data.msg[0];
+    var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
+        selectData = "user_id";
+    let dbuser_data = await db_Select(selectData, "md_user", whrDAta, null);
+    const datetimee = dateFormat(new Date(), "yyyy-mm-dd")
+    var viewData = {
+        title: "Account Type Wise Report",
+        page_path: "/report/account_type_wise_report/input",
+        data: dbuser_data.msg,
+        nowdate:datetimee
+    };
+    res.render('common/layouts/main', viewData)
+} catch (error) {
+    res.json({
+        "success": error,
+        "status": false
+    });  
+}
+}
+
+const account_type_wise_report_post = async(req,res)=>{
+    try {
+        const schema = Joi.object({
+            agent_code: Joi.string().required(),
+            account_type: Joi.string().valid('D', 'R', 'L').required(),
+            // product_code: Joi.string().required(),
+            from_date: Joi.string().required(),
+            to_date: Joi.string().required(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+
+        const user_data = req.session.user.user_data.msg[0];
+
+
+        let select = "transaction_date as date,account_number,account_holder_name,deposit_amount",
+            where = `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${value.from_date}' AND '${value.to_date}'`;
+            let order=`ORDER BY transaction_date ASC`;
+        let resData = await db_Select(select, "td_collection", where, order);
+
+        delete resData.sql
+
+
+        var viewData = {
+            title: "Account Type Wise Report",
+            page_path: "/report/account_type_wise_report/report",
+            data: resData.msg,
+            fdate:value.from_date,
+            tdate:value.to_date,
+            datetime :dateFormat(new Date(), "dd-mm-yyyy hh:MM:ss")
+        };
+        res.render('common/layouts/main', viewData)
+
+
+
+
+        
+
+
+    } catch (error) {
+        res.json({
+            "success": error,
+            "status": false
+        });
+    }
+}
+module.exports={day_scroll_report,day_scroll_report_post,account_type_wise_report,account_type_wise_report_post,individual_day_scroll_report,individual_day_scroll_report_post}

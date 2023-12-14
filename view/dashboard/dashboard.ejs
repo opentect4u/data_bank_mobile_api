@@ -1,0 +1,40 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-body">
+
+
+                <div class="titleSec">
+                    <!-- <button type="button" class="btn btn-primary">Export as CSV</button>
+                    <h2>Page Title</h2> -->
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                       <h1>Dashboard</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function() {
+        // Get the current date
+        var currentDate = new Date();
+    
+        // Get the last day of the current month
+        var lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+        // Calculate the difference in days
+        var daysRemaining = lastDayOfMonth.getDate() - currentDate.getDate();
+    
+        // Show the modal if there are 10 or fewer days remaining in the month
+        if (daysRemaining <= 10) {
+          $("#wornmodal").modal("show");
+        }
+      });
+  </script>

@@ -1,0 +1,250 @@
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-12">
+      <div class="card-body">
+        <div class="titleSec">
+          <!-- <button type="button" class="btn btn-primary">Export as CSV</button> -->
+          <h2>Upload Account</h2>
+        </div>
+        <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+        <div class="titleSec">
+          <p>Branch Code: <%= user.user_data.msg[0].branch_code %></p>
+        </div>
+        <div class="row">
+
+         
+
+          <div class="col-sm-12 row">
+            <div class="form-group col-12">
+              <label for="agent">Select Agent:</label>
+              <select name="" class="form-control s2id" id="agentCode">
+                <option value="">Select Agent</option>
+
+                <% data.forEach(function(item) { %>
+                <option value="<%= item.user_id %>"><%= item.user_id %></option>
+
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- <div class="form-group col-4">
+              <label for="agent">Date:</label>
+
+              <input
+                type="date"
+                class="form-control"
+                id="date"
+                value="2023-08-29"
+              />
+            </div> -->
+
+            <!-- <div class="form-group col-2">
+              <label for="agent"></label>
+              <input
+                type="submit"
+                value="SUBMIT"
+                class="btn btn-primary btn-block"
+                id="showBtn"
+              />
+            </div> -->
+
+            <div class="col-12 form-group row" id="agent_info">
+              <div class="col-6">
+              <div class="form-group row">
+                <label for="showAgentname" class="col-sm-3 col-form-label" >Name:</label>
+                <div class="col-sm-9">
+                  <p class="form-control-plaintext" id="showAgentname"></p>
+                </div>
+              </div>
+              </div>
+              <div class="col-6">
+              <div class="form-group row">
+                <label for="showBranch" class="col-sm-3 col-form-label">Branch:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showBranch" class="form-control-plaintext">
+                   
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group row">
+                <label for="showAgent" class="col-sm-3 col-form-label"
+                  >Agent Code:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showAgent" class="form-control-plaintext"></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+  
+              <div class="form-group row">
+                <label for="showPhone_no" class="col-sm-3 col-form-label"
+                  >Mobile No:</label
+                >
+                <div class="col-sm-9">
+                  <p id="showPhone_no" class="form-control-plaintext"></p>
+                </div>
+              </div>
+            </div>
+            </div>
+  
+
+            <div class="col-12">
+              <table class="table accountTable">
+                <thead>
+                  <tr>
+                    <th>SL No.</th>
+                    <th>Account No</th>
+                    <th>Name</th>
+                    <th>Mobile No</th>
+                    <th>Product Code</th>
+                    <th>Opening Date</th>
+                    <th>Current Blance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    var tbody = $(".accountTable tbody");
+    $("#showBtn").change(function () {
+      getData();
+      tbody.empty();
+    });
+
+    // $("#date").change(function () {
+    //   getData();
+    //   tbody.empty();
+    // });
+
+    $("#agentCode").change(function () {
+      getData();
+      agent_info()
+      tbody.empty();
+    });
+
+    function formatDate(date) {
+      var date = new Date(date);
+      var day = date.getDate();
+      var month = date.getMonth() + 1;
+      var year = date.getFullYear();
+      if (day < 10) {
+        day = "0" + day;
+      }
+      if (month < 10) {
+        month = "0" + month;
+      }
+      return day + "/" + month + "/" + year;
+    }
+
+    function getData() {
+      var agentCode = $("#agentCode").val();
+      var agentDate = $("#date").val();
+      
+      $.ajax({
+        type: "POST",
+        url: "/admin/fetch_show_account",
+        data: { agent_code: agentCode },
+        success: function (response) {
+          console.log(response.SUCCESS.msg);
+          tbody.empty();
+          response.SUCCESS.msg.forEach(function (item,index) {
+            var row =
+              "<tr>" +
+                "<td>" +
+                  (index+1) +
+                "</td>" +
+              "<td>" +
+              item.account_number +
+              "</td>" +
+              "<td>" +
+              item.customer_name +
+              "</td>" +
+              "<td>" +
+              item.mobile_no +
+              "</td>" +
+              "<td>" +
+              item.product_code +
+              "</td>" +
+              "<td>" +
+              formatDate(item.opening_date) +
+              "</td>" +
+              "<td>" +
+              item.current_balance +
+              "</td>" +
+              "</tr>";
+            tbody.append(row);
+          });
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+
+
+    $("#agent_info").hide();
+    function agent_info() {
+      var agent_id = $("#agentCode").val();
+
+      $("#showAgentname").text("");
+      $("#showBranch").text("");
+      $("#showAgent").text("");
+      $("#showPhone_no").text("");
+      $("#agent_info").hide();
+
+      $.ajax({
+        type: "POST",
+        url: "/admin/agent_info",
+        data: { agent_code: agent_id },
+        success: function (response) {
+          console.log(response);
+          $("#agent_info").show();
+
+          $("#showAgentname").text(response.SUCCESS.msg[0].agent_name);
+          $("#showBranch").text(response.SUCCESS.msg[0].branch_name);
+          $("#showAgent").text(response.SUCCESS.msg[0].user_id);
+          $("#showPhone_no").text(response.SUCCESS.msg[0].phone_no);
+        },
+        error: function (error) {
+          console.log(error);
+        },
+      });
+    }
+  });
+</script>
+
+<!-- var tbody = $('#data-table tbody');
+
+            // Loop through the data.msg array and create a row for each object
+            data.msg.forEach(function (item) {
+                var row = '<tr>' +
+                    '<td>' + item.account_dtls_id + '</td>' +
+                    '<td>' + item.bank_id + '</td>' +
+                    '<td>' + item.branch_code + '</td>' +
+                    '<td>' + item.agent_code + '</td>' +
+                    '</tr>';
+                tbody.append(row);
+            }); -->
