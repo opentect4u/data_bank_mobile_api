@@ -315,7 +315,41 @@ const account_wise_scroll_report = async (req, res) => {
     }
 }
 
+const last_five_transaction=async (req, res) => {
+    try{
+        const schema = Joi.object({
+            bank_id: Joi.number().required(),
+            branch_code: Joi.string().required(),
+            agent_code: Joi.string().required()
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key]=detail.message;
+            });
+            return res.json({error:errors});
+        }
+
+        let select = "transaction_date,account_number,account_holder_name,deposit_amount",
+            where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}'`;
+            var orderdata=`order by collected_at desc limit 5`
+        let resData = await db_Select(select, "td_collection", where, orderdata);
+
+
+
+        res.json({
+            "success": resData,
+            "status": true
+        });
+    } catch (err) {
+        res.json({
+            "error": err,
+            "status": false
+        });
+    }
+}
 
 // const 
 
-module.exports = { day_scroll_report, type_wise_report, non_collection_report, mini_statement, date_wise_summary, date_wise_mini_statement, account_wise_scroll_report }
+module.exports = { day_scroll_report, type_wise_report, non_collection_report, mini_statement, date_wise_summary, date_wise_mini_statement, account_wise_scroll_report,last_five_transaction }

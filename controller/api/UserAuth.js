@@ -67,7 +67,7 @@ const login = async (req, res) => {
         }
         var whr = `device_id='${value.device_id}'AND user_id='${value.user_id}' AND active_flag='Y' AND user_type='O'`;
         let res_dt = await db_Select('password', "md_user", whr, null);
-		delete res_dt.sql;
+        delete res_dt.sql;
         let db_pass = res_dt.msg[0].password
         if (await bcrypt.compare(value.password, db_pass)) {
             var table_name = "md_user a,md_bank b,md_branch c,md_agent d",
@@ -96,13 +96,13 @@ const login = async (req, res) => {
                 "status": false
             });
         }
-	}catch(err){
-		res.json({
-			"error": err,
-			"status": false,
-			"position": "User Auth Mysql"
-		});
-	}
+    } catch (err) {
+        res.json({
+            "error": err,
+            "status": false,
+            "position": "User Auth Mysql"
+        });
+    }
 }
 //get agent
 const my_agent = async (req, res) => {
@@ -170,15 +170,15 @@ const change_pin = async (req, res) => {
         let res_dt = await db_Select('password', "md_user", whr, null);
         delete res_dt.sql;
         let db_pass = res_dt.msg[0].password
-        
+
         if (await bcrypt.compare(value.old_password, db_pass)) {
             let pss = value.password
             let enc_pss = bcrypt.hashSync(pss, 10)
             var set = `password='${enc_pss}'`;
             var whr2 = `bank_id='${value.bank_id}' AND branch_code='${value.branch_code}' AND device_id='${value.device_id}' AND user_id='${value.user_id}' AND active_flag='Y'AND user_type='O'`;
-            let res_dt = await db_Insert("md_user", set,null, whr2, 1);
+            let res_dt = await db_Insert("md_user", set, null, whr2, 1);
 
-            
+
             res.json({
                 "success": "password change successfully",
                 "status": true
@@ -198,4 +198,43 @@ const change_pin = async (req, res) => {
     }
 }
 
-module.exports = { register, login, my_agent,change_pin }
+
+const app_version = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            app_version:Joi.string().required()
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+
+
+
+        let res_dt = await db_Select('*', "md_app_version", null, null);
+        console.log("===res_dt===",res_dt.msg[0].app_version)
+
+
+        let update_status=(res_dt.msg[0].app_version==value.app_version) ?'N':'Y';
+
+        res.json({
+            "data": res_dt.msg[0],
+            "status": true,
+            "update_status":update_status
+        });
+        
+
+    } catch (error) {
+        res.json({
+            "error": error,
+            "status": false
+        });
+    }
+}
+
+module.exports = { register, login, my_agent, change_pin,app_version }
