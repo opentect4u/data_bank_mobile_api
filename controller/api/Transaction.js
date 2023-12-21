@@ -64,10 +64,15 @@ const transaction = async (req, res) => {
                     where = `bank_id=${value.bank_id} AND transaction_date = '${dateFormat(value.transaction_date, "yyyy-mm-dd")}'`;
                 let resData = await db_Select(select, "td_collection", where, null);
                 const recpt_no = resData.msg[0].rc_no;
+
+
                 let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount, collection_by, collected_at)',
                     transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
                     values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.collection_by}','${datetime}')`;
                 let res_dt = await db_Insert("td_collection", fields, values, null, 0);
+
+
+
                 if (res_dt.suc == 1) {
                     let setdata = `current_balance=${value.total_amount}`,
                         upwhere5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' `;
@@ -90,13 +95,21 @@ const transaction = async (req, res) => {
                                 console.error("================================", error);
                             });
                     }
+
+                    res.json({
+                        "success": res_dt,
+                        "sms_status": sms_status,
+                        "receipt_no": recpt_no,
+                        "status": true
+                    });
+
+                }else{
+                    res.json({
+                        "error": "not found error ",
+                        "status": false
+                    });
                 }
-                res.json({
-                    "success": res_dt,
-                    "sms_status": sms_status,
-                    "receipt_no": recpt_no,
-                    "status": true
-                });
+                
 
             } else {
                 res.json({

@@ -27,4 +27,13 @@ module.exports = {
     poolMin: 5,
     poolIncrement: 0,
   },
+  4: {
+    user: "spcbs",
+    password: "spcbs191101",
+    // connectionString: "103.177.225.252:1521/xe",
+    connectionString: "synergic-db1.ckoqkwog5p58.ap-south-1.rds.amazonaws.com:1521/syndb1",
+    poolMax: 5,
+    poolMin: 5,
+    poolIncrement: 0,
+  },
 };

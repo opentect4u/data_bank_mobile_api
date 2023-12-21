@@ -501,6 +501,7 @@ const fetchdata_to_server = async (req, res) => {
             order = null,
             flag = 1;
         let tableDate = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null);
+        console.log("**********************", tableDate)
 
         for (let dbdata of tableDate.msg) {
             try {
