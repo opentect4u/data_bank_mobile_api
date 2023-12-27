@@ -31,9 +31,9 @@ const strDAta = (inputStr) => {
 
 const upload_pctx = async (req, res) => {
     const user_data = req.session.user.user_data.msg[0];
-    var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
-        selectData = "user_id";
-    let dbuser_data = await db_Select(selectData, "md_user", whrDAta, null);
+    var whrDAta = `a.user_id=b.agent_code AND a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.bank_id='${user_data.bank_id}' AND a.branch_code='${user_data.branch_code}'  AND a.active_flag='Y'AND a.user_type='O'`,
+        selectData = "a.user_id,b.agent_name";
+    let dbuser_data = await db_Select(selectData, "md_user a, md_agent b", whrDAta, null);
 
     var template = (user_data.data_trf == 'A') ? "/upload_file/upload_data_api" : "/upload_file/upload_pctx";
 
@@ -393,9 +393,9 @@ const fetch_pcrx_file = async (req, res) => {
 
 const show_upload_account = async (req, res) => {
     const user_data = req.session.user.user_data.msg[0];
-    var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
-        selectData = "user_id";
-    let dbuser_data = await db_Select(selectData, "md_user", whrDAta, null);
+    var whrDAta = `a.user_id=b.agent_code AND a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.bank_id='${user_data.bank_id}' AND a.branch_code='${user_data.branch_code}'  AND a.active_flag='Y'AND a.user_type='O'`,
+        selectData = "a.user_id,b.agent_name";
+    let dbuser_data = await db_Select(selectData, "md_user a, md_agent b", whrDAta, null);
     var viewData = {
         title: "UPLOAD ACCOUNT LIST",
         page_path: "/uploaded_data/show_upload_data",
@@ -430,7 +430,6 @@ const fetch_show_account = async (req, res) => {
             selectData = "a.*",
             table = `td_account_dtls as a`;
         let dbuser_data = await db_Select(selectData, table, whrDAta, null);
-
 
         res.json({
             "SUCCESS": data,

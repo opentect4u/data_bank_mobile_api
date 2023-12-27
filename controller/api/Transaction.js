@@ -76,7 +76,7 @@ const transaction = async (req, res) => {
                 if (res_dt.suc == 1) {
                     let setdata = `current_balance=${value.total_amount}`,
                         upwhere5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' `;
-                    let upresData5 = await db_Insert("td_account_dtls", setdata, null, upwhere5, 1);
+                    await db_Insert("td_account_dtls", setdata, null, upwhere5, 1);
                     let select5 = "mobile_no",
                         where5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' `;
                     let resData5 = await db_Select(select5, "td_account_dtls", where5, null);

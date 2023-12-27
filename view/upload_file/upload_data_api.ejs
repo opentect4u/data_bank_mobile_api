@@ -39,7 +39,7 @@
                 <option value="">Select Agent</option>
 
                 <% data.forEach(function(item) { %>
-                <option value="<%= item.user_id %>"><%= item.user_id %></option>
+                <option value="<%= item.user_id %>"><%= item.user_id %>, <%= item.agent_name %></option>
 
                 <% }); %>
               </select>

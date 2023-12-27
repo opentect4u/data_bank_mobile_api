@@ -71,7 +71,7 @@ const login = async (req, res) => {
         let db_pass = res_dt.msg[0].password
         if (await bcrypt.compare(value.password, db_pass)) {
             var table_name = "md_user a,md_bank b,md_branch c,md_agent d",
-                whrDAta = `a.bank_id=b.bank_id AND a.branch_code=c.branch_code AND b.bank_id=c.bank_id AND d.agent_code=a.user_id AND a.device_id='${value.device_id}'AND a.user_id='${value.user_id}' AND a.active_flag='Y'AND user_type='O'`,
+                whrDAta = `a.bank_id=b.bank_id AND a.branch_code=c.branch_code AND b.bank_id=c.bank_id AND d.agent_code=a.user_id AND d.bank_id=a.bank_id AND d.branch_code=a.branch_code AND a.device_id='${value.device_id}'AND a.user_id='${value.user_id}' AND a.active_flag='Y'AND user_type='O'`,
                 selectData = "d.allow_collection_days,a.id, a.bank_id, a.branch_code, a.device_sl_no, a.device_id, a.user_id, a.pin_no, a.profile_pic , b.bank_name,c.branch_name, d.agent_name,d.email_id,d.phone_no,d.max_amt,b.sec_amt_type";
 
             let user_data = await db_Select(selectData, table_name, whrDAta, null);

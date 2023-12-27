@@ -21,7 +21,7 @@
                 <option value="">Select Agent</option>
 
                 <% data.forEach(function(item) { %>
-                <option value="<%= item.user_id %>"><%= item.user_id %></option>
+                <option value="<%= item.user_id %>"><%= item.user_id %>, <%= item.agent_name %></option>
 
                 <% }); %>
               </select>
@@ -89,6 +89,20 @@
                 </div>
               </div>
             </div>
+
+
+            <div class="col-6">
+  
+              <div class="form-group row">
+                <label for="fetchDate" class="col-sm-3 col-form-label"
+                  >Upload Date:</label
+                >
+                <div class="col-sm-9">
+                  <p id="fetchDate" class="form-control-plaintext"></p>
+                </div>
+              </div>
+            </div>
+
             </div>
   
 
@@ -127,6 +141,8 @@
 </div>
 
 <script>
+
+  
   $(document).ready(function () {
     var tbody = $(".accountTable tbody");
     $("#showBtn").change(function () {
@@ -168,7 +184,14 @@
         url: "/admin/fetch_show_account",
         data: { agent_code: agentCode },
         success: function (response) {
-          console.log(response.SUCCESS.msg);
+          //console.log(response.SUCCESS.msg[0].upload_dt);
+          if (response.SUCCESS.msg[0].upload_dt) {
+            var datetime=formatDate(response.SUCCESS.msg[0].upload_dt)
+            console.log(datetime);
+            $("#fetchDate").text(datetime);
+          }else{
+            $("#fetchDate").text('');
+          }
           tbody.empty();
           response.SUCCESS.msg.forEach(function (item,index) {
             var row =
