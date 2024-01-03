@@ -77,8 +77,14 @@ const login = async (req, res) => {
             let user_data = await db_Select(selectData, table_name, whrDAta, null);
 
             delete user_data.sql;
+
+            
+            let userallData=user_data.msg[0];
             var selectCollectionData = " ifnull(SUM(deposit_amount),0) AS total_collection"
-            whrCollectionDAta = `agent_code='${value.user_id}' AND agent_trans_no is null
+            /* The line `whrCollectionDAta = `bank_id=${userallData.bank_id}AND
+            branch_code=${userallData.} AND agent_code='${value.user_id}' AND agent_trans_no is
+            null` is creating a SQL WHERE clause for selecting data from the `td_collection` table. */
+            whrCollectionDAta = `bank_id=${userallData.bank_id} AND branch_code=${userallData.branch_code} AND agent_code='${value.user_id}' AND agent_trans_no is null
             AND  download_flag = 'N'`;
 
             let total_collection = await db_Select(selectCollectionData, "td_collection", whrCollectionDAta, null);
