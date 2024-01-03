@@ -53,11 +53,13 @@ const transaction = async (req, res) => {
         let total_collectlimite = await db_Select("max_amt,allow_collection_days", "md_agent", cbalcheck, null);
 
         var totalallowamt = total_collectlimite.msg[0].max_amt * total_collectlimite.msg[0].allow_collection_days;
+
         var totalallowamt2 = total_collectlimite.msg[0].max_amt;
         console.log("======totalallowamt===========", totalallowamt2)
         var cbalcheck5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND agent_trans_no IS NULL`
+
         let total_collectamttt = await db_Select("ifnull(SUM(deposit_amount),0) as deposit_amount", "td_collection", cbalcheck5, null);
-        console.log("======total_collectamttt===========", totalallowamt > total_collectamttt.msg[0].deposit_amount)
+
         if (value.sec_amt_type == 'M' && (totalallowamt > total_collectamttt.msg[0].deposit_amount)) {
             if (checkedData.msg > 0) {
                 let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
@@ -66,12 +68,12 @@ const transaction = async (req, res) => {
                 const recpt_no = resData.msg[0].rc_no;
 
 
-                let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount, collection_by, collected_at)',
+                let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
                     transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
-                    values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.collection_by}','${datetime}')`;
+                    values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}')`;
                 let res_dt = await db_Insert("td_collection", fields, values, null, 0);
 
-
+              
 
                 if (res_dt.suc == 1) {
                     let setdata = `current_balance=${value.total_amount}`,
@@ -103,13 +105,13 @@ const transaction = async (req, res) => {
                         "status": true
                     });
 
-                }else{
+                } else {
                     res.json({
                         "error": "not found error ",
                         "status": false
                     });
                 }
-                
+
 
             } else {
                 res.json({
@@ -146,10 +148,12 @@ const transaction = async (req, res) => {
 
                 const recpt_no = resData.msg[0].rc_no;
 
-                let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount, collection_by, collected_at)',
+                let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
                     transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
-                    values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.collection_by}','${datetime}')`;
+                    values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}')`;
                 let res_dt = await db_Insert("td_collection", fields, values, null, 0);
+
+
                 if (res_dt.suc == 1) {
                     //let setdata = `current_balance=${value.total_amount}`,
                     let setdata = `current_balance=current_balance+${value.deposit_amount}`,
@@ -179,14 +183,22 @@ const transaction = async (req, res) => {
                                 console.error("================================", error);
                             });
                     }
+                    res.json({
+                        "success": res_dt,
+                        "sms_status": sms_status,
+                        "receipt_no": recpt_no,
+                        "status": true
+                    });
+                }else{
+
+                    res.json({
+                        "error": "not found error ",
+                        "status": false
+                    });
+
                 }
 
-                res.json({
-                    "success": res_dt,
-                    "sms_status": sms_status,
-                    "receipt_no": recpt_no,
-                    "status": true
-                });
+                
 
             } else {
                 res.json({
