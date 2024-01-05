@@ -40,6 +40,8 @@ const transaction = async (req, res) => {
         }
         const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
         datetimef = dateFormat(new Date(), "yyyy/mm/dd HH:MM:ss")
+
+        var timestamp = new Date().getTime();
         var fields = 'sl_no',
             whr = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND coll_flag='Y' AND end_flag='N'`;
 
@@ -139,15 +141,15 @@ const transaction = async (req, res) => {
                 // const recpt_no = (resData.msg[0]) ? (parseInt(resData.msg[0].receipt_no) + 1) : (value.bank_id.toString() + '1');
 
 
-                let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
+             /*   let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
                     where = `bank_id=${value.bank_id} AND transaction_date = '${dateFormat(value.transaction_date, "yyyy-mm-dd")}'`;
                 // orderB = `ORDER BY receipt_no DESC `;
                 let resData = await db_Select(select, "td_collection", where, null);
 
                 console.log("===========rc no ===============", resData)
 
-                const recpt_no = resData.msg[0].rc_no;
-
+                const recpt_no = resData.msg[0].rc_no;*/
+                const recpt_no = timestamp;
                 let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
                     transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
                     values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}')`;
