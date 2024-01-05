@@ -131,11 +131,9 @@ const edit_bank_list_save = async (req, res) => {
 
 }
 
-const admin_bank_list = async (req, res) => {
-    res.render('super-admin/admin_branch')
-}
 
 
 
 
-module.exports = { bank_list, add_bank_list,edit_bank_list,edit_bank_list_save, admin_bank_list}
+
+module.exports = { bank_list, add_bank_list,edit_bank_list,edit_bank_list_save}

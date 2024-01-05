@@ -1,0 +1,101 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <h2>Branch Edit Details</h2>
+          </div>
+          <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+          <form action="/super-admin/edit_branch_save" method="post" id="myForm">
+            <input type="hidden" name="bank_id" value="<%= data.bank_id %>">
+            <div class="row">
+              <div class="form-group col-4">
+                <label for="bank_id">Bank Name:</label>
+                <select name="bank_id"
+                class="form-control"
+                id="bank_id" disabled
+                >
+                  <option value="">Select Bank Name</option>
+                  <option value="1" <%= data.bank_id == '1' ? 'selected' : '' %>>Bihar Co-operative Credit Society Ltd.</option>
+                  <option value="2" <%= data.bank_id == '2' ? 'selected' : '' %>>The Puri Urban and Rural Development Cooperative Society Ltd.</option>
+                  <option value="3" <%= data.bank_id == '3' ? 'selected' : '' %>>Demo Bank</option>
+                  <option value="4" <%= data.bank_id == '4' ? 'selected' : '' %>>Shyamaprasanna SKUS Ltd</option>
+                 
+                </select>
+              </div>
+              <div class="form-group col-4">
+                <label for="branch_c">Branch Code:</label>
+                <input
+                  type="text"
+                  id="branch_c"
+                  name="branch_c"
+                  class="form-control"
+                  readonly
+                  value="<%= data.branch_code %>"
+                />
+              </div>
+  
+              <div class="form-group col-4">
+                <label for="branchname">Branch Name:</label>
+                <input
+                  type="text"
+                  name="branchname"
+                  id="branchname"
+                  class="form-control"
+                  placeholder="Enter Branch Name"
+                  value="<%= data.branch_name %>"
+                />
+              </div>
+
+              <div class="form-group col-4">
+                <label for="contactperson">Contact Person:</label>
+                <input
+                  type="text"
+                  name="contactperson"
+                  id="contactperson"
+                  class="form-control"
+                  placeholder="Enter Name"
+                  value="<%= data.contact_person %>"
+                />
+              </div>
+  
+              <div class="form-group col-4">
+                <label for="email">Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  id="email"
+                  readonly
+                  value="<%= data.email_id %>"
+                />
+              </div>
+              <div class="form-group col-4">
+                <label for="mobile">Mobile No:</label>
+                <input
+                  type="text"
+                  name="mobile"
+                  class="form-control"
+                  id="mobile"
+                  value="<%= data.phone_no %>"
+                />
+              </div>
+  
+              <div class="form-group col-12">
+                <label for="branch_address">Address :</label>
+                <textarea name="branch_address" class="form-control" id="branch_address"><%= data.branch_address %></textarea>
+              </div>
+              <input type="hidden" name="branch_id" value="<%= branch_id %>">
+              <div class="form-group col-3 center">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

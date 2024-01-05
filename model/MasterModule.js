@@ -77,4 +77,19 @@ const db_Check = async (fields, table_name, whr) => {
     });
 };
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check }
+const db_db_Select_Sqery = (sql) => {
+    // let sql = sql;
+    return new Promise((resolve, reject) => {
+        db.query(sql, (err, result) => {
+            if (err) {
+                console.log(err);
+                data = { suc: 0, msg: JSON.stringify(err), sql };
+            } else {
+                data = { suc: 1, msg: result, sql };
+            }
+            resolve(data);
+        });
+    });
+};
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, db_db_Select_Sqery }
