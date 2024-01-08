@@ -1,16 +1,17 @@
 const dateFormat = require('dateformat');
 const { db_Check, db_Select } = require('../../model/MasterModule');
+const { F_Select } = require('../../model/OrcModel');
 const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
-const check_and_collection=async(req,res)=>{
+const check_and_collection = async (req, res) => {
     try {
         const agent_code = req.body.agent_code;
         const user_data = req.session.user.user_data.msg[0];
         var select_q = "send_date";
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}' AND coll_flag='Y' AND end_flag='N' AND agent_trans_no IS NULL AND received_date IS NULL ORDER BY send_date DESC `;
         let res_dt = await db_Check(select_q, "md_agent_trans", whr);
-        if(res_dt.msg>0&&res_dt.msg==1){
+        if (res_dt.msg > 0 && res_dt.msg == 1) {
             res.json(res_dt.msg);
-        }else{
+        } else {
             res.json(res_dt.msg);
         }
     } catch (error) {
@@ -18,7 +19,39 @@ const check_and_collection=async(req,res)=>{
     }
 }
 
-const settings=async(req,res)=>{
+
+
+const check_sync_data = async (req, res) => {
+    try {
+        const agent_code = req.body.agent_code;
+        const user_data = req.session.user.user_data.msg[0];
+        // var select_q = "send_date";
+        // var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}' AND coll_flag='Y' AND end_flag='N' AND agent_trans_no IS NULL AND received_date IS NULL ORDER BY send_date DESC `;
+        // let res_dt = await db_Check(select_q, "md_agent_trans", whr);
+
+
+        //db connection
+        let fields = "COUNT(*) AS COUNT",
+            table_name = "TD_COLLECTION",
+            where = `BRANCH_CODE ='${user_data.branch_code}' AND AGENT_CODE = ${agent_code} AND   data_trf = 'N'`,
+            order = null,
+            flag = 1;
+
+        var unsync_data = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null)
+
+        console.log("========================///////",unsync_data.msg)
+
+        if (unsync_data.msg[0].COUNT == 0 ) {
+            res.json(true);
+        } else {
+            res.json(false);
+        }
+    } catch (error) {
+        res.json(error);
+    }
+}
+
+const settings = async (req, res) => {
     try {
         const user_data = req.session.user.user_data.msg[0];
         let select = 'a.id, a.user_id,a.active_flag,a.device_id,a.device_sl_no,b.agent_name,b.agent_address,b.phone_no,b.email_id,b.max_amt',
@@ -27,17 +60,17 @@ const settings=async(req,res)=>{
         const resData = await db_Select(select, table_name, whr, null)
         delete resData.sql
 
-        var viewData={
-            title:"Settings",
-            page_path:"/settings/settings",
-            data:resData
+        var viewData = {
+            title: "Settings",
+            page_path: "/settings/settings",
+            data: resData
         };
-        res.render('common/layouts/main',viewData)
+        res.render('common/layouts/main', viewData)
     } catch (error) {
         res.json({
             "error": error,
             "status": false
-        }); 
+        });
     }
 }
-module.exports={check_and_collection,settings}
+module.exports = { check_and_collection, check_sync_data, settings }

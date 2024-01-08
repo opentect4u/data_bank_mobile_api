@@ -63,11 +63,14 @@ const transaction = async (req, res) => {
         let total_collectamttt = await db_Select("ifnull(SUM(deposit_amount),0) as deposit_amount", "td_collection", cbalcheck5, null);
 
         if (value.sec_amt_type == 'M' && (totalallowamt > total_collectamttt.msg[0].deposit_amount)) {
+            console.log("tttttttttttttttttttttttttttttttt")
             if (checkedData.msg > 0) {
-                let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
-                    where = `bank_id=${value.bank_id} AND transaction_date = '${dateFormat(value.transaction_date, "yyyy-mm-dd")}'`;
-                let resData = await db_Select(select, "td_collection", where, null);
-                const recpt_no = resData.msg[0].rc_no;
+                // let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
+                //     where = `bank_id=${value.bank_id} AND transaction_date = '${dateFormat(value.transaction_date, "yyyy-mm-dd")}'`;
+                // let resData = await db_Select(select, "td_collection", where, null);
+                // const recpt_no = resData.msg[0].rc_no;
+
+                let recpt_no = timestamp;
 
 
                 let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
@@ -149,7 +152,8 @@ const transaction = async (req, res) => {
                 console.log("===========rc no ===============", resData)
 
                 const recpt_no = resData.msg[0].rc_no;*/
-                const recpt_no = timestamp;
+                let recpt_no = timestamp;
+                console.log("===========rc no ===============", recpt_no)
                 let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
                     transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
                     values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}')`;

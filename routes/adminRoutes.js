@@ -3,7 +3,7 @@ const { login, post_login, blank_page } = require("../controller/admin/authAdmin
 const { dashboard } = require("../controller/admin/Dashboard");
 const { AuthCheckedMW, logout } = require("../middleware/AuthCheckedMW");
 const { upload_pctx, upload_pctx_file_data, download_pcrx, download_pcrx_file, create_agent_trans, show_upload_account, fetch_show_account, del_all_pctx_file_data, fetchdata_to_server, fetch_pcrx_file, update_agent_amount } = require("../controller/admin/UploadDownloadTxtFile");
-const { check_and_collection, settings } = require("../controller/admin/AdminTransaction");
+const { check_and_collection, settings, check_sync_data } = require("../controller/admin/AdminTransaction");
 const { day_scroll_report, day_scroll_report_post, account_type_wise_report, account_type_wise_report_post, individual_day_scroll_report_post, individual_day_scroll_report, summary_report, summary_report_post } = require("../controller/admin/AdminReport");
 const { agent_info, fetchtransNumber, fetch_account } = require("../controller/admin/FetchData");
 const { agent, addAgent, editAgent, edit_save_agent, checkedUnicUser, fetch_agent_max_all_col, fetch_agent_name } = require("../controller/admin/Agent.controller");
@@ -42,6 +42,9 @@ AdminRoutes.get('/download_pcrx',AuthCheckedMW,download_pcrx)
 AdminRoutes.get('/download_pcrx_file',AuthCheckedMW,download_pcrx_file)
 AdminRoutes.get('/fetch_pcrx_file',AuthCheckedMW,fetch_pcrx_file)
 AdminRoutes.post('/check_and_collection',AuthCheckedMW,check_and_collection)
+
+
+AdminRoutes.post('/check_sync_data',AuthCheckedMW,check_sync_data)
 
 
 AdminRoutes.get('/day_scroll_report',AuthCheckedMW,day_scroll_report)
