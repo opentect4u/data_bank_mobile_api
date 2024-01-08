@@ -7,24 +7,35 @@
           <h2>Active Agent</h2>
         </div>
         <div class="row">
-          <div class="col-md-12 mb-2">
-            <div class="form-inline">
-              <select class="form-control mr-sm-2" placeholder="Search" id="bank" aria-label="Search">
-                <option value="">Select Branch</option>
-
-                <% bank.msg.forEach(function(item2,index) { %>
-                  <option value="<%=item2.bank_id%>"><%=item2.bank_name%></option>
-                  <% }); %>
+          <div class="form-group col-4">
+            <label for="bank"><b>Bank Name:</b></label>
+            <select name="bank"
+            class="form-control"
+            id="bank"
+            required>
+              <option value="">Select Bank Name</option>
+              <% bank.msg.forEach(function(item2,index) { %>
+                <option value="<%=item2.bank_id%>"><%=item2.bank_name%></option>
+                <% }); %>
                 
-              </select>
-                <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="submitBtn">Submit</button> -->
-            </div>
-        </div>
+            </select>
+          </div>
+         
+          <div class="form-group col-4">
+            <label for="branch"><b>Branch Name:</b></label>
+            <select name="branch"
+            class="form-control"
+            id="branch"
+            required>
+              <option value="">Select Branch Name</option>
+            </select>
+          </div>
+           
+          <div class="form-group col-4" style="margin-top: 29px;">
+            <button class="btn btn-outline-success" type="button" id="submitBtn">Submit</button>
+          </div>
 
-
-
-
-        <div class="col-12 form-group row" id="bank_info" style="">
+        <!-- <div class="col-12 form-group row" id="bank_info">
           <div class="col-6">
           <div class="form-group row">
             <label for="showAgentname" class="col-sm-3 col-form-label">Total User:</label>
@@ -33,46 +44,20 @@
             </div>
           </div>
           </div>
-          <!-- <div class="col-6">
-          <div class="form-group row">
-            <label for="showBranch" class="col-sm-3 col-form-label">Branch:</label>
-            <div class="col-sm-9">
-              <p id="showBranch" class="form-control-plaintext">Bhgalapur</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-6">
-          <div class="form-group row">
-            <label for="showAgent" class="col-sm-3 col-form-label">Agent Code:</label>
-            <div class="col-sm-9">
-              <p id="showAgent" class="form-control-plaintext">101000081</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-6">
-
-          <div class="form-group row">
-            <label for="showPhone_no" class="col-sm-3 col-form-label">Mobile No:</label>
-            <div class="col-sm-9">
-              <p id="showPhone_no" class="form-control-plaintext">8540860914</p>
-            </div>
-          </div>
         </div> -->
-        </div>
       </div>
         <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
-        <table class="table table_bank" style="width:100%">
+        <table class="table table_bank" id="showAgentDtls" style="width:100%">
           <thead>
             <tr>
               <th>Sl. No.</th>
-              <th>Branch Name</th>
-              <!-- <th>No of users</th> -->
-              <th>Active</th>
-              <th>Inactive</th>
+              <th>Agent Code</th>
+              <th>Agent Name</th>
+              <th>Mobile</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            
           </tbody>
         </table>
       </div>
@@ -80,11 +65,83 @@
   </div>
 </div>
 
-
 <script>
 
-  $("#bank_info").hide()
   $('#bank').change(function(){
+    var bankId=$(this).val();
+    // alert(bank_id)
+      $.ajax({
+          type: "POST",
+          url: "/super-admin/get_branch_name",
+          data: { bank_id: bankId },
+          success: function(response) {
+            console.log(response.SUCCESS.branchData.msg)
+           $('#branch').empty();
+
+            response.SUCCESS.branchData.msg.forEach(function(resData) {
+                $('#branch').append('<option value="' + resData.branch_code + '">' + resData.branch_name + '</option>');
+            });
+
+          },
+        error: function (error) {
+          console.log(error);
+        //   tbody.empty();
+        //  $("#myBtn").hide()
+        },
+      });
+  });
+     
+</script>
+
+<script>
+  $('#submitBtn').click(function () {
+    var branch = $('#branch').val();
+    var bank = $('#bank').val();
+    console.log({ bank_id: bank, branch_id: branch });
+    $.ajax({
+      type: "POST",
+      url: "/super-admin/agent_data",
+      data: { bank_id: bank, branch_id: branch },
+      success: function(response) {
+        console.log(response);
+        // console.log(response.SUCCESS.branchData.msg)
+        $('#showAgentDtls tbody').empty()
+        let i = 1;
+        if(response.suc > 0 && response.msg.length > 0)
+          response.msg.forEach(function(resData) {
+              $('#showAgentDtls tbody').append(`
+              <tr>
+                <td>${i}</td>
+                <td>${resData.agent_code}</td>
+                <td>${resData.agent_name}</td>
+                <td>${resData.phone_no}</td>
+                <td>Action</td>
+              </tr>
+              `)
+              i++;
+          });
+        else{
+          $('#showAgentDtls tbody').append(`
+            <tr>
+              <td colspan="5" class="text-danger text-center">No data found</td>
+            </tr>
+          `)
+        }
+
+      },
+    error: function (error) {
+      console.log(error);
+    //   tbody.empty();
+    //  $("#myBtn").hide()
+    },
+  });
+});
+</script>
+
+<!-- <script>
+
+  $("#bank_info").hide()
+  $('#bank_id').change(function(){
     var bank_id=$(this).val();
 
 
@@ -138,7 +195,7 @@
 
 
 
-</script>
+</script> -->
 
 
 

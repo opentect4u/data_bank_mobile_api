@@ -3,10 +3,241 @@
       <div class="card col-12">
         <div class="card-body">
           <div class="titleSec">
-            <h2>Active Branch</h2>
+          <button type="button" class="btn btn-primary" id="myBtn">Add</button>
+            <h2>Branch Details</h2>
           </div>
-          
+          <div class = row>
+            <div class="col-md-12 mb-2">
+              <div class="form-inline">
+                <select class="form-control mr-sm-" placeholder="Search" id="bank_details" aria-label="Search">
+                  <option value="">Select Bank</option>
+  
+                  <% bank.msg.forEach(function(item2,index) { %>
+                    <option value="<%=item2.bank_id%>"><%=item2.bank_name%></option>
+                    <% }); %>
+                  
+                </select>
+              </div>
+          </div>
+          </div>
+          <table class="table admin_table_bank" style="width:100%">
+            <thead>
+              <tr>
+                <th>Sl. No.</th>
+                <th>Branch Code</th>
+                <th>Branch Name</th>
+                <th>Contact Person</th>
+                <th>Phone No</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="myModal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Add Branch</h4>
+          <button type="button" class="close" data-dismiss="modal">
+            &times;
+          </button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+          <form action="/super-admin/add_branch" method="post" id="myForm">
+            <div class="row">
+              <div class="form-group col-4">
+                <label for="bank_id">Bank Name:</label>
+                <select name="bank_id"
+                class="form-control"
+                id="bank_id"
+                required>
+                  <option value="">Select Bank Name</option>
+                  <% bank.msg.forEach(function(item2,index) { %>
+                    <option value="<%=item2.bank_id%>"><%=item2.bank_name%></option>
+                    <% }); %>
+                    
+                </select>
+              </div>
+              <div class="form-group col-4">
+                <label for="branch_c">Branch Code:</label>
+                <input
+                  type="text"
+                  id="branch_c"
+                  name="branch_c"
+                  class="form-control"
+                  value=""
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-4">
+                <label for="branchname">Branch Name:</label>
+                <input
+                  type="text"
+                  name="branchname"
+                  id="branchname"
+                  class="form-control"
+                  placeholder="Enter Branch Name"
+                  required
+                />
+              </div>
+
+              <div class="form-group col-4">
+                <label for="contactperson">Contact Person:</label>
+                <input
+                  type="text"
+                  name="contactperson"
+                  id="contactperson"
+                  class="form-control"
+                  placeholder="Enter Name"
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-4">
+                <label for="email">Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  id="email"
+                  required
+                />
+              </div>
+              <div class="form-group col-4">
+                <label for="mobile">Mobile No:</label>
+                <input
+                  type="text"
+                  name="mobile"
+                  class="form-control"
+                  id="mobile"
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-6">
+                <label for="pin">Password:</label>
+                <input
+                  type="password"
+                  name="password"
+                  class="form-control"
+                  id="pin"
+                  maxlength="4"
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-6">
+                <label for="cid">Confirm Password:</label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  class="form-control"
+                  id="cid"
+                  maxlength="4"
+                  required
+                />
+              </div>
+             
+            
+              <div class="form-group col-12">
+                <label for="branch_address">Address :</label>
+                <textarea name="branch_address" class="form-control" id="branch_address"></textarea>
+              </div>
+  
+              <div class="form-group col-3 center">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 32vw;"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#myBtn").click(function () {
+        $("#myModal").modal();
+        $("#myBtn").hide()
+      });
+    });
+  </script>
+
+  <script>
+    $("#myBtn").hide()
+    $('#bank_details').change(function(){
+      var bank_id=$(this).val();
+      getBankData(bank_id)
+     })
+    
+     function getBankData(bank_id) {
+     
+      var tbody = $(".admin_table_bank tbody");
+      $.ajax({
+        type: "POST",
+        url: "/super-admin/get_branch_name",
+        async: true,
+        data: { bank_id: bank_id },
+        success: function (response) {
+          console.log(response.SUCCESS.msg);
+          tbody.empty();
+          response.SUCCESS.branchData.msg.forEach(function (item,index) {
+            var row =
+              "<tr>" +
+                "<td>" +
+                  (index+1) +
+                "</td>" +
+                "<td>" +
+              item.branch_code +
+              "</td>" +
+              "<td>" +
+              item.branch_name +
+              "</td>" +
+              "<td>" +
+              item.contact_person +
+              "</td>" +
+              "<td>" +
+              item.phone_no +
+              "</td>" +
+              "<td><a href='/super-admin/edit_branch?branch_id="+item.branch_id+"' class='btn btn-info'>Edit</a></td>" +
+              "</tr>";
+            tbody.append(row);
+            $("#myBtn").show()
+           
+
+          });
+        },
+        error: function (error) {
+          console.log(error);
+          tbody.empty();
+         $("#myBtn").hide()
+        },
+      });
+    } 
+  </script>
