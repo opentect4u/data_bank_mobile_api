@@ -1,6 +1,6 @@
 const express=require("express");
 const { dashboard } = require("../controller/admin/Dashboard");
-const { agent_list, agent } = require("../controller/superAdmin/Agent.controller");
+const { agent_list, agent, editAgentdata, edit_save_agent_data } = require("../controller/superAdmin/Agent.controller");
 const { AuthCheckedMW } = require("../middleware/AuthCheckedMW");
 const { fetch_bank_info, get_branch_name } = require("../controller/superAdmin/FetchData.controller");
 const { bank_list, add_bank_list, edit_bank_list, edit_bank_list_save, admin_bank_list } = require("../controller/superAdmin/Bank.controller");
@@ -15,6 +15,8 @@ Sadmin.get('/agent',AuthCheckedMW,agent_list)
 Sadmin.post('/fetch_bank_info',AuthCheckedMW,fetch_bank_info)
 
 Sadmin.post('/agent_data',agent)
+Sadmin.get('/edit_agent',editAgentdata)
+Sadmin.post('/update_agent_data',edit_save_agent_data)
 
 Sadmin.get('/branch_admin',AuthCheckedMW, branch_list)
 Sadmin.post('/get_branch_name',AuthCheckedMW,get_branch_name)
