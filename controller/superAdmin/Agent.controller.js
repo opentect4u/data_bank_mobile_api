@@ -38,6 +38,49 @@ const agent = async (req, res) => {
     }
 }
 
+const add_agent = async (req, res) => {
+    try {
+      const schema = Joi.object({
+        user_id: Joi.required(),
+        name: Joi.string().required(),
+        email: Joi.string().required(),
+        mobile: Joi.string().required(),
+        max_amt: Joi.number().required(),
+        allow_collection_days: Joi.number().required(),
+        device_id: Joi.required(),
+        agent_active: Joi.string(),
+      });
+      const { error, value } = schema.validate(req.body, { abortEarly: false });
+      console.log(value);
+      if (error) {
+        const errors = {};
+        error.details.forEach((detail) => {
+          errors[detail.context.key] = detail.message;
+        });
+        return res.json({ error: errors });
+      }
+      const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+      const user_data = req.session.user.user_data.msg[0];
+  
+      let fields2 = '(device_id,active_flag,created_by,created_at)',
+        values2 = `('${value.device_id}','${value.agent_active}','${user_data.id}','${datetime}')`;
+      let res_dt2 = await db_Insert("md_user", fields2, values2, null, 0);
+      console.log("========user==========", res_dt2);
+  
+      let fields = '(agent_name,phone_no,email_id,max_amt,allow_collection_days,created_by,created_at)',
+        values = `('${value.name}','${value.mobile}','${value.email}','${value.max_amt}','${value.allow_collection_days}','${user_data.id}','${datetime}')`;
+      let res_dt = await db_Insert("md_agent", fields, values, null, 0);
+      console.log("========branch==========", res_dt);
+      res.redirect("/super-admin/agent");
+    } catch (error) {
+      console.log(error);
+      res.json({
+        error: error,
+        status: false,
+      });
+    }
+  };
+
 const editAgentdata = async (req, res) => {
     try {
         var data = req.query
@@ -113,4 +156,4 @@ const edit_save_agent_data = async (req, res) => {
     
 }
 
-module.exports={agent_list,agent,editAgentdata,edit_save_agent_data}
+module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent}
