@@ -42,6 +42,7 @@ const add_agent = async (req, res) => {
     try {
       const schema = Joi.object({
         user_id: Joi.required(),
+        agent_c: Joi.required(),
         name: Joi.string().required(),
         email: Joi.string().required(),
         mobile: Joi.string().required(),
@@ -67,8 +68,8 @@ const add_agent = async (req, res) => {
       let res_dt2 = await db_Insert("md_user", fields2, values2, null, 0);
       console.log("========user==========", res_dt2);
   
-      let fields = '(agent_name,phone_no,email_id,max_amt,allow_collection_days,created_by,created_at)',
-        values = `('${value.name}','${value.mobile}','${value.email}','${value.max_amt}','${value.allow_collection_days}','${user_data.id}','${datetime}')`;
+      let fields = '(agent_code,agent_name,phone_no,email_id,max_amt,allow_collection_days,created_by,created_at)',
+        values = `('${value.agent_c}','${value.name}','${value.mobile}','${value.email}','${value.max_amt}','${value.allow_collection_days}','${user_data.id}','${datetime}')`;
       let res_dt = await db_Insert("md_agent", fields, values, null, 0);
       console.log("========branch==========", res_dt);
       res.redirect("/super-admin/agent");

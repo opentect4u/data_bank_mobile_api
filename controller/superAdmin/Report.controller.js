@@ -47,13 +47,13 @@ const get_branch_name=async (req,res)=>{
 const agent_report = async (req, res) => {
     try {
         var data = req.body
-        console.log(data);
+        // console.log(data);
         let select = 'agent_id, agent_code, agent_name, phone_no',
             table_name = 'md_agent',
-            whr = `bank_id = ${data.bank_id} AND branch_code = ${data.branch_id} AND agent_code = ${data.agent_code}`;
-        var resdata = await db_Select(select, table_name, whr, null)
-        console.log(resdata);
-        res.json(resdata)
+            whr = `bank_id = ${data.bank_id} AND branch_code = ${data.branch_id}`;
+        var agenData = await db_Select(select, table_name, whr, null)
+        // console.log(agenData);
+        res.json(agenData)
         
     } catch (error) {
         res.json({
@@ -64,20 +64,42 @@ const agent_report = async (req, res) => {
 }
 
 
+const summary_report_post_admin = async(req,res)=>{
+    try {
+        var data = req.body
+        const user_data = req.session.user.user_data.msg[0];
+        let select = "a.agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag, sum(b.deposit_amount)deposit_amount",
+            where = `a.agent_trans_no = b.agent_trans_no and a.agent_code = b.agent_code AND a.bank_id=${data.bank_id} AND a.branch_code='${data.branch_id}' AND a.agent_code='${data.agent_code}' `;
+            let order=`group by a.agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag
+            order by a.send_date`;
 
-// const summary_report = async(req,res)=>{      
-//     const datetime = dateFormat(new Date(), "yyyy-mm-dd")
-//     const user_data = req.session.user.user_data.msg[0];
-//     var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
-//         selectData = "user_id";
-//     let dbuser_data = await db_Select(selectData, "md_user", whrDAta, null);
-//     var viewData = {
-//         title: "Day Scroll Report",
-//         page_path: "/report/summary_report_superAdmin/view_report",
-//         data: dbuser_data.msg,
-//         nowdate:datetime
-//     };
-//     res.render('common/layouts/main', viewData)
-// }
+        let resData = await db_Select(select, "md_agent_trans a,td_collection b", where, order);
+        console.log(resData);
 
-module.exports = {report_list, get_branch_name, agent_report}
+        let resData2 = await db_Select('*', "md_agent", `bank_id=${data.bank_id} AND branch_code='${data.branch_id}' AND agent_code='${data.agent_code}'`, null);
+        console.log(resData2);
+
+        console.log("resData============",resData2);
+        delete resData.sql
+        var viewData = {
+            title: "Day Scroll Report",
+            // page_path: "/report/summary_report_superAdmin/view_report",
+            data: resData.msg,
+            datetime : dateFormat(new Date(), "dd-mm-yyyy hh:MM:ss"),
+            agent_info:resData2.msg[0]
+        };
+
+        console.log("Starting Date",viewData);
+        res.send(resData)
+
+
+    } catch (error) {
+        console.log(error);
+        res.json({
+            "success": error,
+            "status": false
+        });
+    }
+}
+
+module.exports = {report_list, get_branch_name, agent_report, summary_report_post_admin}

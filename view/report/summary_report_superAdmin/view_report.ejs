@@ -1,12 +1,12 @@
 <div class="main-panel">
     <div class="content-wrapper">
-      <div class="card col-8">
+      <div class="card col-12">
         <div class="card-body">
           <div class="titleSec">
             <h2>Summary Report</h2>
           </div>
           <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col-4">
                 <label for="bank"><b>Bank Name:</b></label>
                 <select name="bank"
                 class="form-control"
@@ -19,7 +19,7 @@
                 </select>
               </div>
 
-              <div class="form-group col-6">
+              <div class="form-group col-4">
                 <label for="branch"><b>Branch Name:</b></label>
                 <select name="branch"
                 class="form-control"
@@ -29,26 +29,46 @@
                 </select>
               </div>
 
-
-              <div class="col-sm-12 row">
-                <div class="form-group col-12">
+                <div class="form-group col-4">
                   <label for="agent"><b>Select Agent:</b></label>
                   <select name="agent_code" class="form-control" id="agent_code" required>
                     <option value="">Select Agent</option>
                   </select>
                 </div>
   
-                <div class="form-group col-4" style="margin-left: 15vw;">
-                  <input
-                    type="submit"
-                    value="SUBMIT"
-                    class="btn btn-primary btn-block"
-                    id="downloadButton"
-                  />
+                <div class="form-group col-6" style="margin-left: 30vw;">
+                  <button class="btn btn-success" type="button" id="submitBtn">Submit</button>
                 </div>
-              </div>
+              
           </div>
+
+          <div class="row">
+            
+          <div class="col-6">
+            <h6 style="text-align: left;">Branch Name: &nbsp;<span id="br_name"></span></h6>
+            <h6 style="text-align: left;">Agent Name: &nbsp;<span id="ag_name"></span></h6>
+            <h6 style="text-align: left;">Agent Code: &nbsp;<span id="ag_code"></span></h6>
         </div>
+          </div>
+
+          <table class="table table_bank mt-4" id="showAgentDtls" style="width:100%">
+            <thead>
+              <tr>
+                <th>Sl. No.</th>
+                <th>Agent Code</th>
+                <th>Agent Trans No</th>
+                <th>Send Date</th>
+                <th>Received Date</th>
+                <th>Status</th>
+                <th>Deposit Amount
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>
@@ -61,8 +81,10 @@
             url: "/super-admin/report_branch_name",
             data: { bank_id: bankId },
             success: function(response) {
+              console.log(response);
               console.log(response.SUCCESS.branchData.msg)
              $('#branch').empty();
+             $('#branch').append(`<option value="">Select Branch Name</option>`)
   
               response.SUCCESS.branchData.msg.forEach(function(resData) {
                   $('#branch').append('<option value="' + resData.branch_code + '">' + resData.branch_name + '</option>');
@@ -81,16 +103,19 @@
  $('#branch').change(function(){
   var bank = $('#bank').val();
   var branch = $('#branch').val();
-  var agent = $('#agent_code').val();
+  // var agent = $('#agent_code').val();
         $.ajax({
             type: "POST",
             url: "/super-admin/agent_data_report",
-            data: { bank_id: bank, branch_id: branch, agent_code: agent},
+            data: { bank_id: bank, branch_id: branch},
             success: function(response) {
-              console.log(response)
+              // console.log(response)
+              console.log(response.msg);
              $('#agent_code').empty();
-  
-              response.SUCCESS.resdata.msg.forEach(function(resData) {
+             $('#agent_code').append(`<option value="">Select Agent</option>`)
+            
+              response.msg.forEach(function(resData) {
+                console.log(resData);
                   $('#agent_code').append('<option value="' + resData.agent_code + '">' + resData.agent_name + '</option>');
               });
              
@@ -101,4 +126,80 @@
           },
         });
     });
+</script>
+
+<script>
+  $('#submitBtn').click(function () {
+    var branch = $('#branch').val();
+    var bank = $('#bank').val();
+    var agent = $('#agent_code').val();
+    console.log({ bank_id: bank, branch_id: branch, agent_code: agent });
+    $.ajax({
+      type: "POST",
+      url: "/super-admin/summary_report_post_admin",
+      data: { bank_id: bank, branch_id: branch, agent_code: agent },
+      success: function(response) {
+        console.log(response);
+        $('#showAgentDtls tbody').empty()
+                function formatDate(inputDate) {
+                    const date = new Date(inputDate);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${day}/${month}/${year}`;
+                 } 
+                 var total_amount=0.0
+                
+        let i = 1;
+        $('#br_name').text($('#branch :selected').text())
+          $('#ag_name').text($('#agent_code :selected').text())
+          $('#ag_code').text(agent)
+        if(response.suc > 0 && response.msg.length > 0){
+         
+          response.msg.forEach(function(resData) {
+        console.log(resData);
+        total_amount+=resData.deposit_amount
+        
+              $('#showAgentDtls tbody').append(`
+              
+              <tr>
+                <td>${i}</td>
+                <td>${resData.agent_code}</td>
+                <td>${resData.agent_trans_no}</td>
+                <td>${formatDate(resData.send_date)}</td>
+                <td>${formatDate(resData.received_date)}</td>
+                <td>${(resData.end_flag=='Y')?'End':'Start'}</td>
+                <td>${resData.deposit_amount}</td>
+              </tr>
+              `)
+              i++;
+          });   
+          $('#showAgentDtls tbody').append(`
+          <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><b>Total</b></td>
+                <td><b>${total_amount}.00</b></td>    
+              </tr>
+              `)
+        }
+          
+        else{
+          $('#showAgentDtls tbody').append(`
+            <tr>
+              <td colspan="5" class="text-danger text-center">No data found</td>
+            </tr>
+          `)
+        }
+       
+      },
+    error: function (error) {
+      console.log(error);
+    //   tbody.empty();
+    },
+  });
+});
 </script>

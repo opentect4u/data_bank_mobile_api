@@ -195,7 +195,7 @@
           url: "/super-admin/get_branch_name",
           data: { bank_id: bankId },
           success: function(response) {
-            console.log(response.SUCCESS.branchData.msg)
+            // console.log(response.SUCCESS.branchData.msg)
            $('#branch').empty();
 
             response.SUCCESS.branchData.msg.forEach(function(resData) {
@@ -205,7 +205,7 @@
            
           },
         error: function (error) {
-          console.log(error);
+          // console.log(error);
         //   tbody.empty();
          $("#myBtn").hide()
         },
@@ -219,19 +219,19 @@
   $('#submitBtn').click(function () {
     var branch = $('#branch').val();
     var bank = $('#bank').val();
-    console.log({ bank_id: bank, branch_id: branch });
+    // console.log({ bank_id: bank, branch_id: branch });
     $.ajax({
       type: "POST",
       url: "/super-admin/agent_data",
       data: { bank_id: bank, branch_id: branch },
       success: function(response) {
-        console.log(response);
+        // console.log(response);
         // console.log(response.SUCCESS.branchData.msg)
         $('#showAgentDtls tbody').empty()
         let i = 1;
         if(response.suc > 0 && response.msg.length > 0)
           response.msg.forEach(function(resData) {
-        console.log(resData);
+        // console.log(resData);
               $('#showAgentDtls tbody').append(`
               <tr>
                 <td>${i}</td>
@@ -253,7 +253,7 @@
 
       },
     error: function (error) {
-      console.log(error);
+      // console.log(error);
     //   tbody.empty();
     //  $("#myBtn").hide()
     },
