@@ -1,0 +1,145 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <h2>Collection Report</h2>
+          </div>
+          <div class="row">
+            <div class="form-group col-4">
+                <label for="branch_c">Agent Trans No:</label>
+                <input
+                  type="text"
+                  id="agent_trans"
+                  name="agent_trans"
+                  class="form-control"
+                  value=""
+                />
+              </div>
+            
+              
+  
+                <div class="form-group col-6" style="margin-top: 2.3vw;">
+                  <button class="btn btn-success" type="button" id="submitBtn">Submit</button>
+                </div>
+               </div>
+               <div class="row">
+            
+                <div class="col-6">
+                  <h6 style="text-align: left;">Bank Name: &nbsp;<span id="bank_name"></span></h6>
+                  <h6 style="text-align: left;">Branch Name: &nbsp;<span id="br_name"></span></h6>
+                  <h6 style="text-align: left;">Agent Name: &nbsp;<span id="ag_name"></span></h6>
+                  <h6 style="text-align: left;">Agent Code: &nbsp; <span id="ag_code"></span></h6>
+              </div>
+              <div class="col-6">
+                <h6 style="text-align: left;">Agent Trans No: &nbsp;<span id="ag_trans"></span></h6>
+                <h6 style="text-align: left;">Send Date: &nbsp;<span id="snd_dt"></span></h6>
+                <h6 style="text-align: left;">Received Date: &nbsp;<span id="rec_dt"></span></h6>
+                <h6 style="text-align: left;">Status: &nbsp;<span id="sts"></span></h6>
+            </div>
+                </div>
+
+         
+                <table class="table table_bank mt-4" id="AgentColDtls" style="width:100%">
+                    <thead>
+                      <tr>
+                        <th>Sl. No.</th>
+                        <th>Receipt No.</th>
+                        <th>Transaction Date </th>
+                        <th>Account No.</th>
+                        <th>Account Holder Name</th>
+                        <th>Deposit Amount</th>
+                        <th>Balance Amount</th>
+                        <th>Send to Bank</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>       
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $('#submitBtn').click(function () {
+   
+      var agent_trans_no = $('#agent_trans').val();
+      $.ajax({
+        type: "POST",
+        url: "/super-admin/collection_report_update",
+        data: { agent_trans: agent_trans_no },
+        success: function(response) {
+          console.log(response.data);
+          // console.log(response.SUCCESS.branchData.msg)
+          $('#AgentColDtls tbody').empty()
+          function formatDate(inputDate) {
+                    const date = new Date(inputDate);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${day}/${month}/${year}`;
+                 } 
+                 var total_amount=0.0
+
+          let i = 1;
+          $('#ag_trans').text(agent_trans_no)
+
+          if(response.data.length > 0){
+            response.data.forEach(function(resData) {
+          console.log(resData);
+        total_amount+=resData.deposit_amount
+
+        $('#AgentColDtls tbody').append(`
+                <tr>
+                  <td>${i}</td>
+                  <td>${resData.receipt_no}</td>
+                  <td>${formatDate(resData.transaction_date)}</td>
+                  <td>${resData.account_number}</td>
+                  <td>${resData.account_holder_name}</td>
+                  <td>${resData.deposit_amount}</td>
+                  <td>${resData.balance_amount}</td>
+                  <td>${resData.download_flag}</td>
+                  
+                </tr>
+                `)
+                i++;
+            });
+            
+            $('#AgentColDtls tbody').append(`
+             <tr>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+                 <td><b>Total</b></td>
+                 <td><b>${total_amount}.00</b></td>
+                 <td></td>
+                 <td></td>    
+               </tr>
+             `)
+          }
+          else{
+            $('#AgentColDtls tbody').append(`
+              <tr>
+                <td colspan="5" class="text-danger text-center">No data found</td>
+              </tr>
+            `)
+          }
+
+          var agent_data = response.agent_info
+            $('#bank_name').text(agent_data.bank_name)
+            $('#br_name').text(agent_data.branch_name)
+            $('#ag_name').text(agent_data.agent_name)
+            $('#ag_code').text(agent_data.agent_code)
+            $('#snd_dt').text(formatDate(agent_data.send_date))
+            $('#rec_dt').text(formatDate(agent_data.received_date))
+            $('#sts').text(agent_data.end_flag)
+        },
+      error: function (error) {
+        console.log(error);
+      //   tbody.empty();
+      },
+    });
+  });
+  </script>

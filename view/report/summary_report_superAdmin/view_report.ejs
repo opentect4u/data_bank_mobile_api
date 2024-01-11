@@ -133,13 +133,13 @@
     var branch = $('#branch').val();
     var bank = $('#bank').val();
     var agent = $('#agent_code').val();
-    console.log({ bank_id: bank, branch_id: branch, agent_code: agent });
+    // console.log({ bank_id: bank, branch_id: branch, agent_code: agent });
     $.ajax({
       type: "POST",
       url: "/super-admin/summary_report_post_admin",
       data: { bank_id: bank, branch_id: branch, agent_code: agent },
       success: function(response) {
-        console.log(response);
+        // console.log(response);
         $('#showAgentDtls tbody').empty()
                 function formatDate(inputDate) {
                     const date = new Date(inputDate);
@@ -157,7 +157,7 @@
         if(response.suc > 0 && response.msg.length > 0){
          
           response.msg.forEach(function(resData) {
-        console.log(resData);
+        // console.log(resData);
         total_amount+=resData.deposit_amount
         
               $('#showAgentDtls tbody').append(`
@@ -168,7 +168,7 @@
                 <td>${resData.agent_trans_no}</td>
                 <td>${formatDate(resData.send_date)}</td>
                 <td>${formatDate(resData.received_date)}</td>
-                <td>${(resData.end_flag=='Y')?'End':'Start'}</td>
+                <td>${(resData.end_flag=='Y')?'End Collection':'Collection In Progress'}</td>
                 <td>${resData.deposit_amount}</td>
               </tr>
               `)

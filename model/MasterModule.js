@@ -1,9 +1,9 @@
 const db = require("../config/DB");
 
-const db_Select = (select, table_name, whr, order) => {
+const db_Select = (select, table_name, whr, order, full_query='', full_query_flag=false) => {
     var tb_whr = whr ? `WHERE ${whr}` : "";
     var tb_order = order ? order : "";
-    let sql = `SELECT ${select} FROM ${table_name} ${tb_whr} ${tb_order}`;
+    let sql = !full_query_flag ? `SELECT ${select} FROM ${table_name} ${tb_whr} ${tb_order}` : full_query;
     // console.log(sql);
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
