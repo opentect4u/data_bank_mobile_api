@@ -3,15 +3,15 @@
       <div class="card col-12">
         <div class="card-body">
           <div class="titleSec">
-            <h2>Collection Report</h2>
+            <h2>Collection In Progress</h2>
           </div>
           <div class="row">
             <div class="form-group col-4">
-                <label for="agent_trans">Agent Trans No:</label>
+                <label for="agent_code">Agent Code:</label>
                 <input
                   type="text"
-                  id="agent_trans"
-                  name="agent_trans"
+                  id="agent_code"
+                  name="agent_code"
                   class="form-control"
                   value=""
                 />
@@ -32,7 +32,7 @@
                   <h6 style="text-align: left;">Agent Code: &nbsp; <span id="ag_code"></span></h6>
               </div>
               <div class="col-6">
-                <h6 style="text-align: left;">Agent Trans No: &nbsp;<span id="ag_trans"></span></h6>
+                <!-- <h6 style="text-align: left;">Agent Trans No: &nbsp;<span id="ag_trans"></span></h6> -->
                 <h6 style="text-align: left;">Send Date: &nbsp;<span id="snd_dt"></span></h6>
                 <h6 style="text-align: left;">Received Date: &nbsp;<span id="rec_dt"></span></h6>
                 <h6 style="text-align: left;">Status: &nbsp;<span id="sts"></span></h6>
@@ -63,12 +63,11 @@
 
   <script>
     $('#submitBtn').click(function () {
-   
-      var agent_trans_no = $('#agent_trans').val();
+   var agent_code = $('#agent_code').val();
       $.ajax({
         type: "POST",
-        url: "/super-admin/collection_report_update",
-        data: { agent_trans: agent_trans_no },
+        url: "/super-admin/collection_progress_update",
+        data: { agent_code: agent_code },
         success: function(response) {
           console.log(response.data);
           // console.log(response.SUCCESS.branchData.msg)
@@ -83,7 +82,7 @@
                  var total_amount=0.0
 
           let i = 1;
-          $('#ag_trans').text(agent_trans_no)
+          $('#ag_code').text(agent_code)
 
           if(response.data.length > 0){
             response.data.forEach(function(resData) {
@@ -131,7 +130,7 @@
             $('#bank_name').text(agent_data.bank_name)
             $('#br_name').text(agent_data.branch_name)
             $('#ag_name').text(agent_data.agent_name)
-            $('#ag_code').text(agent_data.agent_code)
+            // $('#ag_trans').text(agent_data.agent_trans_no)
             $('#snd_dt').text(formatDate(agent_data.send_date))
             $('#rec_dt').text(formatDate(agent_data.received_date))
             $('#sts').text(agent_data.end_flag== 'Y'? 'End Collection' : 'Collection in Progress')

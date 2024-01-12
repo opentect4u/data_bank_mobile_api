@@ -80,6 +80,31 @@
       <div class="modal-body">
         <form action="/super-admin/add_agent" method="post" id="myForm">
           <div class="row">
+
+            <div class="form-group col-6">
+              <label for="bank"><b>Bank Name:</b></label>
+              <select name="bank"
+              class="form-control"
+              id="bank"
+              required>
+                <option value="">Select Bank Name</option>
+                <% bank.msg.forEach(function(item2,index) { %>
+                  <option value="<%=item2.bank_id%>"><%=item2.bank_name%></option>
+                  <% }); %>
+                  
+              </select>
+            </div>
+            <div class="form-group col-6">
+              <label for="branch_c">Branch Code:</label>
+              <input
+                type="text"
+                id="branch_c"
+                name="branch_c"
+                class="form-control"
+                value=""
+                required
+              />
+            </div>
               <div class="form-group col-6">
                 <label for="agent_c">Agent Code:</label>
                 <input type="text" id="agent_c" name="user_id" class="form-control" value="" required />
@@ -140,7 +165,7 @@
                 />
               </div>
 
-              <div class="form-group col-6">
+              <div class="form-group col-6 cust-toggle">
                 <label for="success"></label>
                 <input 
                 type="checkbox" 
@@ -154,6 +179,30 @@
                 name="agent_active"
                 >
                 
+                </div>
+
+                <div class="form-group col-6">
+                  <label for="pin">Password:</label>
+                  <input
+                    type="password"
+                    name="password"
+                    class="form-control"
+                    id="pin"
+                    maxlength="4"
+                    required
+                  />
+                </div>
+    
+                <div class="form-group col-6">
+                  <label for="cid">Confirm Password:</label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    class="form-control"
+                    id="cid"
+                    maxlength="4"
+                    required
+                  />
                 </div>
              <div class="form-group col-3 center">
               <input
@@ -197,7 +246,8 @@
           success: function(response) {
             // console.log(response.SUCCESS.branchData.msg)
            $('#branch').empty();
-
+           $('#branch').append(`<option value="">Select Branch Name</option>`)
+           
             response.SUCCESS.branchData.msg.forEach(function(resData) {
                 $('#branch').append('<option value="' + resData.branch_code + '">' + resData.branch_name + '</option>');
             });

@@ -183,6 +183,67 @@ const collection_report = async(req,res)=>{
     }
 }
 
+const col_progress = async(req,res)=>{
+    try {
+        const viewData = {
+            title: "Collection In Progress",
+            page_path: "/report/summary_report_superAdmin/collection_progress",
+            
+        };
+        res.render('common/layouts/main', viewData)
+    } catch (error) {
+        console.log(error);
+        res.json({
+            "ERROR": error,
+            "status": false
+        });
+    } 
+}
+
+const collection_progress = async(req,res)=>{
+    try {
+        const schema = Joi.object({
+            agent_code: Joi.string().required(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        console.log(value);
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+        const user_data = req.session.user.user_data.msg[0];
+        // console.log(user_data,'user');
+        var select = "receipt_no,transaction_date,account_number,account_holder_name,deposit_amount,balance_amount,download_flag, bank_id, branch_code",
+        where = `agent_code ='${value.agent_code}' AND download_flag='N'`;
+        let resData = await db_Select(select, "td_collection", where);
 
 
-module.exports = {report_list, get_branch_name, agent_report, summary_report_post_admin, col_report_list, collection_report}
+        var select = "a.bank_id, b.bank_name, a.branch_code, c.branch_name, d.agent_name, a.send_date, a.received_date, a.end_flag, a.agent_trans_no",
+        where = `a.bank_id=b.bank_id AND a.branch_code=c.branch_code AND a.agent_code=d.agent_code AND a.agent_code = '${value.agent_code}' AND a.end_flag = 'N'`;
+        let resDat2 = await db_Select(select, "md_agent_trans a, md_bank b, md_branch c, md_agent d", where);
+
+        console.log("resData============",resDat2);
+        delete resData.sql
+        
+        var viewData = {
+            data: resData.msg,
+            agent_info:resDat2.msg[0]
+        };
+
+        console.log("Starting Date",viewData);
+        res.send(viewData)
+
+
+    } catch (error) {
+        console.log(error);
+        res.json({
+            "success": error,
+            "status": false
+        });
+    }
+}
+
+module.exports = {report_list, get_branch_name, agent_report, summary_report_post_admin, col_report_list, collection_report,col_progress, collection_progress}

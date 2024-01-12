@@ -6,7 +6,7 @@ const { AuthCheckedMW } = require("../middleware/AuthCheckedMW");
 const BankRoutes = express.Router()
 
 
-// BankRoutes.get('/agent',AuthCheckedMW,agent)
+BankRoutes.get('/agent',AuthCheckedMW,agent)
 BankRoutes.get('/agent/:branch_id?',AuthCheckedMW,agent)
 BankRoutes.get('/edit_agent/:agent_id',AuthCheckedMW,editAgent)
 BankRoutes.post('/update_agent/:agent_id',AuthCheckedMW,edit_save_agent)

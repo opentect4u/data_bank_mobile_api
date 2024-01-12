@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const bcrypt = require('bcrypt')
 const dateFormat = require('dateformat')
 const { db_Select, db_Insert } = require("../../model/MasterModule");
 
@@ -41,8 +42,9 @@ const agent = async (req, res) => {
 const add_agent = async (req, res) => {
     try {
       const schema = Joi.object({
+        bank: Joi.required(),
+        branch_c: Joi.required(),
         user_id: Joi.required(),
-        agent_c: Joi.required(),
         name: Joi.string().required(),
         email: Joi.string().required(),
         mobile: Joi.string().required(),
@@ -50,6 +52,8 @@ const add_agent = async (req, res) => {
         allow_collection_days: Joi.number().required(),
         device_id: Joi.required(),
         agent_active: Joi.string(),
+        password: Joi.string().required(),
+        confirmPassword: Joi.string().required().valid(Joi.ref('password')),
       });
       const { error, value } = schema.validate(req.body, { abortEarly: false });
       console.log(value);
@@ -60,16 +64,20 @@ const add_agent = async (req, res) => {
         });
         return res.json({ error: errors });
       }
+
+      let pss = value.password
+      let enc_pss = bcrypt.hashSync(pss, 10)
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       const user_data = req.session.user.user_data.msg[0];
+    //   console.log(user_data);
   
-      let fields2 = '(device_id,active_flag,created_by,created_at)',
-        values2 = `('${value.device_id}','${value.agent_active}','${user_data.id}','${datetime}')`;
+      let fields2 = '(bank_id,branch_code,password,device_id,active_flag,created_by,created_at)',
+        values2 = `('${value.bank}','${value.branch_c}','${enc_pss}','${value.device_id}','${value.agent_active}','${user_data.id}','${datetime}')`;
       let res_dt2 = await db_Insert("md_user", fields2, values2, null, 0);
       console.log("========user==========", res_dt2);
   
-      let fields = '(agent_code,agent_name,phone_no,email_id,max_amt,allow_collection_days,created_by,created_at)',
-        values = `('${value.agent_c}','${value.name}','${value.mobile}','${value.email}','${value.max_amt}','${value.allow_collection_days}','${user_data.id}','${datetime}')`;
+      let fields = '(bank_id, branch_code,agent_code,agent_name,phone_no,email_id,max_amt,allow_collection_days,created_by,created_at)',
+        values = `('${value.bank}','${value.branch_c}','${value.user_id}','${value.name}','${value.mobile}','${value.email}','${value.max_amt}','${value.allow_collection_days}','${user_data.id}','${datetime}')`;
       let res_dt = await db_Insert("md_agent", fields, values, null, 0);
       console.log("========branch==========", res_dt);
       res.redirect("/super-admin/agent");
