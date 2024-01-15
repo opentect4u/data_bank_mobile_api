@@ -46,6 +46,20 @@
           </div>
         </div> -->
       </div>
+
+      <div class="row">
+        <div class="form-group col-2">
+          <input type="radio" name="status" id="active" value="Y" checked>
+          <label for="active">Active</label>
+        </div>
+        
+        <div class="form-group col-2">
+          <input type="radio" name="status" id="inactive" value="N">
+          <label for="inactive">Inactive</label>
+        </div>
+
+  
+      </div>
         <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
         <table class="table table_bank" id="showAgentDtls" style="width:100%">
           <thead>
@@ -235,6 +249,17 @@
 </script>
 
 <script>
+  $('input[name="status"]').on('change', function(){
+    var flag = $(this).val()
+    console.log(flag);
+    var branch = $('#branch').val();
+    var bank = $('#bank').val();
+    // console.log({ bank_id: bank, branch_id: branch });
+  generate_agent_list(bank,branch,flag);
+})
+</script>
+
+<script>
   $("#myBtn").hide()
   $('#bank').change(function(){
     var bankId=$(this).val();
@@ -270,10 +295,14 @@
     var branch = $('#branch').val();
     var bank = $('#bank').val();
     // console.log({ bank_id: bank, branch_id: branch });
-    $.ajax({
+  generate_agent_list(bank,branch,'Y');
+});
+
+function generate_agent_list(bank, branch, flag){
+  $.ajax({
       type: "POST",
       url: "/super-admin/agent_data",
-      data: { bank_id: bank, branch_id: branch },
+      data: { bank_id: bank, branch_id: branch, flag: flag },
       success: function(response) {
         // console.log(response);
         // console.log(response.SUCCESS.branchData.msg)
@@ -308,67 +337,13 @@
     //  $("#myBtn").hide()
     },
   });
-});
+}
 </script>
 
-<!-- <script>
-
-  $("#bank_info").hide()
-  $('#bank_id').change(function(){
-    var bank_id=$(this).val();
-
-
-    getData(bank_id)
-
-
-  })
-
-
-
-  function getData(bank_id) {
-   
-    var tbody = $(".table_bank tbody");
-    $.ajax({
-      type: "POST",
-      url: "/super-admin/fetch_bank_info",
-      data: { bank_id: bank_id },
-      success: function (response) {
-        console.log(response.SUCCESS.msg);
-        tbody.empty();
-        response.SUCCESS.branchData.msg.forEach(function (item,index) {
-          var row =
-            "<tr>" +
-              "<td>" +
-                (index+1) +
-              "</td>" +
-            "<td>" +
-            item.branch_name +
-            "</td>" +
-            "<td>" +
-            item.active +
-            "</td>" +
-            "<td>" +
-              item.inactive +
-              "</td>" +
-            "</tr>";
-          tbody.append(row);
-          $("#no_of_users").empty()
-          $("#no_of_users").text(response?.SUCCESS?.md_subscription?.msg[0]?.no_of_users)
-          $("#bank_info").show()
-        });
-      },
-      error: function (error) {
-        console.log(error);
-        tbody.empty();
-        $("#bank_info").hide()
-      },
-    });
-  }
 
 
 
 
-</script> -->
 
 
 

@@ -6,15 +6,40 @@
             <!-- <button type="button" class="btn btn-primary" id="myBtn">Add</button> -->
             <h2>Edit Agent Details</h2>
           </div>
-          <form action="/super-admin/update_agent_data/<%=data[0].agent_id %>" id="myForm" method="post">
+          <form action="/super-admin/update_agent_data" id="myForm" method="post">
+            <input type="hidden" name="bank" value="<%= data.bank_id %>">
             <div class="titleSec">
-           <input type="hidden" name="branch_code" value="<%=data[0].branch_code %>">
-              <h5>Branch : <%= data[0].branch_name %></h5>
+              <h5>Branch : <%= data.branch_name %></h5>
             </div>
             <div class="row">
+
+              <div class="form-group col-6">
+                <label for="bank"><b>Bank Name:</b></label>
+                <select name="bank"
+                class="form-control"
+                id="bank" disabled
+                >
+                  <option value="">Select Bank Name</option>
+                  <option value="1" <%= data.bank_id == '1' ? 'selected' : '' %>>Bihar Co-operative Credit Society Ltd.</option>
+                  <option value="2" <%= data.bank_id == '2' ? 'selected' : '' %>>The Puri Urban and Rural Development Cooperative Society Ltd.</option>
+                  <option value="3" <%= data.bank_id == '3' ? 'selected' : '' %>>Demo Bank</option>
+                  <option value="4" <%= data.bank_id == '4' ? 'selected' : '' %>>Shyamaprasanna SKUS Ltd</option>
+                </select>
+              </div>
+              <div class="form-group col-6">
+                <label for="branch_c">Branch Code:</label>
+                <input
+                  type="text"
+                  id="branch_c"
+                  name="branch_c"
+                  class="form-control"
+                  value="<%= data.branch_code %>"
+                  readonly
+                />
+              </div>
               <div class="form-group col-6">
                 <label for="agent_c">Agent Code:</label>
-                <input type="text" id="agent_c" name="user_id" class="form-control" value="<%= data[0].agent_code %>" required readonly/>
+                <input type="text" id="agent_c" name="user_id" class="form-control" value="<%= data.agent_code %>" readonly/>
               </div>
   
               <div class="form-group col-6">
@@ -25,19 +50,19 @@
                   name="name"
                   class="form-control"
                   placeholder="Enter Name"
-                  value="<%= data[0].agent_name %>"
-                  required
+                  value="<%= data.agent_name %>"
+                  
                 />
               </div>
   
               <div class="form-group col-6">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" class="form-control" value="<%= data[0].email_id %>" readonly/>
+                <input type="email" id="email" name="email" class="form-control" value="<%= data.email_id %>" readonly/>
               </div>
   
               <div class="form-group col-6">
                 <label for="mobile">Mobile No.:</label>
-                <input type="text" id="mobile" name="mobile" class="form-control" value="<%= data[0].phone_no %>" required/>
+                <input type="text" id="mobile" name="mobile" class="form-control" value="<%= data.phone_no %>" />
               </div>
   
               <div class="form-group col-6">
@@ -47,8 +72,7 @@
                   type="number"
                   name="max_amt"
                   class="form-control"
-                  value="<%= data[0].max_amt %>"
-                  required
+                  value="<%= data.max_amt %>"
                 />
               </div>
               <div class="form-group col-6">
@@ -58,8 +82,7 @@
                   name="allow_collection_days"
                   class="form-control"
                   id="allow_collection_days"
-                  value="<%= data[0].allow_collection_days %>"
-                  required
+                  value="<%= data.allow_collection_days %>"
                 />
               </div>
   
@@ -70,8 +93,7 @@
                   type="text"
                   name="device_id"
                   class="form-control"
-                  value="<%= data[0].device_id %>"
-                  required
+                  value="<%= data.device_id %>"
                 />
               </div>
 
@@ -87,10 +109,12 @@
                 data-on="Active" 
                 data-off="Deactive" 
                 name="agent_active"
-                <%=(data[0].active_flag=='Y')?'checked':''%>
+                <%=(data.active_flag=='Y')?'checked':''%>
                 >
                 
                 </div>
+
+                <input type="hidden" name="agent_id" value="<%= agent_id %>">
               
               <div class="form-group col-6">
                 <div class="col-6">

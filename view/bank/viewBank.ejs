@@ -4,7 +4,7 @@
       <div class="card-body">
         <div class="titleSec">
           <button type="button" class="btn btn-primary" id="myBtn">Add</button>
-          <h2>Bank Details</h2>
+          <h2>Active Bank Details</h2>
         </div>
         <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
         <table id="example2" class="table table-striped table-bordered" style="width:100%">
@@ -28,7 +28,7 @@
               <td><%=item.contact_person%></td>
               <td><%=item.phone_no%></td>
               <td>
-                <h5><span class="badge badge-<%=(item.active_flag=='Y')?"success":"danger"%>"><%=(item.active_flag=='Y')?"Active":"Deactive"%></span></h5> 
+                <h5><span class="badge badge-success"><%=item.active_flag=='Y'? 'Active' : ''%></span></h5> 
               </td>
               <td><a class="btn btn-info view-button" href="/super-admin/edit_bank?bank_id=<%= item.bank_id %>">Edit</a></td>
 
@@ -88,7 +88,7 @@
               />
             </div>
             <div class="form-group col-4">
-              <label for="mobile">Mobile No.:</label>
+              <label for="mobile">Mobile No:</label>
               <input
                 type="number"
                 name="mobile"
@@ -99,7 +99,7 @@
             </div>
 
             <div class="form-group col-4">
-              <label for="email">Email.:</label>
+              <label for="email">Email:</label>
               <input
                 type="text"
                 name="email"
@@ -109,10 +109,10 @@
               />
             </div>
             <div class="form-group col-4">
-              <label for="device_type">Device Type.:</label>
+              <label for="device_type">Device Type:</label>
               <select name="device_type"
               class="form-control"
-              id="device_type"
+              id="device_type" style="background-color: antiquewhite;"
               required>
                 <option value="">Select Device Type</option>
                 <option value="M">Mobile</option>
@@ -121,7 +121,7 @@
             </div>
 
             <div class="form-group col-4">
-              <label for="data_version">Data Version.:</label>
+              <label for="data_version">Data Version:</label>
               
               <select name="data_version"
               class="form-control"
@@ -136,10 +136,10 @@
 
 
             <div class="form-group col-4">
-              <label for="data_transfer_type">Data transfer types.:</label>
+              <label for="data_transfer_type">Data transfer types:</label>
               <select name="data_transfer_type"
                 class="form-control"
-                id="data_transfer_type"
+                id="data_transfer_type" style="background-color: antiquewhite;"
                 required>
                 <option value="">Select Data transfer types</option>
                 <option value="M">Manual (upload & download data manually) </option>
@@ -152,7 +152,7 @@
               <label for="receipt_type">Receipt type.:</label>
               <select  name="receipt_type"
               class="form-control"
-              id="receipt_type"
+              id="receipt_type" style="background-color: antiquewhite;"
               required>
               <option value="">Select Receipt type</option>
               <option value="S">SMS </option>

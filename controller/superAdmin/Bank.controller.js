@@ -4,7 +4,11 @@ const dateFormat = require('dateformat');
 const bcrypt = require('bcrypt');
 
 const bank_list = async (req, res) => {
-    var bank = await db_Select('*', "md_bank", null, null);
+    var select = '*',
+    table_name = "md_bank",
+    whr = `active_flag='Y'`
+    order = null;
+    var bank = await db_Select(select,table_name,whr,order);
     const viewData = {
         title: "Adminn",
         page_path: "/bank/viewBank",
@@ -12,6 +16,21 @@ const bank_list = async (req, res) => {
     };
     res.render('common/layouts/main', viewData)
 }
+
+const inactive_bank_list = async (req, res) => {
+    var select = '*',
+    table_name = "md_bank",
+    whr = `active_flag='N'`
+    order = null;
+    var bank = await db_Select(select,table_name,whr,order);
+    const viewData = {
+        title: "Adminn",
+        page_path: "/bank/inactiveBank",
+        data: bank
+    };
+    res.render('common/layouts/main', viewData)
+}
+
 
 
 const add_bank_list = async (req, res) => {
@@ -136,4 +155,4 @@ const edit_bank_list_save = async (req, res) => {
 
 
 
-module.exports = { bank_list, add_bank_list,edit_bank_list,edit_bank_list_save}
+module.exports = { bank_list, add_bank_list,edit_bank_list,edit_bank_list_save,inactive_bank_list}

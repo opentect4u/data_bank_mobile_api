@@ -59,7 +59,7 @@ const add_branch_admin=async (req,res)=>{
             values = `('${value.bank_id}','${value.branch_c}','${value.branchname}','${value.branch_address}','${value.contactperson}','${value.mobile}','${value.email}','${user_data.id}','${datetime}','N','N')`;
         let res_dt = await db_Insert("md_branch", fields, values, null, 0);
         console.log('========branch==========',res_dt)
-        res.redirect('/branch_admin/view_branch')
+        res.redirect('/super-admin/branch_admin')
     } catch (error) {
         console.log(error);
         res.json({

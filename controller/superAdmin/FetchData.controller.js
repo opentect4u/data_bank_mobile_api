@@ -60,4 +60,14 @@ const get_branch_name=async (req,res)=>{
         });
 }
 
-module.exports={fetch_bank_info,get_branch_name}
+const bank_name = async (req, res) => {
+    var bank = await db_Select('*','md_bank',null,null);
+    const viewData = {
+        title: "Adminn",
+        page_path: "/summary/summary",
+        data: bank
+    };
+    res.render('common/layouts/main', viewData)
+}
+
+module.exports={fetch_bank_info,get_branch_name, bank_name}

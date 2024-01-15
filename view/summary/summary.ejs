@@ -1,0 +1,112 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <h2>Summary of Active & Inactive Agent Details</h2>
+          </div>
+          <div class="row">
+            <div class="form-group col-4">
+              <label for="bank"><b>Bank Name:</b></label>
+              <select name="bank"
+              class="form-control"
+              id="bank"
+              required>
+                <option value="">Select Bank Name</option>
+                <% data.msg.forEach(function(item2,index) { %>
+                  <option value="<%=item2.bank_id%>"><%=item2.bank_name%></option>
+                  <% }); %>
+                  
+              </select>
+            </div>
+           
+            <div class="form-group col-4">
+              <label for="branch"><b>Branch Name:</b></label>
+              <select name="branch"
+              class="form-control"
+              id="branch"
+              required>
+                <option value="">Select Branch Name</option>
+              </select>
+            </div>
+             
+            <div class="form-group col-4" style="margin-top: 29px;">
+              <button class="btn btn-outline-success" type="button" id="submitBtn">Submit</button>
+            </div>
+  
+          <!-- <div class="col-12 form-group row" id="bank_info">
+            <div class="col-6">
+            <div class="form-group row">
+              <label for="showAgentname" class="col-sm-3 col-form-label">Total User:</label>
+              <div class="col-sm-9">
+                <p class="form-control-plaintext" id="no_of_users"></p>
+              </div>
+            </div>
+            </div>
+          </div> -->
+        </div>
+        <div class="row mt-2">
+            <div class="form-group col-12">
+              <label for="active_user" id="inputField"><b>Active User:</b></label>
+             
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-12">
+              <label for="inactive_user" id="inputField"><b>Inactive User:</b></label>
+             
+            </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $('#bank').change(function(){
+      var bankId=$(this).val();
+      // alert(bank_id)
+        $.ajax({
+            type: "POST",
+            url: "/super-admin/get_branch_name",
+            data: { bank_id: bankId },
+            success: function(response) {
+              // console.log(response.SUCCESS.branchData.msg)
+             $('#branch').empty();
+             $('#branch').append(`<option value="">Select Branch Name</option>`)
+             
+              response.SUCCESS.branchData.msg.forEach(function(resData) {
+                  $('#branch').append('<option value="' + resData.branch_code + '">' + resData.branch_name + '</option>');
+              });
+             
+            },
+          error: function (error) {
+            console.log(error);
+          //   tbody.empty();
+          },
+        });
+    });
+       
+  </script>
+
+
+<script>
+    $('#submitBtn').click(function () {
+      var branch = $('#branch').val();
+      var bank = $('#bank').val();
+
+      // console.log({ bank_id: bank, branch_id: branch });
+      $.ajax({
+        type: "POST",
+        url: "/super-admin/agent_data",
+        data: { bank_id: bank, branch_id: branch, flag: flag },
+        success: function(response) {
+          console.log(response);
+          // console.log(response.SUCCESS.branchData.msg)
+        },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+  });
+  </script>

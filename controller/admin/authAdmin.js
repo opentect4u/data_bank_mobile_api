@@ -14,7 +14,8 @@ const login = async (req, res) => {
                 "status": false
             });
         }
-    else res.redirect('/admin/dashboard')
+    // else res.redirect('/admin/dashboard')
+    else res.redirect('/super-admin/summary')
 }
 //login 
 const post_login = async (req, res) => {
@@ -54,7 +55,8 @@ const post_login = async (req, res) => {
     const datetime = dateFormat(new Date(), "dd/mm/yyyy hh:MM:ss")
         req.session['user'] = {user_data,datetime}
         req.flash('success', 'login successful')
-        res.redirect('/admin/dashboard')
+        // res.redirect('/admin/dashboard')
+        res.redirect('/super-admin/summary')
     } else {
         req.flash('error', 'invalid username and password')
         res.redirect('/admin/login')
