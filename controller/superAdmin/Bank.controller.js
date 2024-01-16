@@ -103,6 +103,18 @@ const edit_bank_list = async (req, res) => {
     };
     res.render('common/layouts/main', viewData)
 }
+
+const edit_inactive_bank_list = async (req, res) => {
+    var data = await db_Select('*', 'md_bank', `bank_id=${req.query.bank_id}`, null)
+    // console.log(data, 'lalal');
+    const viewData = {
+        title: "Adminn",
+        page_path: "/bank/edit_inactiveBank",
+        data: data.suc > 0 && data.msg.length > 0 ? data.msg[0] : [],
+        bank_id: req.query.bank_id,
+    };
+    res.render('common/layouts/main', viewData)
+}
 const edit_bank_list_save = async (req, res) => {
     try {
         const schema = Joi.object({
@@ -151,8 +163,39 @@ const edit_bank_list_save = async (req, res) => {
 }
 
 
+const edit_inactive_bank_list_save = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            active_flag: Joi.string().valid('Y', 'N').required(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        console.log(value);
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            res.redirect('/super-admin/inactive_bank')
+        }
+
+        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+        const user_data = req.session.user.user_data.msg[0];
+
+        var table_name = 'md_bank',
+        fields = `active_flag = '${value.active_flag}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        values = null
+        whr=`bank_id=${value.bank_id}`
+        var insmd_bank = await db_Insert(table_name, fields, values, whr, 1)
+        res.redirect('/super-admin/inactive_bank')
+
+    } catch (error) {
+       console.log(error);
+    }
+
+}
 
 
 
 
-module.exports = { bank_list, add_bank_list,edit_bank_list,edit_bank_list_save,inactive_bank_list}
+
+module.exports = { bank_list, add_bank_list,edit_bank_list,edit_bank_list_save,inactive_bank_list,edit_inactive_bank_list,edit_inactive_bank_list_save}

@@ -50,8 +50,10 @@ const get_branch_name=async (req,res)=>{
             return res.json({ error: errors });
         }
 	
-        var sql=`select a.branch_id,a.branch_code,a.branch_name,a.contact_person,a.phone_no from md_branch a
-                 where a.bank_id = ${value.bank_id}`
+        // var sql=`select a.branch_id,a.branch_code,a.branch_name,a.contact_person,a.phone_no from md_branch a
+        //          where a.bank_id = ${value.bank_id}`
+        var sql=`select branch_id,branch_code,branch_name,contact_person,phone_no from md_branch 
+                 where bank_id = ${value.bank_id}`
 
         var branchData= await db_db_Select_Sqery(sql);
         res.json({

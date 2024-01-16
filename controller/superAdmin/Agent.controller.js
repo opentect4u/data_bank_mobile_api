@@ -167,8 +167,28 @@ const edit_save_agent_data = async (req, res) => {
 }
 
 
-// const active_user = async (req, res) => {
-//   var select = '*',
-//   table_name = ''
-// }
-module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent}
+const total_user = async (req, res) => {
+  
+    var data = req.body
+
+    var select = 'active_flag,COUNT(*) tot_dt',
+    table_name = 'md_agent',
+    whr = `bank_id = ${data.bank_id} AND active_flag='Y'`
+    order = null;
+    var active_resData = await db_Select(select,table_name,whr,order)
+    // res.json(active_resData)
+ 
+
+    var select = 'active_flag,COUNT(*) tot_dt',
+    table_name = 'md_agent',
+    whr = `bank_id = ${data.bank_id} AND active_flag='N'`
+    order = null;
+    var inactive_resData = await db_Select(select,table_name,whr,order)
+    var final_res = {suc: 1, msg: {act_dt: active_resData.suc > 0 && active_resData.msg.length > 0 ? active_resData.msg[0].tot_dt : 0, deact_dt: inactive_resData.suc > 0 && inactive_resData.msg.length > 0 ? inactive_resData.msg[0].tot_dt : 0}}
+    res.json(final_res)
+ 
+}
+
+
+
+module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent,total_user}

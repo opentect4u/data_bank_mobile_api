@@ -21,7 +21,6 @@ const login = async (req, res) => {
 const post_login = async (req, res) => {
     try {
         
-    
     const user_id = req.body.email,
         password = req.body.password;
     var whr = `user_id='${user_id}' AND active_flag='Y' AND user_type IN ('A', 'B', 'R')`;
@@ -65,6 +64,7 @@ const post_login = async (req, res) => {
         //     "status": true
         // });
     }
+
 
 } catch (error) {
     res.json({

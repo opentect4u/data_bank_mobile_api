@@ -1,0 +1,211 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <h2>Bank Edit Details</h2>
+          </div>
+          <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
+          <form action="/super-admin/save_inactive_bank" method="post" id="myForm">
+            <div class="row">
+              <div class="form-group col-12">
+                <label for="bank_name">Bank Name:</label>
+                <input
+                  type="text"
+                  id="bank_name"
+                  name="bank_name"
+                  class="form-control" readonly
+                  value="<%= data.bank_name %>"
+                />
+              </div>
+  
+              
+  
+              <div class="form-group col-4">
+                <label for="contact_person">Contact Person:</label>
+                <input
+                  type="contact_person"
+                  name="contact_person"
+                  class="form-control"
+                  id="contact_person" readonly
+                  value="<%= data.contact_person %>"
+                />
+              </div>
+              <div class="form-group col-4">
+                <label for="mobile">Mobile No:</label>
+                <input
+                  type="number"
+                  name="mobile"
+                  class="form-control"
+                  id="mobile" readonly
+                  value="<%= data.phone_no %>"
+                />
+              </div>
+  
+              <div class="form-group col-4">
+                <label for="email">Email:</label>
+                <input
+                  type="text"
+                  name="email"
+                  class="form-control"
+                  id="email"
+                  value="<%= data.email_id %>"
+                readonly/>
+              </div>
+              <div class="form-group col-4">
+                <label for="device_type">Device Type:</label>
+                <select name="device_type"
+                class="form-control"
+                id="device_type" 
+                value="" disabled
+                >
+                  <option value="">Select Device Type</option>
+                  <option value="M" <%= data.device_type == 'M' ? 'selected' : '' %>>Mobile</option>
+                  <option value="H" <%= data.device_type == 'H' ? 'selected' : '' %>>Handheld</option>
+                </select>
+              </div>
+  
+              <div class="form-group col-4">
+                <label for="data_version">Data Version:</label>
+                
+                <select name="data_version"
+                class="form-control"
+                id="data_version"
+                value="" disabled
+                >
+                  <option value="">Select Data Version</option>
+                  <option value="S" <%= data.data_version == 'S' ? 'selected' : '' %>>Cochin Version with Mobile No</option>
+                  <option value="C" <%= data.data_version == 'C' ? 'selected' : '' %>>Cochin Version without Mobile(applicable in DDS Mc)</option>
+                  <option value="N" <%= data.data_version == 'N' ? 'selected' : '' %>>Normal Version(applicable in DDS Mc)</option>
+                </select>
+              </div>
+  
+  
+              <div class="form-group col-4">
+                <label for="data_transfer_type">Data transfer types:</label>
+                <select name="data_transfer_type"
+                  class="form-control"
+                  id="data_transfer_type" 
+                  value="" disabled
+                  >
+                  <option value="">Select Data transfer types</option>
+                  <option value="M" <%= data.data_trf == 'M' ? 'selected' : '' %>>Manual (upload & download data manually) </option>
+                  <option value="A" <%= data.data_trf == 'A' ? 'selected' : '' %>>Automatically transfer data through API</option>
+                </select>
+              </div>
+  
+  
+              <div class="form-group col-4">
+                <label for="receipt_type">Receipt type:</label>
+                <select  name="receipt_type"
+                class="form-control"
+                id="receipt_type" 
+                value="" disabled
+                >
+                <option value="">Select Receipt type</option>
+                <option value="S" <%= data.receipt_type == 'S' ? 'selected' : '' %>>SMS </option>
+                <option value="P" <%= data.receipt_type == 'P' ? 'selected' : '' %>>Print</option>
+                <option value="B" <%= data.receipt_type == 'B' ? 'selected' : '' %>>Both</option>
+              </select>
+              </div>
+  
+  
+              <div class="form-group col-4">
+                <label for="sucurity_amt_type">Security Amount type:</label>
+                <select  name="sucurity_amt_type"
+                class="form-control"
+                id="sucurity_amt_type"
+                value="" disabled
+                >
+                <option value="">Select Security Amount type</option>
+                <option value="A" <%= data.sec_amt_type == 'A' ? 'selected' : '' %>>Auto </option>
+                <option value="M" <%= data.sec_amt_type == 'M' ? 'selected' : '' %>>Manual</option>
+              </select>
+              </div>
+  
+  
+              <div class="form-group col-4">
+                <label>Active flag:</label>
+              
+                <div class="form-check form-check-inline">
+                  <input
+                    type="radio"
+                    name="active_flag"
+                    class="form-check-input"
+                    id="active_option"
+                    value="Y"
+                    <%= data.active_flag == 'Y' ? 'Checked' : '' %>
+                  />
+                  <label class="form-check-label" for="active_option">Active</label>
+                </div>
+              
+                <div class="form-check form-check-inline">
+                  <input
+                    type="radio"
+                    name="active_flag"
+                    class="form-check-input"
+                    id="inactive_option"
+                    value="N"
+                    <%= data.active_flag == 'N' ? 'Checked' : '' %>
+                  />
+                  <label class="form-check-label" for="inactive_option">Inactive</label>
+                </div>
+              </div>
+  
+              <div class="form-group col-4">
+                <label>After Maturity Collection:</label>
+              
+                <div class="form-check form-check-inline">
+                  <input
+                    type="radio"
+                    name="after_maturity_coll"
+                    class="form-check-input"
+                    id="maturity_active_option"
+                    value="Y" disabled
+                    <%= data.after_maturity_coll == 'Y' ? 'Checked' : '' %>
+                  />
+                  <label class="form-check-label" for="maturity_active_option">Yes</label>
+                </div>
+              
+                <div class="form-check form-check-inline">
+                  <input
+                    type="radio"
+                    name="after_maturity_coll"
+                    class="form-check-input"
+                    id="maturity_inactive_option"
+                    value="N" disabled
+                    <%= data.after_maturity_coll == 'N' ? 'Checked' : '' %>
+                  />
+                  <label class="form-check-label" for="maturity_inactive_option">No</label>
+                </div>
+              </div>
+  
+              <div class="form-group col-4">
+                <label for="mobile">Bank start Date & Time:</label>
+                <input type="datetime" name="start" class="form-control" id="start"
+                  value="<%= (data.created_at).toLocaleString()%>" readonly />
+              </div>
+  
+              <div class="form-group col-12">
+                <label for="bank_address">Bank Address:</label>
+                <textarea  name="bank_address"
+                id="bank_address"
+                class="form-control"
+                placeholder="Enter bank address" readonly
+                cols="30" rows="3"><%= data.bank_address %></textarea>
+                
+              </div>
+              <input type="hidden" name="bank_id" value="<%= bank_id %>">
+              <div class="form-group col-3 center">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 32vw;"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

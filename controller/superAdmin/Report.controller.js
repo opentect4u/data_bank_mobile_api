@@ -70,7 +70,7 @@ const summary_report_post_admin = async(req,res)=>{
         var data = req.body
         const user_data = req.session.user.user_data.msg[0];
         var full_query = `
-        select a.agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag, sum(b.deposit_amount)deposit_amount
+        select a.agent_trans_no agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag, sum(b.deposit_amount)deposit_amount
         from   md_agent_trans a,td_collection b
         where  a.agent_trans_no = b.agent_trans_no 
         and    a.agent_code = b.agent_code 
@@ -78,8 +78,10 @@ const summary_report_post_admin = async(req,res)=>{
         AND    a.branch_code= '${data.branch_id}'
         AND    a.agent_code= '${data.agent_code}'
         and    a.end_flag  = 'Y'
+        and    b.agent_trans_no is not null
+        group by a.agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag
         UNION
-        select a.agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag, sum(b.deposit_amount)deposit_amount
+        select ifnull(a.agent_trans_no,'')agent_trans_no,a.agent_code,a.send_date,a.received_date,received_date,a.end_flag, sum(b.deposit_amount)deposit_amount
         from   md_agent_trans a,td_collection b
         where    a.agent_code = b.agent_code 
         AND    a.bank_id= '${data.bank_id}'
@@ -87,11 +89,14 @@ const summary_report_post_admin = async(req,res)=>{
         AND    a.agent_code= '${data.agent_code}'
         and    a.end_flag = 'N'
         and    b.agent_trans_no is null
+        group by a.agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag
         `;
         let select = "",
             where = null;
 
-        let resData = await db_Select(select, null, where, null, full_query, true);
+            //console.log('111111 '+full_query); 
+
+        let resData = await db_Select(null, null, null, null, full_query, true);
         console.log(resData);
 
         let resData2 = await db_Select('*', "md_agent", `bank_id=${data.bank_id} AND branch_code='${data.branch_id}' AND agent_code='${data.agent_code}'`, null);

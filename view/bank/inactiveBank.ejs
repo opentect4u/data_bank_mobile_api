@@ -13,6 +13,7 @@
                 <th>Contact Person</th>
                 <th>Phone NO</th>
                 <th>Active Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -23,7 +24,9 @@
                       <td><%=item.bank_name%></td>
                       <td><%=item.contact_person%></td>
                       <td><%=item.phone_no%></td>
-                      <td><h5><span class="badge badge-danger"><%=item.active_flag=='N'? 'Deactive' : ''%></span></h5> 
+                      <td><h5><span class="badge badge-danger"><%=item.active_flag=='N'? 'Deactive' : ''%></span></h5></td>
+                      <td><a class="btn btn-info view-button" href="/super-admin/edit_inactive_bank_list?bank_id=<%= item.bank_id %>">Edit</a></td>
+
                     </tr>
         
                     <% }); %>
