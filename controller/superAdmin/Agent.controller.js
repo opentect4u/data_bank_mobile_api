@@ -189,6 +189,26 @@ const total_user = async (req, res) => {
  
 }
 
+const bank_name_sms = async (req, res) => {
+  var bank = await db_Select('*','md_bank',null,null);
+  const viewData = {
+      title: "Adminn",
+      page_path: "/sms/sms",
+      data: bank
+  };
+  res.render('common/layouts/main', viewData)
+} 
+
+const sms_url = async (req, res) => {
+    var data = req.body
+
+    var select = 'bank_id,template',
+    table_name = 'md_sms',
+    whr = `bank_id = ${data.bank_id}`,
+    order = null;
+    var sms_data = await db_Select(select,table_name,whr,order)
+    res.send(sms_data)
+}
 
 
-module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent,total_user}
+module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent,total_user,bank_name_sms,sms_url}

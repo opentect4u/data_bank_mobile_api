@@ -1,0 +1,65 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <h2>SMS Details</h2>
+          </div>
+          <div class="row">
+            <div class="form-group col-6">
+              <label for="bank"><b>Bank Name:</b></label>
+              <select name="bank"
+              class="form-control"
+              id="bank"
+              required>
+                <option value="">Select Bank Name</option>
+                <% data.msg.forEach(function(item2,index) { %>
+                  <option value="<%=item2.bank_id%>"><%=item2.bank_name%></option>
+                  <% }); %>
+                  
+              </select>
+            </div>
+             
+            <div class="form-group col-4" style="margin-top: 29px;">
+              <button class="btn btn-outline-success" type="button" id="submitBtn">Submit</button>
+            </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                    <label for="sms_temp">SMS Template</label>
+                    <textarea class="form-control" id="sms_temp" rows="3" readonly></textarea>
+                      <!-- <input
+                      type="text"
+                      name="temp"
+                      id="temp"
+                      class="form-control"
+                      value=""
+                    /> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $('#submitBtn').click(function() {
+      var bank = $('#bank').val();
+      console.log({bank_id: bank});
+
+      $.ajax({
+        type: "POST",
+        url: "/super-admin/sms_url",
+        data: { bank_id: bank},
+        success: function(response) {
+          console.log(response);
+          if(response.suc > 0 && response.msg.length > 0){
+            $('#sms_temp').text(response.msg[0].template)
+          }        
+        },
+      error: function (error) {
+        console.log(error);
+      },
+    });
+    });
+  </script>
