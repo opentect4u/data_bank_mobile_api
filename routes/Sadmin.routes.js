@@ -36,7 +36,7 @@ Sadmin.post('/get_logo',get_logo_dtls)
 Sadmin.get('/header_footer',header_bank_list)
 Sadmin.post('/add_header_footer',add_header_footer)
 Sadmin.get('/show_header_footer',show_header_footer)
-Sadmin.Post('/edit_header_footer',show_header_footer)
+Sadmin.post('/edit_header_footer',show_header_footer)
 
 Sadmin.post('/agent_data',agent)
 Sadmin.get('/edit_agent',editAgentdata)
