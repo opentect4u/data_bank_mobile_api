@@ -1,7 +1,7 @@
 const express=require("express");
 const fileUpload = require('express-fileupload')
 const { dashboard } = require("../controller/admin/Dashboard");
-const { agent_list, agent, editAgentdata, edit_save_agent_data, add_agent, active_user, total_user, sms, bank_name_sms, sms_url, add_sms, app_url, app_dtls, header_bank_list, add_header_footer, show_header_footer } = require("../controller/superAdmin/Agent.controller");
+const { agent_list, agent, editAgentdata, edit_save_agent_data, add_agent, active_user, total_user, sms, bank_name_sms, sms_url, add_sms, app_url, app_dtls, header_bank_list, add_header_footer, show_header_footer, edit_header_footer } = require("../controller/superAdmin/Agent.controller");
 const { AuthCheckedMW } = require("../middleware/AuthCheckedMW");
 const { fetch_bank_info, get_branch_name, bank_name } = require("../controller/superAdmin/FetchData.controller");
 const { bank_list, add_bank_list, edit_bank_list, edit_bank_list_save, admin_bank_list, inactive_bank_list, edit_inactive_bank_list, edit_inactive_bank_list_save, bank_list_logo, upload_bank_logo, get_logo, get_logo_dtls, edit_bank_list_logo } = require("../controller/superAdmin/Bank.controller");
@@ -20,54 +20,55 @@ Sadmin.get('/',dashboard)
 Sadmin.get('/agent',AuthCheckedMW,agent_list)
 Sadmin.post('/fetch_bank_info',AuthCheckedMW,fetch_bank_info)
 
-Sadmin.get('/summary',bank_name)
-Sadmin.post('/total_user',total_user)
+Sadmin.get('/summary',AuthCheckedMW,bank_name)
+Sadmin.post('/total_user',AuthCheckedMW,total_user)
 
-Sadmin.get('/sms',bank_name_sms)
-Sadmin.post('/sms_url',sms_url)
-Sadmin.post('/add_sms',add_sms)
+Sadmin.get('/sms',AuthCheckedMW,bank_name_sms)
+Sadmin.post('/sms_url',AuthCheckedMW,sms_url)
+Sadmin.post('/add_sms',AuthCheckedMW,add_sms)
 
-Sadmin.get('/about',app_url)
+Sadmin.get('/about',AuthCheckedMW,app_url)
 
-Sadmin.get('/logo',bank_list_logo)
-Sadmin.post('/logo_upload',upload_bank_logo)
-Sadmin.post('/get_logo',get_logo_dtls)
+Sadmin.get('/logo',AuthCheckedMW,bank_list_logo)
+Sadmin.post('/logo_upload',AuthCheckedMW,upload_bank_logo)
+Sadmin.post('/get_logo',AuthCheckedMW,get_logo_dtls)
 
-Sadmin.get('/header_footer',header_bank_list)
-Sadmin.post('/add_header_footer',add_header_footer)
-Sadmin.get('/show_header_footer',show_header_footer)
-Sadmin.post('/edit_header_footer',show_header_footer)
+Sadmin.get('/header_footer',AuthCheckedMW,header_bank_list)
+Sadmin.post('/add_header_footer',AuthCheckedMW,add_header_footer)
+Sadmin.get('/show_header_footer',AuthCheckedMW,show_header_footer)
+Sadmin.post('/edit_header_footer',AuthCheckedMW,edit_header_footer)
 
-Sadmin.post('/agent_data',agent)
-Sadmin.get('/edit_agent',editAgentdata)
-Sadmin.post('/add_agent',add_agent)
-Sadmin.post('/update_agent_data',edit_save_agent_data)
+
+Sadmin.post('/agent_data',AuthCheckedMW,agent)
+Sadmin.get('/edit_agent',AuthCheckedMW,editAgentdata)
+Sadmin.post('/add_agent',AuthCheckedMW,add_agent)
+Sadmin.post('/update_agent_data',AuthCheckedMW,edit_save_agent_data)
 
 Sadmin.get('/branch_admin',AuthCheckedMW, branch_list)
 Sadmin.post('/get_branch_name',AuthCheckedMW,get_branch_name)
 Sadmin.post('/add_branch',AuthCheckedMW,add_branch_admin)
-Sadmin.get('/edit_branch',edit_branch_list)
-Sadmin.post('/edit_branch_save',updatedata_branch)
+Sadmin.get('/edit_branch',AuthCheckedMW,edit_branch_list)
+Sadmin.post('/edit_branch_save',AuthCheckedMW,updatedata_branch)
 
 Sadmin.get('/bank',AuthCheckedMW,bank_list)
 Sadmin.post('/add_bank',AuthCheckedMW,add_bank_list)
-Sadmin.get('/edit_bank', edit_bank_list)
-Sadmin.post('/edit_bank_save', edit_bank_list_save)
-Sadmin.get('/inactive_bank',inactive_bank_list)
-Sadmin.get("/edit_inactive_bank_list",edit_inactive_bank_list);
-Sadmin.post("/save_inactive_bank",edit_inactive_bank_list_save);
+Sadmin.get('/edit_bank',AuthCheckedMW,edit_bank_list)
+Sadmin.post('/edit_bank_save',AuthCheckedMW,edit_bank_list_save)
+Sadmin.get('/inactive_bank',AuthCheckedMW,inactive_bank_list)
+Sadmin.get("/edit_inactive_bank_list",AuthCheckedMW,edit_inactive_bank_list);
+Sadmin.post("/save_inactive_bank",AuthCheckedMW,edit_inactive_bank_list_save);
 
-Sadmin.get('/report',report_list)
-Sadmin.post('/report_branch_name',get_branch_name)
-Sadmin.post('/agent_data_report',agent_report)
-Sadmin.post('/summary_report_post_admin',summary_report_post_admin)
+Sadmin.get('/report',AuthCheckedMW,report_list)
+Sadmin.post('/report_branch_name',AuthCheckedMW,get_branch_name)
+Sadmin.post('/agent_data_report',AuthCheckedMW,agent_report)
+Sadmin.post('/summary_report_post_admin',AuthCheckedMW,summary_report_post_admin)
 
 
-Sadmin.get('/collection_report',col_report_list)
-Sadmin.post('/collection_report_update',collection_report)
+Sadmin.get('/collection_report',AuthCheckedMW,col_report_list)
+Sadmin.post('/collection_report_update',AuthCheckedMW,collection_report)
 
-Sadmin.get('/collection_progress',col_progress)
-Sadmin.post('/collection_progress_update',collection_progress)
+Sadmin.get('/collection_progress',AuthCheckedMW,col_progress)
+Sadmin.post('/collection_progress_update',AuthCheckedMW,collection_progress)
 
 
 module.exports={Sadmin}

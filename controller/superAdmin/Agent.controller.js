@@ -331,5 +331,19 @@ const show_header_footer = async (req, res) => {
   }
 }
 
+const edit_header_footer = async (req, res) => {
+  // console.log(req.query.bank_id);
+  var data = await db_Select('*', 'md_header_footer', `bank_id=${req.query.bank_id}`, null)
+  // console.log(data, 'lalal');
+  const viewData = {
+      title: "Header_Footer",
+      page_path: "/header_footer/header_footer",
+      data: data.suc > 0 && data.msg.length > 0 ? data.msg[0] : [],
+      bank_id: req.query.bank_id,
+  };
+  console.log(viewData);
+  res.render('common/layouts/main', viewData)
+}
 
-module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent,total_user,bank_name_sms,sms_url,add_sms,app_url,header_bank_list, add_header_footer,show_header_footer}
+
+module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent,total_user,bank_name_sms,sms_url,add_sms,app_url,header_bank_list, add_header_footer,show_header_footer,edit_header_footer}
