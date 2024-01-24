@@ -20,6 +20,7 @@ app.set("views",path.join(__dirname,'view'))
 
 app.use(express.static(path.join(__dirname,'public')));
 app.use(express.static(path.join(__dirname,'assets')))
+app.use(express.static(path.join(__dirname,'uploads')))
 app.use(express.json())//alltime return json
 app.use(express.urlencoded({extended:true}))
 
@@ -100,6 +101,8 @@ setInterval(() => {
   }
   console.log("update_endcollection");
 }, 1000*60*60);
+
+
 
 app.listen(port , (err) =>{
     if(err) throw new Error(err)

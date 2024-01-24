@@ -23,9 +23,12 @@ const post_login = async (req, res) => {
         
     const user_id = req.body.email,
         password = req.body.password;
+        
     var whr = `user_id='${user_id}' AND active_flag='Y' AND user_type IN ('A', 'B', 'R')`;
     let res_dt = await db_Select('password,user_type', "md_user", whr, null);
     delete res_dt.sql;
+
+    
     if (res_dt.msg[0] && await bcrypt.compare(password, res_dt.msg[0].password)) {
 
         if(res_dt.msg[0].user_type=='R'){
@@ -57,7 +60,7 @@ const post_login = async (req, res) => {
         // res.redirect('/admin/dashboard')
         res.redirect('/super-admin/summary')
     } else {
-        req.flash('error', 'invalid username and password')
+        req.flash('error', 'Invalid username or password or Deactivate By Admin')
         res.redirect('/admin/login')
         // res.json({
         //     "ERROR": "Password Miss Match",

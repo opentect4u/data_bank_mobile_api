@@ -81,7 +81,7 @@ const summary_report_post_admin = async(req,res)=>{
         and    b.agent_trans_no is not null
         group by a.agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag
         UNION
-        select ifnull(a.agent_trans_no,'')agent_trans_no,a.agent_code,a.send_date,a.received_date,received_date,a.end_flag, sum(b.deposit_amount)deposit_amount
+        select ifnull(a.agent_trans_no,'')agent_trans_no,a.agent_code,a.send_date,a.received_date,a.end_flag, sum(b.deposit_amount)deposit_amount
         from   md_agent_trans a,td_collection b
         where    a.agent_code = b.agent_code 
         AND    a.bank_id= '${data.bank_id}'

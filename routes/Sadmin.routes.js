@@ -1,15 +1,20 @@
 const express=require("express");
+const fileUpload = require('express-fileupload')
 const { dashboard } = require("../controller/admin/Dashboard");
-const { agent_list, agent, editAgentdata, edit_save_agent_data, add_agent, active_user, total_user, sms, bank_name_sms, sms_url } = require("../controller/superAdmin/Agent.controller");
+const { agent_list, agent, editAgentdata, edit_save_agent_data, add_agent, active_user, total_user, sms, bank_name_sms, sms_url, add_sms, app_url, app_dtls, header_bank_list, add_header_footer, show_header_footer } = require("../controller/superAdmin/Agent.controller");
 const { AuthCheckedMW } = require("../middleware/AuthCheckedMW");
 const { fetch_bank_info, get_branch_name, bank_name } = require("../controller/superAdmin/FetchData.controller");
-const { bank_list, add_bank_list, edit_bank_list, edit_bank_list_save, admin_bank_list, inactive_bank_list, edit_inactive_bank_list, edit_inactive_bank_list_save } = require("../controller/superAdmin/Bank.controller");
+const { bank_list, add_bank_list, edit_bank_list, edit_bank_list_save, admin_bank_list, inactive_bank_list, edit_inactive_bank_list, edit_inactive_bank_list_save, bank_list_logo, upload_bank_logo, get_logo, get_logo_dtls, edit_bank_list_logo } = require("../controller/superAdmin/Bank.controller");
 const { branch_list, add_branch_admin, editBranch_admin, edit_branch_list, updatedata_branch } = require("../controller/superAdmin/Admin_branch.controller");
 const { add_branch } = require("../controller/bank/branch.controller");
 const { summary_report, report_list, agent_report, summary_report_post_admin, col_report_list, collection_report, col_progress, collection_progress } = require("../controller/superAdmin/Report.controller");
 
 const Sadmin = express.Router()
 
+// Middleware for file uploads
+Sadmin.use(fileUpload({
+    limits: { fileSize: 5 * 1024 * 1024 }, // 1 MB limit
+  }));
 
 Sadmin.get('/',dashboard)
 Sadmin.get('/agent',AuthCheckedMW,agent_list)
@@ -20,6 +25,18 @@ Sadmin.post('/total_user',total_user)
 
 Sadmin.get('/sms',bank_name_sms)
 Sadmin.post('/sms_url',sms_url)
+Sadmin.post('/add_sms',add_sms)
+
+Sadmin.get('/about',app_url)
+
+Sadmin.get('/logo',bank_list_logo)
+Sadmin.post('/logo_upload',upload_bank_logo)
+Sadmin.post('/get_logo',get_logo_dtls)
+
+Sadmin.get('/header_footer',header_bank_list)
+Sadmin.post('/add_header_footer',add_header_footer)
+Sadmin.get('/show_header_footer',show_header_footer)
+Sadmin.Post('/edit_header_footer',show_header_footer)
 
 Sadmin.post('/agent_data',agent)
 Sadmin.get('/edit_agent',editAgentdata)

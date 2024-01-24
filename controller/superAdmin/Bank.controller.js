@@ -2,6 +2,9 @@ const Joi = require("joi");
 const { db_Select, db_Insert } = require("../../model/MasterModule");
 const dateFormat = require('dateformat');
 const bcrypt = require('bcrypt');
+const fileUpload = require('express-fileupload');
+fs = require('fs')
+const path = require('path')
 
 const bank_list = async (req, res) => {
     var select = '*',
@@ -113,6 +116,7 @@ const edit_inactive_bank_list = async (req, res) => {
         data: data.suc > 0 && data.msg.length > 0 ? data.msg[0] : [],
         bank_id: req.query.bank_id,
     };
+    console.log(viewData);
     res.render('common/layouts/main', viewData)
 }
 const edit_bank_list_save = async (req, res) => {
@@ -136,10 +140,7 @@ const edit_bank_list_save = async (req, res) => {
                 errors[detail.context.key] = detail.message;
             });
 
-            // req.flash('error', errors)
             res.redirect('/super-admin/bank')
-
-            // return res.status(400).json({ error: errors });
         }
 
         const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
@@ -151,22 +152,42 @@ const edit_bank_list_save = async (req, res) => {
         values = null
         whr=`bank_id=${value.bank_id}`
         var insmd_bank = await db_Insert(table_name, fields, values, whr, 1)
-        // req.flash('success', "Bank Add Successful")
+
+        var table_name = 'md_branch',
+        fields2 = `active_flag = 'N', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        values = null
+        whr = `bank_id= ${value.bank_id} AND active_flag = 'Y'`
+        var bank = await db_Insert(table_name, fields2, values, whr, 1)
+        // console.log(bank);
+
+        var table_name = 'md_agent',
+        fields3 = `active_flag = 'N', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        values = null
+        whr = `bank_id= ${value.bank_id} AND active_flag = 'Y'`
+        var bank = await db_Insert(table_name, fields3, values, whr, 1)
+
+        var table_name = 'md_user',
+        fields4 = `active_flag = 'N', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        values = null
+        whr = `bank_id= ${value.bank_id} AND active_flag = 'Y'`
+        var bank = await db_Insert(table_name, fields4, values, whr, 1)
+
         res.redirect('/super-admin/bank')
 
     } catch (error) {
-        // req.flash('error', error)
-        // res.redirect('/super-admin/bank')
-        // return res.status(400).json({ error: error });
+        console.log(error);
     }
 
 }
 
 
 const edit_inactive_bank_list_save = async (req, res) => {
+    var data = req.body
+    // console.log(data);
     try {
         const schema = Joi.object({
             active_flag: Joi.string().valid('Y', 'N').required(),
+
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
         console.log(value);
@@ -175,17 +196,37 @@ const edit_inactive_bank_list_save = async (req, res) => {
             error.details.forEach(detail => {
                 errors[detail.context.key] = detail.message;
             });
-            res.redirect('/super-admin/inactive_bank')
+            // res.redirect('/super-admin/inactive_bank')
         }
 
         const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
         const user_data = req.session.user.user_data.msg[0];
 
         var table_name = 'md_bank',
-        fields = `active_flag = '${value.active_flag}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        fields = `active_flag = 'Y', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
         values = null
-        whr=`bank_id=${value.bank_id}`
+        whr = `bank_id= ${value.bank_id} AND active_flag = 'N'`
         var insmd_bank = await db_Insert(table_name, fields, values, whr, 1)
+
+        var table_name = 'md_branch',
+        fields2 = `active_flag = 'Y', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        values = null
+        whr = `bank_id= ${value.bank_id} AND active_flag = 'N'`
+        var bank = await db_Insert(table_name, fields2, values, whr, 1)
+        // console.log(bank);
+
+        var table_name = 'md_agent',
+        fields3 = `active_flag = 'Y', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        values = null
+        whr = `bank_id= ${value.bank_id} AND active_flag = 'N'`
+        var bank = await db_Insert(table_name, fields3, values, whr, 1)
+
+        var table_name = 'md_user',
+        fields4 = `active_flag = 'Y', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        values = null
+        whr = `bank_id= ${value.bank_id} AND active_flag = 'N'`
+        var bank = await db_Insert(table_name, fields4, values, whr, 1)
+
         res.redirect('/super-admin/inactive_bank')
 
     } catch (error) {
@@ -194,8 +235,105 @@ const edit_inactive_bank_list_save = async (req, res) => {
 
 }
 
+const bank_list_logo = async (req, res) => {
+    var bank = await db_Select('*','md_bank',null,null)
+    const viewData = {
+        title: "Logo",
+        page_path: "/logo_upload/bank_logo",
+        data: bank
+    };
+    res.render('common/layouts/main', viewData)
+}
 
 
+const upload_bank_logo = async (req, res) => {  
+    var data = req.body
+    // console.log(data);
+   
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send('No files were uploaded.');
+      }
+
+    const uploadedFile = req.files.photo;
+    // console.log(uploadedFile);
+
+     const allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowedFileTypes.includes(uploadedFile.mimetype)) {
+        return res.status(400).send('Invalid file type. Only JPEG and JPG and PNG are allowed.');
+      }
+
+     // Check file size
+    //  console.log("//////////////",uploadedFile.size)
+    if (uploadedFile.size > 1 * 1024 * 1024) {
+        return res.status(400).send('File size exceeds the limit of 1 MB.');
+    }
+
+     // Move the file to a directory (you can modify the destination path as needed)
+     let fileName = Date.now()+"_"+ uploadedFile.name;
+    uploadedFile.mv('uploads/bank_logo/' + fileName, async (err) => {
+    if (err) {
+      return res.status(500).send(err);
+    }else {     
+
+        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+
+        const user_data = req.session.user.user_data.msg[0];
+        let bank_img=data.bank_image;
+
+        if(bank_img){
+
+            let filePathToDelete="uploads/bank_logo/"+bank_img
+
+            if (fs.existsSync(filePathToDelete)) {
+                fs.unlinkSync(filePathToDelete);
+              }
 
 
-module.exports = { bank_list, add_bank_list,edit_bank_list,edit_bank_list_save,inactive_bank_list,edit_inactive_bank_list,edit_inactive_bank_list_save}
+            var table_name = "td_logo",
+            fields = `file_path = '${fileName}', modified_by = 'Admin', updated_dt = '${datetime}'`,
+            values = null
+            whr = `bank_id= '${data.bank}'`,
+            flag = 1;
+            res_dt = await db_Insert(table_name, fields, values, whr, flag);
+            
+        }else{
+            var table_name = "td_logo",
+            fields = `(bank_id, file_path, created_by, created_dt)`,
+            values = `('${data.bank}','${fileName}','${user_data.id}','${datetime}')`
+            whr = null,
+            flag = 0;
+            res_dt = await db_Insert(table_name, fields, values, whr, flag);
+           
+        }
+       
+        req.flash('success', "Logo added Successful")
+        res.redirect('/super-admin/logo');
+    console.log(res_dt);
+
+    }
+  });
+
+} 
+    
+
+const get_logo_dtls = async (req, res) => {
+    try {
+        var data = req.body
+        let select = 'a.bank_id, a.file_path, b.bank_name',
+            table_name = 'td_logo a, md_bank b',
+            whr = `a.bank_id = b.bank_id AND a.bank_id = '${data.bank_id}'`;
+        var resData = await db_Select(select, table_name, whr, null)
+        // console.log(resData);
+        res.json(resData)
+        
+    } catch (error) {
+        res.json({
+            "suc": 0,
+            "msg": []
+        });
+    }
+}
+
+
+module.exports = { bank_list, add_bank_list,edit_bank_list,edit_bank_list_save,inactive_bank_list,edit_inactive_bank_list,edit_inactive_bank_list_save, bank_list_logo,upload_bank_logo, get_logo_dtls}
