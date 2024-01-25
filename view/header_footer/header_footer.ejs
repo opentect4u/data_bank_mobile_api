@@ -7,7 +7,7 @@
             <h2>Header & Footer</h2>
           </div>
           <div class="row">
-            <div class="form-group col-6">
+            <div class="form-group col-7">
               <label for="bank"><b>Bank Name:</b></label>
               <select name="bank"
               class="form-control"
@@ -88,8 +88,10 @@
 
               <div class="col-md-9">
                 <div class="form-group">
-                <label for="header_1"><b>Header 1</b></label>
-                <textarea class="form-control" id="header_1" name="header_1" rows="2" placeholder="Enter Header1...."></textarea>
+                <label for="header_1"><b>Header 1</b>&nbsp;&nbsp;<span id="charCount1" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="header_1" name="header_1" rows="2" placeholder="Enter Header1...." maxlength="25" oninput="updateCharCount('header_1','charCount1')"></textarea>
+                
+              
                 </div>
             </div>
             <div class="col-md-3 cust-toggle1">
@@ -109,8 +111,8 @@
 
             <div class="col-md-9">
                 <div class="form-group">
-                <label for="header_2"><b>Header 2</b></label>
-                <textarea class="form-control" id="header_2" name="header_2" rows="2" placeholder="Enter Header2...."></textarea>
+                <label for="header_2"><b>Header 2</b>&nbsp;&nbsp;<span id="charCount2" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="header_2" name="header_2" rows="2" placeholder="Enter Header2...." maxlength="25" oninput="updateCharCount('header_2','charCount2')"></textarea>
                 </div>
             </div>
             <div class="col-md-3 cust-toggle1">
@@ -130,8 +132,8 @@
 
             <div class="col-md-9">
                 <div class="form-group">
-                <label for="header_3"><b>Header 3</b></label>
-                <textarea class="form-control" id="header_3" name="header_3" rows="2" placeholder="Enter Header3...."></textarea>
+                <label for="header_3"><b>Header 3</b>&nbsp;&nbsp;<span id="charCount3" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="header_3" name="header_3" rows="2" placeholder="Enter Header3...." maxlength="25" oninput="updateCharCount('header_3','charCount3')"></textarea>
                 </div>
             </div>
 
@@ -152,8 +154,8 @@
             
             <div class="col-md-9">
                 <div class="form-group">
-                <label for="header_4"><b>Header 4</b></label>
-                <textarea class="form-control" id="header_4" name="header_4" rows="2" placeholder="Enter Header4...."></textarea>
+                <label for="header_4"><b>Header 4</b>&nbsp;&nbsp;<span id="charCount4" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="header_4" name="header_4" rows="2" placeholder="Enter Header4...." maxlength="25" oninput="updateCharCount('header_4','charCount4')"></textarea>
                 </div>
             </div>
 
@@ -174,8 +176,8 @@
 
             <div class="col-md-9">
                 <div class="form-group">
-                <label for="footer_1"><b>Footer 1</b></label>
-                <textarea class="form-control" id="footer_1" name="footer_1" rows="2" placeholder="Enter Footer1...."></textarea>
+                <label for="footer_1"><b>Footer 1</b>&nbsp;&nbsp;<span id="charCount5" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="footer_1" name="footer_1" rows="2" placeholder="Enter Footer1...." maxlength="25" oninput="updateCharCount('footer_1','charCount5')"></textarea>
                 </div>
             </div>
 
@@ -196,8 +198,8 @@
 
             <div class="col-md-9">
                 <div class="form-group">
-                <label for="footer_2"><b>Footer 2</b></label>
-                <textarea class="form-control" id="footer_2" name="footer_2" rows="2" placeholder="Enter Footer2...."></textarea>
+                <label for="footer_2"><b>Footer 2</b>&nbsp;&nbsp;<span id="charCount6" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="footer_2" name="footer_2" rows="2" placeholder="Enter Footer2...." maxlength="25" oninput="updateCharCount('footer_2','charCount6')"></textarea>
                 </div>
             </div>
 
@@ -218,8 +220,8 @@
 
             <div class="col-md-9">
                 <div class="form-group">
-                <label for="footer_3"><b>Footer 3</b></label>
-                <textarea class="form-control" id="footer_3" name="footer_3" rows="2" placeholder="Enter Footer3...."></textarea>
+                <label for="footer_3"><b>Footer 3</b>&nbsp;&nbsp;<span id="charCount7" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="footer_3" name="footer_3" rows="2" placeholder="Enter Footer3...." maxlength="25" oninput="updateCharCount('footer_3','charCount7')"></textarea>
                 </div>
             </div>
 
@@ -240,8 +242,8 @@
 
             <div class="col-md-9">
                 <div class="form-group">
-                <label for="footer_4"><b>Footer 4</b></label>
-                <textarea class="form-control" id="footer_4" name="footer_4" rows="2" placeholder="Enter Footer4...."></textarea>
+                <label for="footer_4"><b>Footer 4</b>&nbsp;&nbsp;<span id="charCount8" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="footer_4" name="footer_4" rows="2" placeholder="Enter Footer4...." maxlength="25" oninput="updateCharCount('footer_4','charCount8')"></textarea>
                 </div>
             </div>
 
@@ -287,21 +289,21 @@
     $(document).ready(function () {
       $("#myBtn").click(function () {
         $("#myModal").modal();
-        $("#myBtn").hide()
+        // $("#myBtn").hide()
       });
     });
   </script>
 
   <script>
-   $("#myBtn").hide()
+  //  $("#myBtn").hide()
     $('#bank').change(function(){
-     $("#myBtn").show()
+    //  $("#myBtn").show()
      })
 
   </script>
 
 <script>
-  $('.show_data').hide()
+  // $('.show_data').hide()
   $('#bank').change(function () {
     var bank_id = $(this).val()
     var tbody = $(".show_data tbody");
@@ -364,7 +366,7 @@
               "<td><a href='/super-admin/edit_header_footer?bank_id="+item.bank_id+"' class='btn btn-info'>Edit</a></td>" +
               "</tr>";
             tbody.append(row);
-            $('.show_data').show()
+            // $('.show_data').show()
          });
         else {
           $('.show_data tbody').append(`
@@ -378,10 +380,22 @@
       error: function (error) {
         console.log(error);
         tbody.empty();
-        $('.show_data').hide()
+        // $('.show_data').hide()
         
       },
     });
 
   });
+</script>
+
+<script>
+  function updateCharCount(textareaId, countId) {
+    var textarea = document.getElementById(textareaId);
+    var charCount = document.getElementById(countId);
+
+    if (textarea && charCount) {
+    var count = textarea.value.length;
+    charCount.innerHTML  ='<span style="font-weight: bold;">(' + count + '/25)</span>';
+  }
+}
 </script>

@@ -73,14 +73,14 @@ const add_branch_admin=async (req,res)=>{
 const edit_branch_list = async (req, res) => {
     console.log(req.query.branch_id);
     var data = await db_Select('*', 'md_branch', `branch_id=${req.query.branch_id}`, null)
-    console.log(data, 'lalal');
+    // console.log(data, 'lalal');
     const viewData = {
         title: "Adminn",
         page_path: "/branch_admin/edit_View_Branch",
         data: data.suc > 0 && data.msg.length > 0 ? data.msg[0] : [],
         branch_id: req.query.branch_id,
     };
-    console.log(viewData);
+    // console.log(viewData);
     res.render('common/layouts/main', viewData)
 }
 

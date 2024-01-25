@@ -4,7 +4,7 @@
         <div class="card-body">
           <div class="titleSec">
             <!-- <button type="button" class="btn btn-primary" id="myBtn">Add</button> -->
-            <h2>Edit Agent Details</h2>
+            <h2><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Edit Agent Details</i></h2>
           </div>
           <form action="/super-admin/update_agent_data" id="myForm" method="post">
             <input type="hidden" name="bank" value="<%= data.bank_id %>">
@@ -133,7 +133,13 @@
     </div>
   </div>
   
-  
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/super-admin/agent";
+      });
+    });
+  </script>
   
   
   

@@ -1,0 +1,248 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+             <h2><i class="fa fa-arrow-circle-left" aria-hidden="true" id="back" style="cursor: pointer;">&nbsp;Header & Footer Edit Details</i></h2>
+          </div> 
+          <form action="/super-admin/edit_save_header_footer" id="myForm" method="post">
+            <input type="hidden" name="bank_id" value="<%= data.bank_id %>">
+          <div class="row">
+            <div class="form-group col-9">
+                <label for="bank_id">Bank Name:</label>
+                <select name="bank_id"
+                class="form-control"
+                id="bank_id" disabled
+                >
+                <option value="">Select Bank Name</option>
+                <option value="1" <%= data.bank_id == '1' ? 'selected' : '' %>>Bihar Co-operative Credit Society Ltd.</option>
+                <option value="2" <%= data.bank_id == '2' ? 'selected' : '' %>>The Puri Urban and Rural Development Cooperative Society Ltd.</option>
+                <option value="3" <%= data.bank_id == '3' ? 'selected' : '' %>>Demo Bank</option>
+                <option value="4" <%= data.bank_id == '4' ? 'selected' : '' %>>Shyamaprasanna SKUS Ltd</option>
+                </select>
+              </div>
+
+              <div class="col-md-9">
+                <div class="form-group">
+                <label for="header_1"><b>Header 1</b>&nbsp;&nbsp;<span id="charCount1" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="header_1" name="header_1" rows="2" placeholder="Enter Header1...." maxlength="25" oninput="updateCharCount('header_1','charCount1')"><%= data.header_1 %></textarea>
+                </div>
+            </div>
+            <div class="col-md-3 cust-toggle1">
+                <label for="header_1_flag"><b>Header 1 Flag</b></label><br>
+                <input 
+                type="checkbox" 
+                value="Y" 
+                id="header_1_flag" 
+                data-toggle="toggle" 
+                data-onstyle="success" 
+                data-offstyle="danger" 
+                data-on="Active" 
+                data-off="Deactive" 
+                name="header_1_flag"
+                <%=(data.header_1_flag=='Y')?'checked':''%>
+                >
+                </div>
+
+            <div class="col-md-9">
+                <div class="form-group">
+                <label for="header_2"><b>Header 2</b>&nbsp;&nbsp;<span id="charCount2" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="header_2" name="header_2" rows="2" placeholder="Enter Header2...." maxlength="25" oninput="updateCharCount('header_2','charCount2')"><%= data.header_2 %></textarea>
+                </div>
+            </div>
+            <div class="col-md-3 cust-toggle1">
+              <label for="header_2_flag"><b>Header 2 Flag</b></label><br>
+              <input 
+              type="checkbox" 
+              value="Y" 
+              id="header_2_flag" 
+              data-toggle="toggle" 
+              data-onstyle="success" 
+              data-offstyle="danger" 
+              data-on="Active" 
+              data-off="Deactive" 
+              name="header_2_flag"
+              <%=(data.header_2_flag=='Y')?'checked':''%>
+              >
+              </div>
+
+            <div class="col-md-9">
+                <div class="form-group">
+                <label for="header_3"><b>Header 3</b>&nbsp;&nbsp;<span id="charCount3" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="header_3" name="header_3" rows="2" placeholder="Enter Header3...." maxlength="25" oninput="updateCharCount('header_3','charCount3')"><%= data.header_3 %></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="header_3_flag"><b>Header 3 Flag</b></label><br>
+              <input 
+              type="checkbox" 
+              value="Y" 
+              id="header_3_flag" 
+              data-toggle="toggle" 
+              data-onstyle="success" 
+              data-offstyle="danger" 
+              data-on="Active" 
+              data-off="Deactive" 
+              name="header_3_flag"
+              <%=(data.header_3_flag=='Y')?'checked':''%>
+              >
+              </div>
+            
+            <div class="col-md-9">
+                <div class="form-group">
+                <label for="header_4"><b>Header 4</b>&nbsp;&nbsp;<span id="charCount4" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="header_4" name="header_4" rows="2" placeholder="Enter Header4...." maxlength="25" oninput="updateCharCount('header_4','charCount4')"><%= data.header_4 %></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="header_4_flag"><b>Header 4 Flag</b></label><br>
+              <input 
+              type="checkbox" 
+              value="Y" 
+              id="header_4_flag" 
+              data-toggle="toggle" 
+              data-onstyle="success" 
+              data-offstyle="danger" 
+              data-on="Active" 
+              data-off="Deactive" 
+              name="header_4_flag"
+              <%=(data.header_4_flag=='Y')?'checked':''%>
+              >
+              </div>
+
+            <div class="col-md-9">
+                <div class="form-group">
+                <label for="footer_1"><b>Footer 1</b>&nbsp;&nbsp;<span id="charCount5" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="footer_1" name="footer_1" rows="2" placeholder="Enter Footer1...." maxlength="25" oninput="updateCharCount('footer_1','charCount5')"><%= data.footer_1 %></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="footer_1_flag"><b>Footer 1 Flag</b></label><br>
+              <input 
+              type="checkbox" 
+              value="Y" 
+              id="footer_1_flag" 
+              data-toggle="toggle" 
+              data-onstyle="success" 
+              data-offstyle="danger" 
+              data-on="Active" 
+              data-off="Deactive" 
+              name="footer_1_flag"
+              <%=(data.footer_1_flag=='Y')?'checked':''%>
+              >
+              </div>
+
+            <div class="col-md-9">
+                <div class="form-group">
+                <label for="footer_2"><b>Footer 2</b>&nbsp;&nbsp;<span id="charCount6" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="footer_2" name="footer_2" rows="2" placeholder="Enter Footer2...." maxlength="25" oninput="updateCharCount('footer_2','charCount6')"><%= data.footer_2 %></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="footer_2_flag"><b>Footer 2 Flag</b></label><br>
+              <input 
+              type="checkbox" 
+              value="Y" 
+              id="footer_2_flag" 
+              data-toggle="toggle" 
+              data-onstyle="success" 
+              data-offstyle="danger" 
+              data-on="Active" 
+              data-off="Deactive" 
+              name="footer_2_flag"
+              <%=(data.footer_2_flag=='Y')?'checked':''%>
+              >
+              </div>
+
+            <div class="col-md-9">
+                <div class="form-group">
+                <label for="footer_3"><b>Footer 3</b>&nbsp;&nbsp;<span id="charCount7" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="footer_3" name="footer_3" rows="2" placeholder="Enter Footer3...." maxlength="25" oninput="updateCharCount('footer_3','charCount7')"><%= data.footer_3 %></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="footer_3_flag"><b>Footer 3 Flag</b></label><br>
+              <input 
+              type="checkbox" 
+              value="Y" 
+              id="footer_3_flag" 
+              data-toggle="toggle" 
+              data-onstyle="success" 
+              data-offstyle="danger" 
+              data-on="Active" 
+              data-off="Deactive" 
+              name="footer_3_flag"
+              <%=(data.footer_3_flag=='Y')?'checked':''%>
+              >
+              </div>
+
+            <div class="col-md-9">
+                <div class="form-group">
+                <label for="footer_4"><b>Footer 4</b>&nbsp;&nbsp;<span id="charCount8" class="char-count"><b>(0/25)</b></span></label>
+                <textarea class="form-control" id="footer_4" name="footer_4" rows="2" placeholder="Enter Footer4...." maxlength="25" oninput="updateCharCount('footer_4','charCount8')"><%= data.footer_4 %></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-3 cust-toggle1">
+              <label for="footer_4_flag"><b>Footer 4 Flag</b></label><br>
+              <input 
+              type="checkbox" 
+              value="Y" 
+              id="footer_4_flag" 
+              data-toggle="toggle" 
+              data-onstyle="success" 
+              data-offstyle="danger" 
+              data-on="Active" 
+              data-off="Deactive" 
+              name="footer_4_flag"
+              <%=(data.footer_4_flag=='Y')?'checked':''%>
+              >
+              </div>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-3">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 25vw;"
+                />
+              </div>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#back").click(function () {
+        window.location.href = "/super-admin/header_footer";
+      });
+    });
+  </script>
+
+<script>
+    updateCharCount('header_1', 'charCount1');
+    updateCharCount('header_2', 'charCount2');
+    updateCharCount('header_3', 'charCount3');
+    updateCharCount('header_4', 'charCount4');
+    updateCharCount('footer_1', 'charCount5');
+    updateCharCount('footer_2', 'charCount6');
+    updateCharCount('footer_3', 'charCount7');
+    updateCharCount('footer_4', 'charCount8');
+    function updateCharCount(textareaId, countId) {
+      var textarea = document.getElementById(textareaId);
+      var charCount = document.getElementById(countId);
+  
+      if (textarea && charCount) {
+      var count = textarea.value.length;
+      charCount.innerHTML  ='<span style="font-weight: bold;">(' + count + '/25)</span>';
+    }
+  }
+  </script>

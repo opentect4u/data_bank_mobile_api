@@ -305,13 +305,22 @@ const add_header_footer = async (req, res) => {
         values = `('${value.bank_id}','${value.header_1}','${value.header_1_flag=='Y'? 'Y' : 'N'}','${value.header_2}','${value.header_2_flag=='Y'? 'Y' : 'N'}','${value.header_3}','${value.header_3_flag=='Y'? 'Y' : 'N'}','${value.header_4}','${value.header_4_flag=='Y'? 'Y' : 'N'}','${value.footer_1}','${value.footer_1_flag=='Y'? 'Y' : 'N'}','${value.footer_2}','${value.footer_2_flag=='Y'? 'Y' : 'N'}','${value.footer_3}','${value.footer_3_flag=='Y'? 'Y' : 'N'}','${value.footer_4}','${value.footer_4_flag=='Y'? 'Y' : 'N'}','${user_data.id}','${datetime}')`;
       let res_dt = await db_Insert("md_header_footer", fields, values, null, 0);
       // console.log("========header==========", res_dt);
+      req.flash('success', 'Saved successful')
       res.redirect("/super-admin/header_footer");
+      // res.json(
+      //   {
+      //     "success": "password change successfully",
+      //     "status": true
+      
+      // })
   } catch (error){
   //  console.log(error);
- res.json({
-  error: error,
-  status: false,
-  });
+//  res.json({
+//   error: error,
+//   status: false,
+//   });
+req.flash('error', 'Data not saved Successfully')
+res.redirect('/super-admin/header_footer')
 }
 }
 
@@ -332,18 +341,77 @@ const show_header_footer = async (req, res) => {
 }
 
 const edit_header_footer = async (req, res) => {
-  // console.log(req.query.bank_id);
-  var data = await db_Select('*', 'md_header_footer', `bank_id=${req.query.bank_id}`, null)
-  // console.log(data, 'lalal');
-  const viewData = {
-      title: "Header_Footer",
-      page_path: "/header_footer/header_footer",
-      data: data.suc > 0 && data.msg.length > 0 ? data.msg[0] : [],
-      bank_id: req.query.bank_id,
-  };
-  console.log(viewData);
-  res.render('common/layouts/main', viewData)
+  let select = 'a.bank_id,a.header_1,a.header_1_flag,a.header_2,a.header_2_flag,a.header_3,a.header_3_flag,a.header_4,a.header_4_flag,a.footer_1,a.footer_1_flag,a.footer_2,a.footer_2_flag,a.footer_3,a.footer_3_flag,a.footer_4,a.footer_4_flag,b.bank_name',
+            table_name = 'md_header_footer a, md_bank b',
+            whr = `a.bank_id = b.bank_id
+            AND a.bank_id = '${req.query.bank_id}'`;
+        const resData = await db_Select(select, table_name, whr, null)
+        console.log(resData);
+        delete resData.sql
+        var viewData = {
+            title: "Header_Footer",
+            page_path: "/header_footer/edit_Header_Footer",
+            data: resData.suc > 0 && resData.msg.length > 0 ? resData.msg[0] : [],
+            bank_id : req.query.bank_id
+        };
+        console.log(viewData);
+        res.render('common/layouts/main', viewData)
+}
+
+const edit_save_header_footer = async (req, res) => {
+  try {
+      const schema = Joi.object({
+          bank_id: Joi.required(),
+          header_1: Joi.required(),
+          header_1_flag: Joi.string(),
+          header_2: Joi.required(),
+          header_2_flag: Joi.string(),
+          header_3: Joi.required(),
+          header_3_flag: Joi.string(),
+          header_4: Joi.required(),
+          header_4_flag: Joi.string(),
+          footer_1: Joi.required(),
+          footer_1_flag: Joi.string(),
+          footer_2: Joi.required(),
+          footer_2_flag: Joi.string(),
+          footer_3: Joi.required(),
+          footer_3_flag: Joi.string(),
+          footer_4: Joi.required(),
+          footer_4_flag: Joi.string(),
+      });
+      const { error, value } = schema.validate(req.body, { abortEarly: false });
+      // console.log(value);
+      if (error) {
+          const errors = {};
+          error.details.forEach(detail => {
+              errors[detail.context.key] = detail.message;
+          });
+          return res.json({ error: errors });
+      }
+      
+      const user_data = req.session.user.user_data.msg[0];
+      const datetime = dateFormat(new Date(), "yyyy-mm-dd")
+      
+
+
+
+      let fields =  `header_1='${value.header_1}',header_1_flag='${value.header_1_flag=='Y' ? 'Y' : 'N'}',header_2='${value.header_2}',header_2_flag='${value.header_2_flag=='Y' ? 'Y' : 'N'}',header_3='${value.header_3}',header_3_flag='${value.header_3_flag=='Y' ? 'Y' : 'N'}',header_4='${value.header_4}',header_4_flag='${value.header_4_flag=='Y' ? 'Y' : 'N'}',footer_1='${value.footer_1}',footer_1_flag='${value.footer_1_flag=='Y' ? 'Y' : 'N'}',footer_2='${value.footer_2}',footer_2_flag='${value.footer_2_flag=='Y' ? 'Y' : 'N'}',footer_3='${value.footer_3}',footer_3_flag='${value.footer_3_flag=='Y' ? 'Y' : 'N'}',footer_4='${value.footer_4}',footer_4_flag='${value.footer_4_flag=='Y' ? 'Y' : 'N'}',modified_by='${user_data.id}',updated_dt='${datetime}'`,
+      where=`bank_id='${value.bank_id}'`;
+      let res_dt2 = await db_Insert("md_header_footer", fields, null, where, 1);
+      // console.log(res_dt2);
+      req.flash('success', 'Updated successful')
+      res.redirect('/super-admin/header_footer')
+  } catch (error) {
+      console.log(error);
+      // res.json({
+      //     "error": error,
+      //     "status": false
+      // });
+      req.flash('error', 'Data not Updated Successfully')
+      res.redirect('/super-admin/header_footer')
+  }
+
 }
 
 
-module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent,total_user,bank_name_sms,sms_url,add_sms,app_url,header_bank_list, add_header_footer,show_header_footer,edit_header_footer}
+module.exports={agent_list,agent,editAgentdata,edit_save_agent_data,add_agent,total_user,bank_name_sms,sms_url,add_sms,app_url,header_bank_list, add_header_footer,show_header_footer,edit_header_footer,edit_save_header_footer}
