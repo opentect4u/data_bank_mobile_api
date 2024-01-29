@@ -177,7 +177,84 @@
       </div>
     </div>
 
+    <!--change password modal-->
 
+    <div class="modal fade" id="changepwd">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h4 class="modal-title">Change Password</h4>
+            <button type="button" class="close" data-dismiss="modal">
+              &times;
+            </button>
+          </div>
+          
+          <!-- Modal body -->
+          <div class="modal-body">
+          <form action="/super-admin/password" method="post" id="myForm">
+            <div class="row">
+              <div class="col-md-4">
+                <label for="old_pwd">Old Password:</label>
+                <input
+                    type="password"
+                    name="old_pwd"
+                    class="form-control"
+                    id="old_pwd"
+                    maxlength="4"
+                    placeholder="Enter old password....."
+                    required
+                  />
+              </div>
+              <div class="col-md-4">
+                <label for="new_pwd">New Password:</label>
+                <input
+                    type="password"
+                    name="new_pwd"
+                    class="form-control"
+                    id="new_pwd"
+                    maxlength="4"
+                    placeholder="Enter new password....."
+                    required
+                  />
+              </div>
+              <div class="col-md-4">
+                <label for="con_pwd">Confirm Password:</label>
+                <input
+                    type="password"
+                    name="con_pwd"
+                    class="form-control"
+                    id="con_pwd"
+                    maxlength="4"
+                    placeholder="Enter confirm password....."
+                    required
+                  />
+              </div>
+              <div class="form-group col-3 mt-4">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block" style="margin-left: 30vw;"
+                />
+              </div>
+            </div>
+            </form>
+            
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
     <!-- The Modal -->

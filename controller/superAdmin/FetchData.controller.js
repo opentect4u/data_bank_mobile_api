@@ -1,5 +1,8 @@
 const Joi = require("joi");
-const {db_Select, db_db_Select_Sqery } = require("../../model/MasterModule");
+const {db_Select, db_db_Select_Sqery, db_Insert } = require("../../model/MasterModule");
+const dateFormat = require("dateformat");
+const bcrypt = require("bcrypt");
+
 
 const fetch_bank_info=async (req,res)=>{
     // try {
@@ -63,6 +66,8 @@ const get_branch_name=async (req,res)=>{
 }
 
 const bank_name = async (req, res) => {
+    // const user_data = req.session.user.user_data.msg[0];
+    // console.log(user_data)
     var bank = await db_Select('*','md_bank',null,null);
     const viewData = {
         title: "Adminn",
@@ -72,4 +77,52 @@ const bank_name = async (req, res) => {
     res.render('common/layouts/main', viewData)
 }
 
-module.exports={fetch_bank_info,get_branch_name, bank_name}
+const password = async (req, res) => {
+      const user_data = req.session.user.user_data.msg[0];
+    //   console.log(user_data);
+      const datetime = dateFormat(new Date(), "yyyy-mm-dd");
+      
+      var data = req.body,result;
+    //   console.log(data,"1234");
+
+      var select = "id,password",
+      table_name = "md_user",
+      whr = `id='${user_data.id}'`;
+      var res_dt = await db_Select(select,table_name,whr,null)
+    //   console.log(res_dt,"1234");
+
+      if(res_dt.suc > 0) {
+        if(res_dt.msg.length > 0) {
+          if (await bcrypt.compare(data.old_pwd, res_dt.msg[0].password)) {
+            var pass = bcrypt.hashSync(data.new_pwd, 10);
+            var table_name = "md_user",
+            fields = `password = '${pass}', modified_by='${user_data.id}', updated_at='${datetime}'`,
+            where2 = `id = '${user_data.id}'`,
+            flag = 1;
+            var forget_pass = await db_Insert(table_name,fields,null,where2,flag)
+            result = forget_pass
+            // req.flash("success","Password updated successfully")
+            res.redirect("/admin/logout");
+          }else {
+            // result = {
+            //   suc: 0,
+            //   msg: "Please provide your correct old password"
+            // };
+            res.redirect("/super-admin/summary");
+          }
+        }else {
+            // result = { suc: 0, msg: "No data found" };
+            res.redirect("/super-admin/summary");
+          }
+      }else {
+        // result = { suc: 0, msg: "No data found"};
+        res.redirect("/super-admin/summary");
+      }
+    //  res.send(result)
+    //  req.flash("success","Password updated successfully")
+    //  res.redirect("/admin/login");
+    }
+
+
+
+module.exports={fetch_bank_info,get_branch_name, bank_name,password}
