@@ -49,16 +49,29 @@ const post_login = async (req, res) => {
         
 
 
-
         let user_data = await db_Select(selectData, table_name, whrDAta, null);
+
+
+        // LEFT JOIN table2 ON table1.column_name = table2.column_name;
+        var table_name = "td_logo",
+        where = `bank_id='${user_data.msg[0].bank_id}'`,
+        select = 'file_path'
+
+        let logo_data = await db_Select(select, 'td_logo', where, null);
+
+        console.log(logo_data);
+
         console.log("=================================",user_data)
         delete user_data.sql;
         
     const datetime = dateFormat(new Date(), "dd/mm/yyyy hh:MM:ss")
-        req.session['user'] = {user_data,datetime}
-        req.flash('success', 'login successful')
-        // res.redirect('/admin/dashboard')
-        res.redirect('/super-admin/summary')
+        req.session['user'] = {user_data,logo_data,datetime}
+        if(res_dt.msg[0].user_type=='A') {
+            res.redirect('/super-admin/summary')
+           } else{
+            req.flash('success', 'login successful')
+            res.redirect('/admin/dashboard')
+           }
     } else {
         req.flash('error', 'Invalid username or password or Deactivate By Admin')
         res.redirect('/admin/login')
@@ -70,6 +83,7 @@ const post_login = async (req, res) => {
 
 
 } catch (error) {
+    // console.log(error);
     res.json({
         "ERROR": error,
         "status": true

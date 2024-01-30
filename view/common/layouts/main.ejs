@@ -131,47 +131,58 @@
       <div class="modal-dialog modal-xl">
         <div class="modal-content">
           <!-- Modal Header -->
-          <div class="modal-header">
-            <h4 class="modal-title">My Profile</h4>
+          <div class="modal-header" style="background-color: aliceblue;">
+            <h4 class="modal-title"><i class="fa fa-user-circle-o" style="font-size:30px">&nbsp;My Profile</i></h4>
             <button type="button" class="close" data-dismiss="modal">
               &times;
             </button>
           </div>
-          <div class="row">
-            <div class="col-md-4">
-              <img
-                src=""
-                alt="Your Profile Picture"
-                class="img-fluid rounded-circle"
-              />
-            </div>
-            <div class="col-md-8">
-              <h1><%= user.user_data.msg[0].bank_name %></h1>
-              <p><%= user.user_data.msg[0].branch_name %></p>
-              <p><%= user.user_data.msg[0].branch_address %></p>
-              <ul class="list-unstyled">
-                <li>
-                  <strong>Email:</strong> <%= user.user_data.msg[0].email_id %>
-                </li>
-                <li>
-                  <strong>Phone:</strong> <%= user.user_data.msg[0].phone_no %>
-                </li>
-                <!-- <li><strong>Website:</strong> <a href="#">www.yourwebsite.com</a></li> -->
-              </ul>
+          
+          <!-- Modal body -->
+          <div class="modal-body" style="background-color: antiquewhite;">
+            <div class="row">
+              <div class="col-md-4">
+                <img
+                  src="/bank_logo/<%=user.logo_data.msg[0].file_path%>"
+                  alt="Your Profile Picture"
+                  class="img-fluid rounded-circle"
+                />
+              </div>
+              <div class="col-md-8">
+                <h4 class="badge badge-success" style="font-size: 21px;"><%= user.user_data.msg[0].bank_name %></h4>
+                <% if (user.user_data.msg[0].user_type=='B') { %>
+                <ul class="list-unstyled">
+                  <li>
+                    <strong style="font-size: 18px;">Email:</strong>&nbsp; <%= user.user_data.msg[0].email_id %>
+                  </li>
+                  <li>
+                    <strong style="font-size: 18px;">Phone No:</strong>&nbsp; <%= user.user_data.msg[0].phone_no %>
+                  </li>
+                  <li>
+                    <strong style="font-size: 18px;">Contact Person:</strong>&nbsp; <%= user.user_data.msg[0].contact_person %>
+                  </li>
+                  <li>
+                    <strong style="font-size: 18px;">Bank Address:</strong>&nbsp; <%= user.user_data.msg[0].bank_address %>
+                  </li>
+                </ul>
+                <% } else { %>
+                <p><%= user.user_data.msg[0].branch_name %></p>
+                <p><%= user.user_data.msg[0].branch_address %></p>
+                  <% } %>
+              </div>
+              
             </div>
           </div>
-          <!-- Modal body -->
-          <div class="modal-body"></div>
 
           <!-- Modal footer -->
-          <div class="modal-footer">
-            <button
+          <div class="modal-footer" style="background-color: aliceblue;">
+            <!-- <button
               type="button"
               class="btn btn-secondary"
               data-dismiss="modal"
             >
               Close
-            </button>
+            </button> -->
           </div>
         </div>
       </div>
@@ -184,7 +195,7 @@
         <div class="modal-content">
           <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title">Change Password</h4>
+            <h4 class="modal-title"><i class="fa fa-key" style="font-size:30px">&nbsp;Change Password</i></h4>
             <button type="button" class="close" data-dismiss="modal">
               &times;
             </button>
@@ -195,7 +206,7 @@
           <form action="/super-admin/password" method="post" id="myForm">
             <div class="row">
               <div class="col-md-4">
-                <label for="old_pwd">Old Password:</label>
+                <label for="old_pwd"><b>Old Password:</b></label>
                 <input
                     type="password"
                     name="old_pwd"
@@ -207,7 +218,7 @@
                   />
               </div>
               <div class="col-md-4">
-                <label for="new_pwd">New Password:</label>
+                <label for="new_pwd"><b>New Password:</b></label>
                 <input
                     type="password"
                     name="new_pwd"
@@ -219,7 +230,7 @@
                   />
               </div>
               <div class="col-md-4">
-                <label for="con_pwd">Confirm Password:</label>
+                <label for="con_pwd"><b>Confirm Password:</b></label>
                 <input
                     type="password"
                     name="con_pwd"

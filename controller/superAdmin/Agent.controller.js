@@ -70,8 +70,8 @@ const add_agent = async (req, res) => {
     //   console.log(user_data);
 
     let fields2 =
-        "(bank_id,branch_code,password,user_id,device_id,active_flag,created_by,created_at)",
-      values2 = `('${value.bank}','${value.branch_c}','${enc_pss}','${value.user_id}','${value.device_id}','${value.agent_active}','${user_data.id}','${datetime}')`;
+        "(bank_id,branch_code,user_type,password,user_id,device_id,active_flag,created_by,created_at)",
+      values2 = `('${value.bank}','${value.branch_c}','O','${enc_pss}','${value.user_id}','${value.device_id}','${value.agent_active}','${user_data.id}','${datetime}')`;
     let res_dt2 = await db_Insert("md_user", fields2, values2, null, 0);
     //   console.log("========user==========", res_dt2);
 

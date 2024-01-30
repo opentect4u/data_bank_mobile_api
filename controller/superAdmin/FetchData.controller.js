@@ -66,7 +66,7 @@ const get_branch_name=async (req,res)=>{
 }
 
 const bank_name = async (req, res) => {
-    // const user_data = req.session.user.user_data.msg[0];
+    const user_data = req.session.user.user_data.msg[0];
     // console.log(user_data)
     var bank = await db_Select('*','md_bank',null,null);
     const viewData = {
@@ -79,7 +79,7 @@ const bank_name = async (req, res) => {
 
 const password = async (req, res) => {
       const user_data = req.session.user.user_data.msg[0];
-    //   console.log(user_data);
+      console.log(user_data,"123456");
       const datetime = dateFormat(new Date(), "yyyy-mm-dd");
       
       var data = req.body,result;

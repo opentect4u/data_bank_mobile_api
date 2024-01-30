@@ -41,7 +41,7 @@
             <!--		<a href="javascript:void(0)" onclick="myFunction()" class="dropbtn loginThumb"><img src="/admin_assets/images/thum.png"alt=""/></a>-->
 
             <div id="myDropdown" class="dropdown-content">
-              <% if (user.user_data.msg[0].user_id!='superadmin') { %>
+              <% if (user.user_data.msg[0].user_type!='A') { %>
                 <a
                 href="javascript:void(0)"
                 data-toggle="modal"
@@ -50,6 +50,7 @@
               >
               <% } %>
               
+             
               <a
                 href="javascript:void(0);"
                 data-toggle="modal"
@@ -58,6 +59,7 @@
                 <i class="fa fa-unlock-alt" aria-hidden="true"></i> Change
                 Password</a
               >
+
               <a href="/admin/logout"
                 ><i class="fa fa-sign-out" aria-hidden="true"></i> Log Out</a
               >
