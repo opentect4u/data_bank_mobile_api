@@ -86,7 +86,7 @@ const edit_branch_list = async (req, res) => {
     data: data.suc > 0 && data.msg.length > 0 ? data.msg[0] : [],
     branch_id: req.query.branch_id,
   };
-  // console.log(viewData);
+  console.log(viewData);
   res.render("common/layouts/main", viewData);
 };
 

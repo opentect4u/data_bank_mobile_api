@@ -452,6 +452,68 @@ const edit_save_header_footer = async (req, res) => {
   }
 };
 
+// const reset_data = async (req, res) => {
+//   try {
+//     let select = "a.*,b.bank_name",
+//     table_name = "md_user a, md_bank b"
+//     where = `a.bank_id = b.bank_id
+//     AND a.bank_id = '${req.query.bank_id}'` 
+//     const reset_dt = await db_Select(select, table_name, where, null);
+//     const viewData = {
+//       title: "Reset Password",
+//       page_path: "/reset/reset_password",
+//       data: reset_dt.suc > 0 && reset_dt.msg.length > 0 ? reset_dt.msg[0] : [],
+//       bank_id: req.query.bank_id,
+
+//     };
+//     console.log(viewData);
+//     res.render("common/layouts/main", viewData);
+//   } catch (error) {
+//     console.log(error);
+//     res.json({
+//       ERROR: error,
+//       status: false,
+//     });
+//   }
+// };
+
+const reset_bank_data = async (req, res) => {
+  var bank = await db_Select("*", "md_bank", null, null);
+  const viewData = {
+    title: "Reset Password",
+    page_path: "/reset/reset_password",
+    data: bank,
+    // bank_id: req.query.bank_id,
+
+  };
+  console.log(viewData.data);
+  res.render("common/layouts/main", viewData);
+};
+
+const reset_branch_name=async (req,res)=>{
+  // try {
+      const schema = Joi.object({
+          bank_id: Joi.string().required(),
+      });
+      const { error, value } = schema.validate(req.body, { abortEarly: false });
+      if (error) {
+          const errors = {};
+          error.details.forEach(detail => {
+              errors[detail.context.key] = detail.message;
+          });
+          return res.json({ error: errors });
+      }
+
+      var sql=`select branch_id,branch_code,branch_name,contact_person,phone_no from md_branch 
+               where bank_id = ${value.bank_id}`
+
+      var branchData= await db_db_Select_Sqery(sql);
+      res.json({
+          "SUCCESS": {branchData},
+          "status": true
+      });
+}
+
 module.exports = {
   agent_list,
   agent,
@@ -468,4 +530,6 @@ module.exports = {
   show_header_footer,
   edit_header_footer,
   edit_save_header_footer,
+  reset_bank_data,
+  reset_branch_name,
 };

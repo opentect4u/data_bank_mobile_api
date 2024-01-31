@@ -132,7 +132,7 @@
         <div class="modal-content">
           <!-- Modal Header -->
           <div class="modal-header" style="background-color: aliceblue;">
-            <h4 class="modal-title"><i class="fa fa-user-circle-o" style="font-size:30px">&nbsp;My Profile</i></h4>
+            <h4 class="modal-title"><i class="fa fa-user-circle-o" style="font-size:30px">&nbsp;My Profile&nbsp; (<%= user.user_data.msg[0].user_type=='B' ? user.user_data.msg[0].bank_name : user.user_data.msg[0].branch_name %>) </i></h4>
             <button type="button" class="close" data-dismiss="modal">
               &times;
             </button>
@@ -140,13 +140,21 @@
           
           <!-- Modal body -->
           <div class="modal-body" style="background-color: antiquewhite;">
-            <div class="row">
+            <div class="row" style="align-items: center;margin-left: 5vw;">
               <div class="col-md-4">
+                <% if (user.logo_data && user.logo_data.msg && user.logo_data.msg[0] && user.logo_data.msg[0].file_path) { %>
                 <img
-                  src="/bank_logo/<%=user.logo_data.msg[0].file_path%>"
+                  src="/bank_logo/<%= user.logo_data.msg[0].file_path %>"
                   alt="Your Profile Picture"
                   class="img-fluid rounded-circle"
                 />
+                <% } else { %>
+                  <img
+                  src=""
+                  alt="No Image Available"
+                  class=""
+              />
+          <% } %>
               </div>
               <div class="col-md-8">
                 <h4 class="badge badge-success" style="font-size: 21px;"><%= user.user_data.msg[0].bank_name %></h4>
@@ -165,9 +173,29 @@
                     <strong style="font-size: 18px;">Bank Address:</strong>&nbsp; <%= user.user_data.msg[0].bank_address %>
                   </li>
                 </ul>
-                <% } else { %>
-                <p><%= user.user_data.msg[0].branch_name %></p>
-                <p><%= user.user_data.msg[0].branch_address %></p>
+                <% } %>
+
+                <% if (user.user_data.msg[0].user_type=='R') { %>
+                  <ul class="list-unstyled">
+                    <li>
+                    <strong style="font-size: 18px;">Branch Code:</strong>&nbsp; <%= user.user_data.msg[0].branch_code %>
+                  </li>
+                  <li>
+                    <strong style="font-size: 18px;">Branch Name:</strong>&nbsp; <%= user.user_data.msg[0].branch_name %>
+                  </li>
+                  <li>
+                    <strong style="font-size: 18px;">Contact Person:</strong>&nbsp; <%= user.user_data.msg[0].person %>
+                  </li>
+                  <li>
+                    <strong style="font-size: 18px;">Email:</strong>&nbsp; <%= user.user_data.msg[0].email %>
+                  </li>
+                  <li>
+                    <strong style="font-size: 18px;">Phone No:</strong>&nbsp; <%= user.user_data.msg[0].mobile %>
+                  </li>
+                  <li>
+                    <strong style="font-size: 18px;">Branch Address:</strong>&nbsp; <%= user.user_data.msg[0].branch_address %>
+                  </li>
+                  </ul>
                   <% } %>
               </div>
               

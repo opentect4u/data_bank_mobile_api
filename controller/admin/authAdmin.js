@@ -34,7 +34,7 @@ const post_login = async (req, res) => {
         if(res_dt.msg[0].user_type=='R'){
             var table_name = "md_user a,md_bank b,md_branch c",
             whrDAta = `a.bank_id=b.bank_id AND a.branch_code=c.branch_code AND b.bank_id=c.bank_id AND a.user_id='${user_id}' AND a.active_flag='Y'`,
-            selectData = "a.user_type,c.branch_address,c.email_id,c.phone_no,a.id, a.bank_id, a.branch_code, a.device_sl_no, a.device_id, a.user_id, a.pin_no, a.profile_pic , c.branch_name,b.*";
+            selectData = "a.user_type,c.branch_address,c.email_id email,c.phone_no mobile,a.id, a.bank_id, a.branch_code, a.device_sl_no, a.device_id, a.user_id, a.pin_no, a.profile_pic , c.branch_name,c.contact_person person,b.*";
         }else if(res_dt.msg[0].user_type=='B'){
             var table_name = "md_user a,md_bank b",
             whrDAta = `a.bank_id=b.bank_id AND a.user_id='${user_id}' AND a.active_flag='Y'`,
