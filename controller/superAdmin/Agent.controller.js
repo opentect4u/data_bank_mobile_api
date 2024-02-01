@@ -478,41 +478,36 @@ const edit_save_header_footer = async (req, res) => {
 // };
 
 const reset_bank_data = async (req, res) => {
+  const user_data = req.session.user.user_data.msg[0];
   var bank = await db_Select("*", "md_bank", null, null);
   const viewData = {
     title: "Reset Password",
     page_path: "/reset/reset_password",
     data: bank,
+    user_data: user_data,
     // bank_id: req.query.bank_id,
 
   };
-  console.log(viewData.data);
+  // console.log(viewData.data);
   res.render("common/layouts/main", viewData);
 };
 
-const reset_branch_name=async (req,res)=>{
-  // try {
-      const schema = Joi.object({
-          bank_id: Joi.string().required(),
-      });
-      const { error, value } = schema.validate(req.body, { abortEarly: false });
-      if (error) {
-          const errors = {};
-          error.details.forEach(detail => {
-              errors[detail.context.key] = detail.message;
-          });
-          return res.json({ error: errors });
-      }
-
-      var sql=`select branch_id,branch_code,branch_name,contact_person,phone_no from md_branch 
-               where bank_id = ${value.bank_id}`
-
-      var branchData= await db_db_Select_Sqery(sql);
-      res.json({
-          "SUCCESS": {branchData},
-          "status": true
-      });
-}
+const user_agent = async (req, res) => {
+  try {
+    var data = req.body;
+    let select = "agent_id, agent_code, agent_name, phone_no",
+      table_name = "md_agent",
+      whr = `bank_id = ${data.bank_id} AND branch_code = ${data.branch_id}`;
+    var resData = await db_Select(select, table_name, whr, null);
+    // console.log(resData);
+    res.json(resData);
+  } catch (error) {
+    res.json({
+      suc: 0,
+      msg: [],
+    });
+  }
+};
 
 module.exports = {
   agent_list,
@@ -531,5 +526,5 @@ module.exports = {
   edit_header_footer,
   edit_save_header_footer,
   reset_bank_data,
-  reset_branch_name,
+  user_agent,
 };
