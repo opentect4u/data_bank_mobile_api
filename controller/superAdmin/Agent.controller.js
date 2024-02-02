@@ -509,6 +509,24 @@ const user_agent = async (req, res) => {
   }
 };
 
+const save_agent_pin = async (req, res) => {
+  try {
+    var data = req.body
+
+    const user_data = req.session.user.user_data.msg[0];
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd");
+
+    let fields = `password = ${data.pass},modified_by='${user_data.id}',updated_at='${datetime}'`,
+      where = `agent_code='${data.agent_code}'`;
+    let res_dt = await db_Insert("md_user", fields, null, where, 1);
+    // console.log(res_dt);    
+    res.send(res_dt);
+  } catch (error) {
+    console.log(error);
+    res.send({suc: 0, msg: error})
+  }
+};
+
 module.exports = {
   agent_list,
   agent,
@@ -527,4 +545,5 @@ module.exports = {
   edit_save_header_footer,
   reset_bank_data,
   user_agent,
+  save_agent_pin,
 };
