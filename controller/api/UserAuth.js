@@ -51,6 +51,7 @@ const register = async (req, res) => {
 //login Operator
 const login = async (req, res) => {
     try {
+        var bank_acc_type = []
         const schema = Joi.object({
             device_id: Joi.required(),
             user_id: Joi.required(),
@@ -76,6 +77,16 @@ const login = async (req, res) => {
 
             let user_data = await db_Select(selectData, table_name, whrDAta, null);
 
+            if(user_data.suc > 0 && user_data.msg.length > 0){
+                var select = 'bank_id, dds_flag, rd_flag, loan_flag',
+                table_name = 'md_bank_acc_type',
+                whr = `bank_id = '${user_data.msg[0].bank_id}'`,
+                order = null;
+                bank_acc_type = await db_Select(select, table_name, whr, order)
+            }else{
+                bank_acc_type = []
+            }
+
             delete user_data.sql;
 
             
@@ -93,7 +104,7 @@ const login = async (req, res) => {
             let setting = await db_Select("*", "td_settings", whrSeetingData, null);
             delete setting.sql;
             res.json({
-                "success": { user_data, total_collection, setting },
+                "success": { user_data, total_collection, setting, bank_acc_type: bank_acc_type.suc > 0 ? bank_acc_type.msg : [] },
                 "status": true
             });
         } else {

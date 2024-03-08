@@ -12,6 +12,7 @@ const todaydate = dateFormat(new Date(), "yyyy-mm-dd")
 
 const transaction = async (req, res) => {
     try {
+        console.log(req.body);
         const schema = Joi.object({
             // receipt_no: Joi.number().required(),
             bank_id: Joi.number().required(),
