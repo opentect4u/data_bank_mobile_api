@@ -1,4 +1,4 @@
-const { db_Select, db_Insert, db_Delete } = require("../../model/MasterModule");
+const { db_Select, db_Insert, db_Delete, createStrWithZero } = require("../../model/MasterModule");
 const dateFormat = require('dateformat');
 const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
 const stream = require('stream');
@@ -168,7 +168,9 @@ const upload_pctx_file_data = async (req, res) => {
                 // }
                 var fields = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
 
-                    values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? 'D' : (valuesArray[1] == '-') ? 'L' : 'R'}','D','${valuesArray[2]}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+                    // values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? 'D' : (valuesArray[1] == '-') ? 'L' : 'R'}','D','${valuesArray[2]}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+
+                    values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? (valuesArray[2].trim() != 'RD' ? 'D' : 'R') : 'L'}','${(valuesArray[1] == '+') ? (valuesArray[2].trim() != 'RD' ? 'D' : 'R') : 'L'}','${valuesArray[2].trim()}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
                 res_dt
                 try {
                     var res_dt = await db_Insert("td_account_dtls", fields, values, null, 0);
@@ -223,30 +225,40 @@ const download_pcrx_file = async (req, res) => {
         const tDate = req.query.tDate;
         const transitionNumber = req.query.transaction_number;
         const user_data = req.session.user.user_data.msg[0];
-        var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,RPAD(account_number, 19, ' ') as account_number,RPAD(UPPER(account_holder_name), 20, ' ') as name,LPAD(deposit_amount, 10, '0') as deposit_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date,LPAD(receipt_no, 5, '0') as receipt_no";
+        var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,RPAD(account_number, 19, ' ') as account_number,RPAD(UPPER(account_holder_name), 20, ' ') as name,LPAD(deposit_amount, 10, '0') as deposit_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,LPAD(receipt_no, 5, '0') as receipt_no";
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
         //AND download_flag='N'// onetime download
         // var whr = null;
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
         console.log("=====================", res_dt)
         // Format the date as "dd.mm.yy"
-        const formattedDate = dateFormat(new Date(), "dd.MM.yy");
-        let formattedData = `000,12345,0000000000106100.00,00000000000000000402,${String(agent_code).padStart(10, '0')},${formattedDate},12345\n`;
-        res_dt.msg.forEach((item) => {
-            const {
-                branch_code,
-                product_code,
-                account_number,
-                name,
-                deposit_amount,
-                transaction_date,
-                receipt_no
-            } = item;
-            const formattedLine = `${branch_code},${product_code},${account_number},${name},${deposit_amount},${transaction_date},${receipt_no}`;
-            formattedData += formattedLine + "\n";
-        });
+        const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
+        currTime = dateFormat(new Date(), "HH.MM.ss");
+        // let formattedData = `000,12345,0000000000106100.00,00000000000000000402,${String(agent_code).padStart(10, '0')},${formattedDate},12345\n`;
+        let formattedData = '', tot_coll_amt = 0, tot_coll = 1, agent_code_final = await createStrWithZero(10, agent_code.toString(), '0', 'P');
+        if(res_dt.suc > 0){
+            for(let item of res_dt.msg){
+                const {
+                    branch_code,
+                    product_code,
+                    account_number,
+                    name,
+                    deposit_amount,
+                    transaction_date,
+                    transaction_time,
+                    receipt_no
+                } = item;
+                const formattedLine = `${branch_code},${product_code},${account_number},${name},D,${deposit_amount},${transaction_date},${transaction_time},${receipt_no},0,00000000,${agent_code_final}`;
+                formattedData += formattedLine + "\n";
+                tot_coll_amt += parseFloat(deposit_amount)
+                tot_coll++
+            }
+        }
+        let tot_col_amt_final = await createStrWithZero(10, tot_coll_amt.toString(), '0', 'P'),
+        tot_col_final = await createStrWithZero(4, tot_coll.toString(), '0', 'P');
+        let col_header = `000,12345,${tot_col_amt_final},${tot_col_final},${agent_code_final},${formattedDate},${currTime},12345,0,00000000,${agent_code_final}`
 
-
+        formattedData = col_header + '\n' + formattedData
 
         var whr3 = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}' AND download_flag='N' AND agent_trans_no IS NOT NULL`,
             fields = `download_flag='Y'`;

@@ -92,4 +92,22 @@ const db_db_Select_Sqery = (sql) => {
     });
 };
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, db_db_Select_Sqery }
+const createStrWithZero = (tot_row, str, chr_pad_with, flag) => { // S -> Suffix; P-> Prefix
+    return new Promise((resolve, reject) => {
+        console.log(str);
+        let tot_char_len = str.split('').length,finalStr = '';
+        console.log(tot_char_len, 'len', (tot_row-tot_char_len), 'minus', str.length);
+        for(let i = tot_char_len; i < tot_row; i++){
+            finalStr = finalStr.toString() + chr_pad_with.toString()
+        }
+        console.log(finalStr);
+        if(flag != 'S'){
+            finalStr = finalStr + str
+        }else{
+            finalStr = str + finalStr
+        }
+        resolve(finalStr)
+    })
+}
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, db_db_Select_Sqery, createStrWithZero }
