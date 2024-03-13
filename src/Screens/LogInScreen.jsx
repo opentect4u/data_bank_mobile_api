@@ -243,7 +243,7 @@ const LogInScreen = ({ navigation }) => {
                   handleOnpress={() => {
                     setDisable(true)
                     login()
-                    console.log(isLogin)
+                    // console.log(isLogin)
                   }}
                   customStyle={{ marginTop: 10, width: "40%" }}
                 />
