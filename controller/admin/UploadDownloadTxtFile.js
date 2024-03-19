@@ -170,7 +170,7 @@ const upload_pctx_file_data = async (req, res) => {
 
                     // values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? 'D' : (valuesArray[1] == '-') ? 'L' : 'R'}','D','${valuesArray[2]}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
 
-                    values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? (valuesArray[2].trim() != 'RD' ? 'D' : 'R') : 'L'}','${(valuesArray[1] == '+') ? (valuesArray[2].trim() != 'RD' ? 'D' : 'R') : 'L'}','${valuesArray[2].trim()}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+                    values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? (valuesArray[2].trim() != 'RD' ? 'D' : 'R') : 'L'}','${(valuesArray[1] == '+') ? (valuesArray[2].trim().split(' ').join('') != 'RD' ? 'D' : 'R') : 'L'}','${valuesArray[2].trim().split(' ').join('')}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
                 res_dt
                 try {
                     var res_dt = await db_Insert("td_account_dtls", fields, values, null, 0);
