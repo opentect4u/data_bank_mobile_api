@@ -153,42 +153,57 @@ const upload_pctx_file_data = async (req, res) => {
         const firstRow = req.body.firstRow.split(',');
         const file_AGENT_CODE = firstRow[6]
         var er
+        const chk_arr = req.body.batch[0].split(',');
         // console.log("========FIRST ROW==========", req.body.agent_id)
         // for (let i = 0; i < req.body.batch.length; i++) {
         // console.log(req.body.batch.length);
-        for (let dt of req.body.batch) {
-            // var input = req.body.batch[i];
-            var input = dt;
-            const valuesArray = input.split(',');
-            // console.log("************************",valuesArray.length)
-            if (valuesArray.length == 9) {
-                // console.log(JSON.stringify(valuesArray));
-                // for (let i = 0; i < valuesArray.length; i++) {
-                //     valuesArray[i].replace(/^\s*/, '').trim();
-                // }
-                var fields = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
-
-                    // values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? 'D' : (valuesArray[1] == '-') ? 'L' : 'R'}','D','${valuesArray[2]}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
-
-                    values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? (valuesArray[2].trim() != 'RD' ? 'D' : 'R') : 'L'}','${(valuesArray[1] == '+') ? (valuesArray[2].trim().split(' ').join('') != 'RD' ? 'D' : 'R') : 'L'}','${valuesArray[2].trim().split(' ').join('')}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
-                res_dt
-                try {
-                    var res_dt = await db_Insert("td_account_dtls", fields, values, null, 0);
-                    er = res_dt
-                } catch (error) {
-                    er = error
+        if(user_data.branch_code == chk_arr[0].replace(/^\s*/, '').trim()){
+            if(selectAgentId == file_AGENT_CODE){
+                for (let dt of req.body.batch) {
+                    // var input = req.body.batch[i];
+                    var input = dt;
+                    const valuesArray = input.split(',');
+                    // console.log("************************",valuesArray.length)
+                    if (valuesArray.length == 9) {
+                        // console.log(JSON.stringify(valuesArray));
+                        // for (let i = 0; i < valuesArray.length; i++) {
+                        //     valuesArray[i].replace(/^\s*/, '').trim();
+                        // }
+                        var fields = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
+        
+                            // values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? 'D' : (valuesArray[1] == '-') ? 'L' : 'R'}','D','${valuesArray[2]}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+        
+                            values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${valuesArray[1] == '+' ? 'D' : 'L'}','${(valuesArray[1] == '+') ? (valuesArray[2].trim().split(' ').join('') != 'RD' ? 'D' : 'R') : 'L'}','${valuesArray[2].trim().split(' ').join('')}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+                        res_dt
+                        try {
+                            var res_dt = await db_Insert("td_account_dtls", fields, values, null, 0);
+                            er = res_dt
+                        } catch (error) {
+                            er = error
+                        }
+                    }
                 }
+                if (req.body.batch.length > 0) {
+                    res.json({
+                        "success": req.body.batch.length,
+                        "status": true
+                    });
+                } else {
+                    res.json({
+                        "ERROR": req.body.batch.length,
+                        "status": true
+                    });
+                }
+            }else{
+                res.send({
+                    "ERROR": 'Selected Agent Code and PCTX Agent code does not match.',
+                    "status": false
+                });
             }
-        }
-        if (req.body.batch.length > 0) {
-            res.json({
-                "success": req.body.batch.length,
-                "status": true
-            });
-        } else {
-            res.json({
-                "ERROR": req.body.batch.length,
-                "status": true
+        }else{
+            res.send({
+                "ERROR": 'Selected Branch Code and PCTX Branch code does not match.',
+                "status": false
             });
         }
     } catch (error) {

@@ -138,7 +138,7 @@
                 const content = event.target.result;
                 const rows = content.split("@");
                 const firstRow = rows.shift(); // Remove and store the first row
-
+                console.log('HERE');
                 sendBatches(rows, firstRow);
               };
               reader.readAsText(file);
@@ -189,9 +189,18 @@
           agent_id: agent_id,
         }),
         success: function (response) {
-          console.log("AJAX Success:", response);
-          $("#uploadButton").attr("disabled", true);
-          callback(); // Call the callback function to process the next batch
+          console.log("HERE IS AJAX Success:", response);
+          if(response.status){
+            $("#uploadButton").attr("disabled", true);
+            callback(); // Call the callback function to process the next batch
+          }else{
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: response.ERROR,
+            });
+            // console.error("AJAX Error:", error);
+          }
         },
         error: function (error) {
           Swal.fire({
