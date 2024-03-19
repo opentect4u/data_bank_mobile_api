@@ -115,8 +115,8 @@ const LoanAccountDetailsScreen = ({ navigation, route }) => {
           <View style={styles.tableConatiner}>
             <Table
               borderStyle={{
-                borderWidth: 2,
-                borderColor: COLORS.lightScheme.onTertiaryContainer,
+                borderWidth: 5,
+                borderColor: COLORS.lightScheme.primary,
               }}
               style={{ backgroundColor: COLORS.lightScheme.onPrimary }}>
               <Rows data={tableData} textStyle={styles.text} />
@@ -211,10 +211,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 12,
   },
   inputContainer: {
+    padding:20,
     marginVertical: 10,
-    padding: 10,
-    backgroundColor: COLORS.lightScheme.secondaryContainer,
-    borderRadius: 5,
+    // padding: 10,
+    backgroundColor: COLORS.lightScheme.onPrimary,
+    borderRadius: 20,
+    borderColor:COLORS.lightScheme.primary,
+    borderWidth:0.8,
+    elevation:10
   },
   buttonContainer: {
     flexDirection: "row",

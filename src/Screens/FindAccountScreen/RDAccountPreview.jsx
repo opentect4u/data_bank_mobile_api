@@ -420,7 +420,7 @@ const RDAccountPreview = ({ navigation, route }) => {
             <Table
               borderStyle={{
                 borderWidth: 2,
-                borderColor: COLORS.lightScheme.onTertiaryContainer,
+                borderColor: COLORS.lightScheme.primary,
               }}
               style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
               <Rows data={tableData} textStyle={styles.text} />

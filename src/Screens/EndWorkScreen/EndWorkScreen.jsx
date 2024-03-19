@@ -157,8 +157,8 @@ const EndWorkScreen = ({ navigation }) => {
             <Text style={styles.todayCollection}>Today's Collections</Text>
             <Table
               borderStyle={{
-                borderWidth: 1,
-                borderColor: COLORS.lightScheme.tertiary,
+                borderWidth: 5,
+                borderColor: COLORS.lightScheme.primary,
               }}
               style={{ backgroundColor: COLORS.lightScheme.onPrimary }}>
               <Rows data={tableData} textStyle={styles.text} />

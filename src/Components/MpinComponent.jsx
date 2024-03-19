@@ -15,6 +15,7 @@ const MpinComponent = ({ value, handleChange }) => {
               height: 10,
               borderRadius: 25,
               backgroundColor: COLORS.lightScheme.primary,
+              borderWidth:2
             }}></View>
         }
         maskDelay={1000}
@@ -22,7 +23,7 @@ const MpinComponent = ({ value, handleChange }) => {
         cellStyle={{
           borderWidth: 1,
           borderRadius: 5,
-          borderColor: COLORS.lightScheme.secondary,
+          borderColor: COLORS.lightScheme.primary,
         }}
         cellStyleFocused={null}
         value={value}

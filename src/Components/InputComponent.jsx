@@ -30,7 +30,7 @@ const InputComponent = ({
         onChangeText={handleChange}
         value={value}
         placeholder={placeholder}
-        placeholderTextColor={COLORS.lightScheme.secondary}
+        placeholderTextColor={COLORS.lightScheme.primary}
         readOnly={readOnly}
         keyboardType={keyboardType}
         secureTextEntry={textHide}
@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     width: "100%",
     borderWidth: 1,
     borderColor: COLORS.lightScheme.primary,
+    borderWidth:1.5,
     borderRadius: PixelRatio.roundToNearestPixel(10),
     paddingHorizontal: 10,
     paddingVertical: 15,

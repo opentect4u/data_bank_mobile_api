@@ -420,8 +420,8 @@ const AccountPreview = ({ navigation, route }) => {
           <View style={styles.tableConatiner}>
             <Table
               borderStyle={{
-                borderWidth: 2,
-                borderColor: COLORS.lightScheme.onTertiaryContainer,
+                borderWidth: 5,
+                borderColor: COLORS.lightScheme.primary,
               }}
               style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
               <Rows data={tableData} textStyle={styles.text} />

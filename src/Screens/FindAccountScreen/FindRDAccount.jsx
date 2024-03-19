@@ -134,9 +134,12 @@ const styles = StyleSheet.create({
     bottom: 130,
     width: "100%",
     alignSelf: "center",
-    backgroundColor: COLORS.lightScheme.tertiaryContainer,
+    borderColor:COLORS.lightScheme.primary,
+    borderWidth:2,
+    backgroundColor: COLORS.lightScheme.onPrimary,
     padding: 20,
     borderRadius: 10,
+    elevation:10
   },
   title: {
     textAlign: "center",

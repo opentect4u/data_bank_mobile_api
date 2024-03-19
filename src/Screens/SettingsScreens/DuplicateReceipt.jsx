@@ -9,6 +9,7 @@ import { AppStore } from "../../Context/AppContext"
 import { useFocusEffect } from "@react-navigation/native"
 import SearchCardDuplicateReceipt from "../../Components/SearchCardDuplicateReceipt"
 import { Dropdown } from "react-native-element-dropdown"
+import InputDropdownComponent from "../../Components/InputDropdownComponent"
 
 const DuplicateReceipt = ({ navigation }) => {
   const [searchValue, changeSearchValue] = useState(() => "")
@@ -70,10 +71,28 @@ const DuplicateReceipt = ({ navigation }) => {
 
         console.log("bank details", res.data)
         setUserBankDetails(res.data.success.msg)
+        if(!res.data.success.msg.length)
+        {ToastAndroid.showWithGravityAndOffset(
+          "No data found!",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50,
+        )
+      }
       })
       .catch(err => {
         console.log("error" + err)
-      })
+        ToastAndroid.showWithGravityAndOffset(
+          "No data found!",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50,
+        )
+      }
+      )
+
   }
 
   useFocusEffect(
@@ -111,7 +130,7 @@ const DuplicateReceipt = ({ navigation }) => {
             })}
         </ScrollView>
         {/* <ScrollView> */}
-        <View style={styles.dropdownContainer}>
+        {/* <View style={styles.dropdownContainer}>
           {renderLabel()}
           <Dropdown
             style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
@@ -139,17 +158,38 @@ const DuplicateReceipt = ({ navigation }) => {
               setAccountType(item.value)
               setFocusDrop(false)
             }}
-            // renderLeftIcon={() => (
-            //   <AntDesign
-            //     style={styles.icon}
-            //     color={isFocus ? 'blue' : 'black'}
-            //     name="Safety"
-            //     size={20}
-            //   />
-            // )}
+           
           />
-        </View>
+        </View> */}
         <View style={styles.searchContainer}>
+        {renderLabel()}
+
+        <Dropdown
+            style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={data}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!focusDrop ? "Select type" : "..."}
+            searchPlaceholder="Search..."
+            value={accountType}
+            onFocus={() => setFocusDrop(true)}
+            onBlur={() => setFocusDrop(false)}
+            // onConfirmSelectItem={()=>
+            //   setReadonly(accountType?false:true)
+
+            // }
+            onChange={item => {
+              // console.log(accountType)
+              setReadonly(false)
+              setAccountType(item.value)
+              setFocusDrop(false)
+            }}/>
           <InputComponent
             readOnly={isReadonly}
             label={"Account No. / Name"}
@@ -159,6 +199,16 @@ const DuplicateReceipt = ({ navigation }) => {
             autoFocus={!isReadonly}
           />
         </View>
+        {/* <View style={styles.searchContainer}>
+        <InputDropdownComponent
+            readOnly={isReadonly}
+            label={"Account No. / Name"}
+            placeholder={"Enter Account No. / Name"}
+            value={searchValue}
+            handleChange={changeSearchValue}
+            autoFocus={!isReadonly}
+          />
+        </View> */}
         {/* </ScrollView> */}
         {/* Search Component */}
       </View>
@@ -179,21 +229,24 @@ const styles = StyleSheet.create({
     bottom: 130,
     width: "100%",
     alignSelf: "center",
-    backgroundColor: COLORS.lightScheme.tertiaryContainer,
+    borderColor:COLORS.lightScheme.primary,
+    borderWidth:2.5,
+    backgroundColor: COLORS.lightScheme.onPrimary,
     padding: 20,
     borderRadius: 10,
+    elevation:10
   },
   dropdownContainer: {
     backgroundColor: "white",
     position: "absolute",
-    bottom: 300,
+    bottom: 250,
     padding: 16,
     width: "100%",
   },
   dropdown: {
     height: 50,
-    borderColor: "gray",
-    borderWidth: 0.5,
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 1.5,
     borderRadius: 8,
     paddingHorizontal: 8,
   },

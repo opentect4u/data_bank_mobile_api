@@ -24,6 +24,8 @@ import {
             backgroundColor: disabled
               ? COLORS.darkScheme.secondary
               : COLORS.lightScheme.primary,
+              borderColor:COLORS.lightScheme.primary,
+              borderWidth:1.5
           },
           { ...styles.container, ...customStyle },
         ]}>
@@ -38,7 +40,9 @@ import {
     container: {
       borderRadius: PixelRatio.roundToNearestPixel(30),
       padding: 10,
-      elevation: 15,
+      borderColor:COLORS.lightScheme.primary,
+      border:1.5,
+      elevation: 5,
       // backgroundColor: colors.secondary
     },
     text: {

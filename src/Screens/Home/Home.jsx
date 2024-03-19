@@ -221,9 +221,9 @@ const Home = ({ navigation }) => {
             <Text style={styles.todayCollection}>Agent Information</Text>
             <Table
               borderStyle={{
-                borderWidth: 2,
+                borderWidth: 5,
                 borderColor: COLORS.lightScheme.primary,
-                borderRadius: 10,
+                borderRadius: 15,
               }}
               style={{
                 backgroundColor: COLORS.lightScheme.background,
@@ -312,6 +312,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
+    
   },
   grettingText: {
     fontSize: 20,
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightScheme.onPrimary,
     alignItems: "center",
     width: "25%",
-    height: 60, //
+    height: 70, //
     padding: 6,
     paddingTop:20,
     margin: 5,
@@ -355,7 +356,9 @@ const styles = StyleSheet.create({
     paddingHorizontal:10,
     borderRadius: 10,
     justifyContent: "center",
-    elevation: 10,
+    borderColor:COLORS.lightScheme.primary,
+    borderWidth:3,
+    elevation: 30,
   },
   label: {
     color: COLORS.lightScheme.primary,
