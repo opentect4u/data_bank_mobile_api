@@ -230,7 +230,7 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
         await BluetoothEscposPrinter.printColumn(
           [30],
           [BluetoothEscposPrinter.ALIGN.LEFT],
-          ["Current Bal. : " + parseFloat(item?.current_balance + parseFloat(money))],
+          ["Current Bal. : " + parseFloat(item?.current_balance - parseFloat(money))],
           {},
         )
   

@@ -221,7 +221,7 @@ const Home = ({ navigation }) => {
             <Text style={styles.todayCollection}>Agent Information</Text>
             <Table
               borderStyle={{
-                borderWidth: 5,
+                borderWidth: 2,
                 borderColor: COLORS.lightScheme.primary,
                 borderRadius: 15,
               }}
