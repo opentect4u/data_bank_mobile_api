@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, ToastAndroid, PixelRatio } from "react-native"
-import { useCallback, useContext, useState } from "react"
+import { StyleSheet, Text, View, ScrollView, ToastAndroid, PixelRatio,RefreshControl } from "react-native"
+import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS, colors } from "../../Resources/colors"
 import {
@@ -22,6 +22,8 @@ const EndWorkScreen = ({ navigation }) => {
   const [isButtonEnabled, setIsButtonEnabled] = useState(() => false)
   const [endScreenPassword, setEndScreenPassword] = useState(() => "")
   const [isLoading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+
   const {
     userId,
     agentName,
@@ -32,12 +34,19 @@ const EndWorkScreen = ({ navigation }) => {
     totalCollection,
     receiptNumber,
     maximumAmount,
+    transDt,
+    setTotalCollection,
+    allowCollectionDays,
+    login,
+    getTotalDepositAmount,
   } = useContext(AppStore)
 
   const tableData = [
     ["Agent Code", userId],
     ["Agent Name", agentName],
     ["Branch Code", branchCode],
+    ["Allowed Days", allowCollectionDays],
+    ["Send Date", transDt.toISOString().slice(0, 10)],
     ["Max Collection", maximumAmount],
     ["Total Collection", totalCollection],
     ["Remaing Collection", maximumAmount - totalCollection],
@@ -45,6 +54,7 @@ const EndWorkScreen = ({ navigation }) => {
 
   const endCollection = async () => {
     setLoading(true)
+    onRefresh()
     const obj = {
       user_id: userId,
       password: passcode,
@@ -126,10 +136,31 @@ const EndWorkScreen = ({ navigation }) => {
   // } after CustomerHeader
 
   const popAction = StackActions.popToTop()
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    login()
+    getTotalDepositAmount()
+    setTimeout(() => {
+      setRefreshing(false)
+      login()
+    }, 2000)
+    navigation.dispatch(popAction)
 
+  }, [])
+  useEffect(()=>{
+    onRefresh()
+    login()
+
+  },[])
   useFocusEffect(
     useCallback(() => {
-      // alert('Screen was focused')
+      setRefreshing(true)
+      getTotalDepositAmount()
+      setTimeout(() => {
+        setRefreshing(false)
+        login()
+      }, 2000)
+
       navigation.dispatch(popAction)
 
       return () => {
@@ -153,7 +184,9 @@ const EndWorkScreen = ({ navigation }) => {
             justifyContent: "center",
             alignContent: "center",
           }}>
-          <ScrollView keyboardShouldPersistTaps="handled">
+          <ScrollView keyboardShouldPersistTaps="handled" refreshControl={
+              <RefreshControl refreshing={refreshing} color={COLORS.lightScheme.primary} onRefresh={onRefresh} />
+            }>
             <Text style={styles.todayCollection}>Today's Collections</Text>
             <Table
               borderStyle={{

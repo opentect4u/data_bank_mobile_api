@@ -138,13 +138,14 @@ const ReportDay = () => {
           let rowArr = [
             i + 1,
             new Date(item.date).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"}),
-            item.account_type == "D"
-              ? "Daily"
-              : item.account_type == "R"
-              ? "RD"
-              : item.account_type == "L"
-              ? "Loan"
-              : "",
+            // item.account_type == "D"
+            //   ? "Daily"
+            //   : item.account_type == "R"
+            //   ? "RD"
+            //   : item.account_type == "L"
+            //   ? "Loan"
+            //   : "",
+            item.product_code,
             item.account_number,
             item.account_holder_name,
             item.deposit_amount,

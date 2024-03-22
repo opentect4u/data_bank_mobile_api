@@ -113,7 +113,7 @@ const AccountPreview = ({ navigation, route }) => {
       .then(res => {
         console.log('result '+res.data.status)
         if (res.data.status) {
-    setLoading(false)
+          setLoading(false)
 
           // console.log("###### Preview: ", res.data)
           // alert(`Receipt No is ${res.data.receipt_no}`)
@@ -347,7 +347,7 @@ const AccountPreview = ({ navigation, route }) => {
       console.log("##$$$$+++++###$$$ totalCollection", totalCollection)
 
       if (
-        maximumAmount * allowCollectionDays >=
+        maximumAmount >=
         parseFloat(money) + totalDepositedAmount
       ) {
         console.log("MMMMMMMMMMMMMMMM")

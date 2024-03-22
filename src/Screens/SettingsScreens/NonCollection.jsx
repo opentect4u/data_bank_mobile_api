@@ -75,7 +75,7 @@ const NonCollection = () => {
         })
         if(tableData.length==0){
         setIsDisabled(false)
-        setLoading(false)
+        // setLoading(false)
         ToastAndroid.showWithGravityAndOffset(
           "No data found!",
           ToastAndroid.SHORT,
@@ -86,7 +86,7 @@ const NonCollection = () => {
         }
         console.log("++++++ TABLE DATA ++++++++", tableData)
         setNonCollectionReport(tableData)
-        setLoading(false)
+        // setLoading(false)
         setIsDisabled(false)
       })
       .catch(err => {

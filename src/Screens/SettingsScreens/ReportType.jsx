@@ -112,7 +112,7 @@ const ReportType = () => {
     { label: "RD", value: "R" },
   ]
 
-  const tableHead = ["Sl No.", "Date", "A/c No.", "Name", "Amount"]
+  const tableHead = ["Sl No.", "Date","A/C Type", "A/c No.", "Name", "Amount"]
   let tableData = typeWiseReportArray
 
   const getReportsTypeScroll = async () => {
@@ -140,6 +140,7 @@ const ReportType = () => {
           let rowArr = [
             i + 1,
             new Date(item.date).toLocaleDateString("en-GB"),
+            item.product_code,
             item.account_number,
             item.account_holder_name,
             item.deposit_amount,

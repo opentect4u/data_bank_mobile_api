@@ -331,6 +331,7 @@ const RDAccountPreview = ({ navigation, route }) => {
 
   const handleSave = () => {
     getTotalDepositAmount()
+    console.log('sec ',secAmtType)
     // console.log("##$$$$###$$$", maximumAmount, money, totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", money + totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", typeof money, typeof totalDepositedAmount)
@@ -346,7 +347,7 @@ const RDAccountPreview = ({ navigation, route }) => {
       console.log("##$$$$+++++###$$$ totalCollection", totalCollection)
 
       if (
-        maximumAmount * allowCollectionDays >=
+        maximumAmount  >=
         parseFloat(money) + totalDepositedAmount
       ) {
         console.log("MMMMMMMMMMMMMMMM")

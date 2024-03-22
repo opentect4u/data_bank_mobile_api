@@ -31,6 +31,7 @@ const AppContext = ({ children }) => {
   const [secAmtType, setSecAmtType] = useState(() => "")
 
   const [modifiedAt, setModifiedAt] = useState(() => new Date())
+  const [transDt, setTransDt] = useState(() => new Date())
   const [isDaily, setisDaily] = useState(false)
   const [isLoan, setIsLoan] = useState(false)
   const [isRD,setIsRD] = useState(false)
@@ -70,9 +71,9 @@ const AppContext = ({ children }) => {
       .then(res => {
         if (res.data.status) {
           setIsLogin(true)
-          console.log("response from server")
-          console.log(res.data, res.status)
-          console.log("dataguli ",res.data.success.bank_acc_type)
+          // console.log('modified_dt '+new Date(res.data.success.setting.msg[0].modified_at))
+          // console.log(res.data, res.status)
+          // console.log("dataguli ",res.data.success.bank_acc_type)
           setId(res.data.success.user_data.msg[0].id)
           setAgentName(res.data.success.user_data.msg[0].agent_name)
           setAgentEmail(res.data.success.user_data.msg[0].email_id)
@@ -95,8 +96,10 @@ const AppContext = ({ children }) => {
             res.data.success.total_collection.msg[0].total_collection,
           )
 
-          setReceiptNumber(res.data.success.setting.msg[0].receipt_no)
-          setModifiedAt(new Date(res.data.success.setting.msg[0].modified_at))
+          setReceiptNumber(res.data.success.setting.msg[0]?.receipt_no)
+          setModifiedAt(res.data.success.setting.msg.length > 0 ? new Date(res.data.success.setting.msg[0].modified_at) : new Date())
+          setTransDt(res.data.success.trans.msg.length > 0 ?new Date(res.data.success.trans.msg[0].trans_dt) : new Date())
+          return true
         } else {
           setIsLogin(false)
           ToastAndroid.showWithGravityAndOffset(
@@ -107,6 +110,7 @@ const AppContext = ({ children }) => {
             50,
           )
           setPasscode("")
+          return false
         }
       })
       .catch(err => {
@@ -120,10 +124,11 @@ const AppContext = ({ children }) => {
           25,
           50,
         )
+        return false
       })
   }
 
-  console.log(modifiedAt.toISOString().slice(0, 10), modifiedAt)
+  console.log('dtdtdtdt', transDt, transDt)
 
   const nowDate = async () => {
     await axios
@@ -260,7 +265,9 @@ const AppContext = ({ children }) => {
         totalDepositedAmount,
         isDaily,
         isLoan,
-        isRD
+        isRD,
+        transDt,
+        setTotalCollection
       }}>
       {children}
     </AppStore.Provider>

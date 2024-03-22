@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS } from "../../Resources/colors"
@@ -18,6 +18,7 @@ const DuplicateReceipt = ({ navigation }) => {
   // const [showModal, setShowModal] = useState(() => false)
   const [accountType, setAccountType] = useState(() => "")
   const [isReadonly, setReadonly] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const { userId, bankId, branchCode } = useContext(AppStore)
 
   function handleAccountSearch() {
@@ -49,6 +50,7 @@ const DuplicateReceipt = ({ navigation }) => {
   }, [searchValue])
 
   const fetchBankDetails = async () => {
+    setIsLoading(true)
     const obj = {
       bank_id: bankId,
       branch_code: branchCode,
@@ -68,6 +70,7 @@ const DuplicateReceipt = ({ navigation }) => {
       })
       .then(res => {
         console.log("hello")
+        setIsLoading(false)
 
         console.log("bank details", res.data)
         setUserBankDetails(res.data.success.msg)
@@ -82,6 +85,8 @@ const DuplicateReceipt = ({ navigation }) => {
       }
       })
       .catch(err => {
+        setIsLoading(false)
+
         console.log("error" + err)
         ToastAndroid.showWithGravityAndOffset(
           "No data found!",
@@ -116,6 +121,9 @@ const DuplicateReceipt = ({ navigation }) => {
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">
+         {isLoading && <ActivityIndicator size={"large"}
+                  color={COLORS.lightScheme.primary}
+                  />}
           {userBankDetails &&
             userBankDetails?.map((props, index) => {
               console.log("========================", props)

@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS } from "../../Resources/colors"
@@ -17,6 +17,7 @@ const MiniStatement = ({ navigation,item }) => {
   const [showModal, setShowModal] = useState(() => false)
   const [accountType, setAccountType] = useState(() => "")
   const [isReadonly,setReadonly] = useState(true)
+  const [isLoading,setIsLoading] = useState(false)
   const { userId, bankId, branchCode } = useContext(AppStore)
 
   function handleAccountSearch() {
@@ -47,6 +48,7 @@ const MiniStatement = ({ navigation,item }) => {
   }, [searchValue])
 
   const fetchBankDetails = async () => {
+    setIsLoading(true)
     const obj = {
       bank_id: bankId,
       branch_code: branchCode,
@@ -65,10 +67,22 @@ const MiniStatement = ({ navigation,item }) => {
         },
       })
       .then(res => {
+    setIsLoading(false)
+
         console.log("bank details", res.data)
         setUserBankDetails(res.data.success.msg)
+        if(res.data.length==0)
+        ToastAndroid.showWithGravityAndOffset(
+          "No data found!",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50,
+        )
       })
       .catch(err => {
+    setIsLoading(false)
+
         console.log(err)
       })
   }
@@ -90,7 +104,8 @@ const MiniStatement = ({ navigation,item }) => {
       <CustomHeader />
       <View style={styles.container}>
         {/* Account Cards */}
-
+        {isLoading && <ActivityIndicator size={"large"}
+                  color={COLORS.lightScheme.primary}/>}
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">

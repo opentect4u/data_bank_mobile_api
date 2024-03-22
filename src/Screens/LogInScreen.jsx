@@ -45,9 +45,9 @@ const LogInScreen = ({ navigation }) => {
   const [appDownloadLink, setAppDownloadLink] = useState("")
   const [updateStatus, setUpdateStatus] = useState("")
   const [isDisable,setDisable] = useState(false)
-  useEffect(() => {
-    console.log(passcode)
-  }, [passcode])
+  // useEffect(() => {
+  //   console.log(passcode)
+  // }, [passcode])
 
   const handlePressOnFirstScreen = () => {
     if (userId) {
@@ -208,9 +208,11 @@ const LogInScreen = ({ navigation }) => {
                   }}
                   cellStyleFocused={null}
                   value={passcode}
-                  onTextChange={code => setPasscode(code)}
+                  onTextChange={code => {
+                    
+                    setPasscode(code)}}
                   onBackspace={() => {
-                    console.warn("hello")
+                    // console.warn("hello")
                   }}
                 />
               </View>
@@ -227,6 +229,7 @@ const LogInScreen = ({ navigation }) => {
                   title={"Back"}
                   handleOnpress={() => {
                     setNext(!next)
+                    setDisable(false)
                   }}
                   
                   customStyle={{
@@ -238,12 +241,13 @@ const LogInScreen = ({ navigation }) => {
                   }}
                 />
                 <ButtonComponent
-                  disabled={isDisable || passcode.length!=4}
+                  disabled={isDisable || passcode.length!=4 }
                   title={!isDisable?"Submit":<ActivityIndicator color={COLORS.lightScheme.primary}/>}
-                  handleOnpress={() => {
+                  handleOnpress={async() => {
                     setDisable(true)
-                    login()
-                    // console.log(isLogin)
+                    let k = await login()
+                    setDisable(false)
+                    
                   }}
                   customStyle={{ marginTop: 10, width: "40%" }}
                 />

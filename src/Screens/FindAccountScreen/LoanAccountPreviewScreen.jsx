@@ -77,7 +77,7 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
     const netTotalSectionTableData = [
       ["Tnx. Date", new Date(todayDateFromServer).toLocaleDateString("en-GB")],
       ["Deposit Amt.", money],
-      ["Current Balance", item?.current_balance - parseFloat(money)],
+      ["Current Balance", item?.current_balance + parseFloat(money)],
     ]
   
     const resetAction = StackActions.popToTop()

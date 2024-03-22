@@ -33,6 +33,8 @@ const RDAccountDetails = ({ navigation, route }) => {
     getFlagsRequest,
     collectionFlag,
     endFlag,
+    transDt,
+    allowCollectionDays
   } = useContext(AppStore)
 
   const { item } = route.params
@@ -76,29 +78,48 @@ const RDAccountDetails = ({ navigation, route }) => {
       money: collectionMoney,
     })
   }
+  const checkDayLock = () => {
+    let currentDate = new Date(todayDateFromServer.toISOString().slice(0, 10))
+    console.log("CURRRRR DATEE", currentDate)
+    let trans_dt = new Date(transDt.toISOString().slice(0, 10))
+    console.log("MODDDD DATEsssssss", trans_dt)
+    let newTrans_dt = trans_dt.setDate(trans_dt.getDate() + parseInt(allowCollectionDays))
+    newTrans_dt = new Date(newTrans_dt).toISOString().slice(0, 10)
+    // console.log('NNNNEEEWWWWW TRANCE DT', new Date(newTrans_dt).toISOString().slice(0, 10), trans_dt);
 
-  // const checkHolidayLock = () => {
-  //   let currentDate = new Date(todayDateFromServer.toISOString().slice(0, 10))
-  //   console.log("CURRRRR DATEE", currentDate)
-  //   let modifiedAtDate = new Date(modifiedAt.toISOString().slice(0, 10))
-  //   console.log("MODDDD DATE", modifiedAtDate)
-  //   let newModifiedDate = new Date()
+    var date_dif = Math.abs(new Date() - new Date(transDt))
+    date_dif = date_dif / (1000 * 60 * 60 * 24)
+    // console.log('Police case kore6ile', date_dif, 'llala', allowCollectionDays);
 
-  //   // let afterAddingHolidayLockDays = modifiedAtDate.getDate() + 1
-  //   newModifiedDate.setDate(modifiedAtDate.getDate() + holidayLock)
-  //   console.log("HOLIIIIDDDAAAAYYYYY _+++++++>>>", holidayLock)
+    // let afterAddingHolidayLockDays = modifiedAtDate.getDate() + 1
+    // newModifiedDate.setDate(modifiedAtDate.getDate() + holidayLock)
+    // console.log("HOLIIIIDDDAAAAYYYYY _+++++++>>>", holidayLock)
+    
+    // return newTrans_dt >= currentDate
+    return date_dif < allowCollectionDays
+  }
+  const checkHolidayLock = () => {
+    let currentDate = new Date(todayDateFromServer.toISOString().slice(0, 10))
+    console.log("CURRRRR DATEE", currentDate)
+    let modifiedAtDate = new Date(modifiedAt.toISOString().slice(0, 10))
+    console.log("MODDDD DATE", modifiedAtDate)
+    let newModifiedDate = new Date()
 
-  //   return newModifiedDate >= currentDate
-  // }
+    // let afterAddingHolidayLockDays = modifiedAtDate.getDate() + 1
+    newModifiedDate.setDate(modifiedAtDate.getDate() + holidayLock)
+    console.log("HOLIIIIDDDAAAAYYYYY _+++++++>>>", holidayLock)
 
-  // console.log("CHECKKK HOLIDAAAY LOCKKK fun()", checkHolidayLock())
+    return newModifiedDate >= currentDate
+  }
+
+  console.log("CHECKKK HOLIDAAAY LOCKKK fun()", checkDayLock())
 
   const checkIsCollectionEnded = () => {
     if (collectionFlag == "Y" && endFlag == "N") return false
     else if (collectionFlag == "N" && endFlag == "Y") return true
   }
 
-  console.log("CHECKKK COLLL ENDEDDD ========>>>>>", checkIsCollectionEnded())
+  // console.log("CHECKKK COLLL ENDEDDD ========>>>>>", checkIsCollectionEnded())
 
   return (
     <View>
@@ -147,8 +168,7 @@ const RDAccountDetails = ({ navigation, route }) => {
                   navigation.goBack()
                 }}
               />
-
-              {!checkIsCollectionEnded() ? (
+              {!checkIsCollectionEnded() && checkDayLock()? (
                 <ButtonComponent
                   title={"Preview / Save"}
                   customStyle={{ marginTop: 10, width: "50%" }}

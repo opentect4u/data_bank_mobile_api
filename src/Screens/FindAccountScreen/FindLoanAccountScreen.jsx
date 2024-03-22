@@ -46,7 +46,7 @@ const FindLoanAccountScreen = ({ navigation }) => {
   }, [searchValue])
 
   const fetchBankDetails = async () => {
-    // setIsLoading(true)
+    setIsLoading(true)
     const obj = {
       bank_id: bankId,
       branch_code: branchCode,
@@ -64,11 +64,14 @@ const FindLoanAccountScreen = ({ navigation }) => {
         },
       })
       .then(res => {
+        setIsLoading(false)
         console.log("bank details", res.data.success.msg)
         setUserBankDetails(res.data.success.msg)
         setIsLoading(false)
       })
       .catch(err => {
+        setIsLoading(false)
+
         setUserBankDetails([])
         console.log(err.response.data)
       })
@@ -93,7 +96,7 @@ const FindLoanAccountScreen = ({ navigation }) => {
       <View style={styles.container}>
         {/* Account Cards */}
         <Text style={styles.title}>Loan</Text>
-        {/* { isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} style={styles.loading} size={"large"}/>} */}
+        { isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} style={styles.loading} size={"large"}/>}
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">

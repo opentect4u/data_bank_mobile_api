@@ -1,4 +1,4 @@
-import { AppState, ScrollView, StyleSheet, Text, View } from "react-native"
+import { ActivityIndicator, AppState, ScrollView, StyleSheet, Text, View } from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS, colors } from "../../Resources/colors"
@@ -13,6 +13,7 @@ import { useFocusEffect } from "@react-navigation/native"
 const FindRDAccount = ({ navigation }) => {
   const [searchValue, changeSearchValue] = useState(() => "")
   const [userBankDetails, setUserBankDetails] = useState(() => [])
+  const [isLoading, setIsLoading] = useState(() => [])
 
   const { userId, bankId, branchCode } = useContext(AppStore)
 
@@ -45,6 +46,8 @@ const FindRDAccount = ({ navigation }) => {
   }, [searchValue])
 
   const fetchBankDetails = async () => {
+    setIsLoading(true)
+
     const obj = {
       bank_id: bankId,
       branch_code: branchCode,
@@ -62,10 +65,14 @@ const FindRDAccount = ({ navigation }) => {
         },
       })
       .then(res => {
+    setIsLoading(false)
+
         console.log("bank details", res.data.success.msg)
         setUserBankDetails(res.data.success.msg)
       })
       .catch(err => {
+    setIsLoading(false)
+
         setUserBankDetails([])
         console.log(err.response.data)
       })
@@ -89,6 +96,7 @@ const FindRDAccount = ({ navigation }) => {
       <View style={styles.container}>
         {/* Account Cards */}
         <Text style={styles.title}>Recurring Deposit</Text>
+        { isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} style={styles.loading} size={"large"}/>}
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">

@@ -53,7 +53,7 @@ const Home = ({ navigation }) => {
   let bank = [
     [bankName]
   ]
-
+  // useEffect(())
   let tableData = [
     // ["Bank", bankName],
     ["Branch", branchName],
