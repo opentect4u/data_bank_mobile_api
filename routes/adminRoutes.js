@@ -4,7 +4,7 @@ const { dashboard } = require("../controller/admin/Dashboard");
 const { AuthCheckedMW, logout } = require("../middleware/AuthCheckedMW");
 const { upload_pctx, upload_pctx_file_data, download_pcrx, download_pcrx_file, create_agent_trans, show_upload_account, fetch_show_account, del_all_pctx_file_data, fetchdata_to_server, fetch_pcrx_file, update_agent_amount } = require("../controller/admin/UploadDownloadTxtFile");
 const { check_and_collection, settings, check_sync_data } = require("../controller/admin/AdminTransaction");
-const { day_scroll_report, day_scroll_report_post, account_type_wise_report, account_type_wise_report_post, individual_day_scroll_report_post, individual_day_scroll_report, summary_report, summary_report_post } = require("../controller/admin/AdminReport");
+const { day_scroll_report, day_scroll_report_post, account_type_wise_report, account_type_wise_report_post, individual_day_scroll_report_post, individual_day_scroll_report, summary_report, summary_report_post, acc_type_list_ajax } = require("../controller/admin/AdminReport");
 const { agent_info, fetchtransNumber, fetch_account } = require("../controller/admin/FetchData");
 const { agent, addAgent, editAgent, edit_save_agent, checkedUnicUser, fetch_agent_max_all_col, fetch_agent_name } = require("../controller/admin/Agent.controller");
 
@@ -74,6 +74,8 @@ AdminRoutes.post('/add_agent',AuthCheckedMW,addAgent)
 AdminRoutes.post('/checkedUnicUser',AuthCheckedMW,checkedUnicUser)
 AdminRoutes.get('/edit_agent/:agent_id',AuthCheckedMW,editAgent)
 AdminRoutes.post('/update_agent/:agent_id',AuthCheckedMW,edit_save_agent)
+
+AdminRoutes.post('/acc_type_list_ajax', AuthCheckedMW, acc_type_list_ajax)
 
 
 // AdminRoutes.get('/edit_settings/:agent_id',AuthCheckedMW,editSetting)

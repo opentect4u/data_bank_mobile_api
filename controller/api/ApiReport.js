@@ -26,7 +26,7 @@ const day_scroll_report = async (req, res) => {
             return res.json({ error: errors });
         }
 
-        let select = "DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,account_type,account_number,account_holder_name,deposit_amount",
+        let select = "DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,account_type,account_number,account_holder_name,deposit_amount, product_code",
             where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${value.from_date}' AND '${value.to_date}'`;
         let resData = await db_Select(select, "td_collection", where, null);
 
@@ -49,8 +49,6 @@ const day_scroll_report = async (req, res) => {
 }
 
 
-
-
 const type_wise_report = async (req, res) => {
     try {
         const schema = Joi.object({
@@ -71,7 +69,7 @@ const type_wise_report = async (req, res) => {
             return res.json({ error: errors });
         }
 
-        let select = "DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,account_number,account_holder_name,deposit_amount",
+        let select = "DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,account_number,account_holder_name,deposit_amount, product_code",
             where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${value.from_date}' AND '${value.to_date}'`;
         let resData = await db_Select(select, "td_collection", where, null);
 

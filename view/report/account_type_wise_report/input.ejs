@@ -40,8 +40,9 @@
                 <label for="agent">Accouunt Type:</label>
                 <select name="account_type" class="form-control s2id" id="account_type" required>
                   <option value="">Select Agent</option>
-                  <option value="D">Daily Deposit</option>
+                  <option value="D">Daily</option>
                   <option value="L">Loan</option>
+                  <option value="R">RD</option>
                   <!-- <option value="R">Daily Deposit</option> -->
                 </select>
               </div>
@@ -61,3 +62,29 @@
     </div>
   </div>
 </div>
+
+<!-- <script>
+  $('#agent_code').on('change', function(){
+    $.ajax({
+          type: "POST",
+          url: "/super-admin/acc_type_list_ajax",
+          data: { agent_code: $(this).val() },
+          success: function(response) {
+            // console.log(response.SUCCESS.branchData.msg)
+           $('#account_type').empty();
+           $('#account_type').append(`<option value="">Select Account Type</option>`)
+           
+            response.msg.forEach(function(item) {
+                $('#account_type').append($('<option>', {value: item.acc_type, text: item.product_code}));
+            });
+        $("#myBtn").show()
+           
+          },
+        error: function (error) {
+          // console.log(error);
+        //   tbody.empty();
+         $("#myBtn").hide()
+        },
+      });
+  })
+</script> -->

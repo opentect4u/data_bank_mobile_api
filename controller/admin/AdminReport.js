@@ -36,7 +36,7 @@ const day_scroll_report_post = async(req,res)=>{
             return res.json({ error: errors });
         }
         const user_data = req.session.user.user_data.msg[0];
-        let select = "transaction_date as date,account_type,account_number, account_holder_name,deposit_amount",
+        let select = "transaction_date as date,account_type,account_number, account_holder_name,deposit_amount, product_code",
             where = `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}' AND transaction_date BETWEEN '${value.from_date}' AND '${value.to_date}'`;
             let order=`ORDER BY transaction_date ASC`;
         let resData = await db_Select(select, "td_collection", where, order);
@@ -115,13 +115,6 @@ const individual_day_scroll_report_post = async(req,res)=>{
             tdate:value.to_date
         };
         res.render('common/layouts/main', viewData)
-
-
-
-
-        
-
-
     } catch (error) {
         res.json({
             "success": error,
@@ -130,12 +123,26 @@ const individual_day_scroll_report_post = async(req,res)=>{
     }
 }
 
+const acc_type_list = (agent_code, bank_id, br_code) => {
+    return new Promise(async (resolve, reject) => {
+        var select = 'DISTINCT product_code, acc_type',
+        table_name = 'td_account_dtls',
+        whr = `agent_code = '${agent_code}' AND bank_id = ${bank_id} AND branch_code = ${br_code}`,
+        order = null;
+        var res_dt = await db_Select(select, table_name, whr, order)
+        resolve(res_dt)
+    })
+}
 
+const acc_type_list_ajax = async (req, res) => {
+    const user_data = req.session.user.user_data.msg[0];
+    var data = req.body
+    var acc_type_list = await acc_type_list(data.agent_code, user_data.bank_id, user_data.branch_code)
+    res.send(acc_type_list)
+}
 
 const account_type_wise_report = async(req,res)=>{
     try {
-        
-    
     const user_data = req.session.user.user_data.msg[0];
     var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
         selectData = "user_id";
@@ -281,4 +288,4 @@ const summary_report_post = async(req,res)=>{
 
 
 
-module.exports={day_scroll_report,day_scroll_report_post,account_type_wise_report,account_type_wise_report_post,individual_day_scroll_report,individual_day_scroll_report_post,summary_report,summary_report_post}
+module.exports={day_scroll_report,day_scroll_report_post,account_type_wise_report,account_type_wise_report_post,individual_day_scroll_report,individual_day_scroll_report_post,summary_report,summary_report_post, acc_type_list, acc_type_list_ajax}

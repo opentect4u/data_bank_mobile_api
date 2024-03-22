@@ -12,7 +12,7 @@ const todaydate = dateFormat(new Date(), "yyyy-mm-dd")
 
 const transaction = async (req, res) => {
     try {
-        console.log(req.body);
+        console.log(req.body, 'Body');
         const schema = Joi.object({
             // receipt_no: Joi.number().required(),
             bank_id: Joi.number().required(),
@@ -53,9 +53,11 @@ const transaction = async (req, res) => {
         // =================================================================
 
         var cbalcheck = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND active_flag='Y'`;
-        let total_collectlimite = await db_Select("max_amt,allow_collection_days", "md_agent", cbalcheck, null);
+        let total_collectlimite = await db_Select("max_amt,allow_collection_days, (max_amt * allow_collection_days) tot_amt", "md_agent", cbalcheck, null);
 
-        var totalallowamt = total_collectlimite.msg[0].max_amt * total_collectlimite.msg[0].allow_collection_days;
+        // var totalallowamt = total_collectlimite.msg[0].max_amt * total_collectlimite.msg[0].allow_collection_days;
+
+        var totalallowamt = total_collectlimite.msg[0].tot_amt;
 
         var totalallowamt2 = total_collectlimite.msg[0].max_amt;
         console.log("======totalallowamt===========", totalallowamt2)
@@ -63,7 +65,9 @@ const transaction = async (req, res) => {
 
         let total_collectamttt = await db_Select("ifnull(SUM(deposit_amount),0) as deposit_amount", "td_collection", cbalcheck5, null);
 
-        if (value.sec_amt_type == 'M' && (totalallowamt > total_collectamttt.msg[0].deposit_amount)) {
+        // console.log(value.sec_amt_type, totalallowamt, (total_collectamttt.msg[0].deposit_amount + value.deposit_amount), (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))), 'LALALALALAAAAAAAAAAAAAA');
+
+        if (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
             console.log("tttttttttttttttttttttttttttttttt")
             if (checkedData.msg > 0) {
                 // let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
@@ -125,7 +129,7 @@ const transaction = async (req, res) => {
                     "status": false
                 });
             }
-        } else if (value.sec_amt_type == 'A' && (totalallowamt2 > total_collectamttt.msg[0].deposit_amount)) {
+        } else if (value.sec_amt_type == 'A' && (totalallowamt2 > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
             // =================================================================
             // =================================================================
             if (checkedData.msg > 0) {

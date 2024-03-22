@@ -248,7 +248,8 @@ const download_pcrx_file = async (req, res) => {
         console.log("=====================", res_dt)
         // Format the date as "dd.mm.yy"
         const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
-        currTime = dateFormat(new Date(), "HH.MM.ss");
+        currTime = dateFormat(new Date(), "HH.MM.ss"),
+        currTimeStamp = new Date().getTime();
         // let formattedData = `000,12345,0000000000106100.00,00000000000000000402,${String(agent_code).padStart(10, '0')},${formattedDate},12345\n`;
         let formattedData = '', tot_coll_amt = 0, tot_coll = 1, agent_code_final = await createStrWithZero(10, agent_code.toString(), '0', 'P');
         if(res_dt.suc > 0){
@@ -280,7 +281,8 @@ const download_pcrx_file = async (req, res) => {
         await db_Insert("td_collection", fields, null, whr3, 1)
 
         const text = formattedData + "";
-        res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + transitionNumber + '.txt"');
+        // res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + transitionNumber + '.txt"');
+        res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.txt"');
         res.setHeader('Content-Type', 'text/plain');
         const readable = new stream.Readable();
         readable._read = () => { };
