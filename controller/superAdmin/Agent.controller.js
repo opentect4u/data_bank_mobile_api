@@ -515,9 +515,11 @@ const save_agent_pin = async (req, res) => {
 
     const user_data = req.session.user.user_data.msg[0];
     const datetime = dateFormat(new Date(), "yyyy-mm-dd");
+	  
+	var pass = bcrypt.hashSync(data.pass, 10)
 
-    let fields = `password = ${data.pass},modified_by='${user_data.id}',updated_at='${datetime}'`,
-      where = `agent_code='${data.agent_code}'`;
+    let fields = `password = '${pass}',modified_by='${user_data.id}',updated_at='${datetime}'`,
+      where = `user_id='${data.agent_code}'`;
     let res_dt = await db_Insert("md_user", fields, null, where, 1);
     // console.log(res_dt);    
     res.send(res_dt);
