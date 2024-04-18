@@ -9,7 +9,7 @@ try {
 //   oracledb.initOracleClient({libDir: "C:\\inetpub\\vhosts\\opentech4u.co.in\\databank\\instantclient"});
   //oracledb.initOracleClient({libDir: "D:\\oracle\\instantclient_11_2"});
 //amit
-  oracledb.initOracleClient({libDir: "C:\\instaclient\\instantclient_11_2"});
+  oracledb.initOracleClient({libDir: "D:\\oracle\\instantclient_11_2"});
 } catch (err) {
   console.error("Whoops!");
   console.error(err);

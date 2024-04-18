@@ -264,21 +264,25 @@ const download_pcrx_file = async (req, res) => {
                     transaction_time,
                     receipt_no
                 } = item;
-                const formattedLine = `${branch_code},${product_code},${account_number},${name},D,${deposit_amount},${transaction_date},${transaction_time},${receipt_no},0,00000000,${agent_code_final}`;
+                const formattedLine = `${branch_code},${product_code},${account_number},${name},${deposit_amount},${transaction_date},${receipt_no}`;
                 formattedData += formattedLine + "\n";
                 tot_coll_amt += parseFloat(deposit_amount)
                 tot_coll++
             }
         }
-        let tot_col_amt_final = await createStrWithZero(10, tot_coll_amt.toString(), '0', 'P'),
-        tot_col_final = await createStrWithZero(4, tot_coll.toString(), '0', 'P');
-        let col_header = `000,12345,${tot_col_amt_final},${tot_col_final},${agent_code_final},${formattedDate},${currTime},12345,0,00000000,${agent_code_final}`
+        // let tot_col_amt_final = await createStrWithZero(10, tot_coll_amt.toString(), '0', 'P'),
+        // tot_col_final = await createStrWithZero(4, tot_coll.toString(), '0', 'P');
+        // let col_header = `000,12345,${tot_col_amt_final},${tot_col_final},${agent_code_final},${formattedDate},${currTime},12345,0,00000000,${agent_code_final}`
+
+        let tot_col_amt_final = await createStrWithZero(19, tot_coll_amt.toString(), '0', 'P'),
+        tot_col_final = await createStrWithZero(20, tot_coll.toString(), '0', 'P');
+        let col_header = `000,12345,${tot_col_amt_final},${tot_col_final},${agent_code_final},${formattedDate},12345`
 
         formattedData = col_header + '\n' + formattedData
 
-        var whr3 = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}' AND download_flag='N' AND agent_trans_no IS NOT NULL`,
-            fields = `download_flag='Y'`;
-        await db_Insert("td_collection", fields, null, whr3, 1)
+        // var whr3 = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}' AND download_flag='N' AND agent_trans_no IS NOT NULL`,
+        //     fields = `download_flag='Y'`;
+        // await db_Insert("td_collection", fields, null, whr3, 1)
 
         const text = formattedData + "";
         // res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + transitionNumber + '.txt"');

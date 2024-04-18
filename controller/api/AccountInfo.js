@@ -21,7 +21,7 @@ const search_account = async (req, res) => {
         }
         const table_name="td_account_dtls"
         var whrDAta = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND acc_type = '${value.flag}' AND (customer_name LIKE '%${value.account_number}%' OR account_number LIKE '%${value.account_number}%')`,
-        selectData = "*";
+        selectData = "account_dtls_id, bank_id, branch_code, agent_code, acc_type, product_code, account_number, mobile_no, customer_name, opening_date, current_balance";
         const order = null
         let res_data = await db_Select(selectData, table_name, whrDAta, order);
        

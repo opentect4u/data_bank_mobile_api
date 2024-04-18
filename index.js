@@ -79,6 +79,14 @@ app.use('/agent_account',ServerRoures);
 //full online app Api
 app.use('/v1/user',UserRouter);
 
+app.get('/test', async (req, res) => {
+  const { createStrWithZero } = require('./model/MasterModule');  
+  var tot_col = '1300.00'
+  var data = await createStrWithZero(10, tot_col.toString(), '0', 'P')
+  console.log(data);
+  res.send(data.toString())
+})
+
 app.get('*', function(req, res){
   res.render('auth/error_404')
   // res.redirect('/auth')
@@ -88,6 +96,7 @@ app.get('*', function(req, res){
 // app.get('/about',(rex,res,nxt)=>{
 //     res.send("hello");
 // });
+
 
 
 // Schedule the task to run at every day
