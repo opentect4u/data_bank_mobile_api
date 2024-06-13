@@ -387,7 +387,10 @@ const normal_version_download = (user_data, agent_code, transitionNumber) => {
         var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,RPAD(account_number, 19, ' ') as account_number,RPAD(UPPER(account_holder_name), 20, ' ') as name,LPAD(deposit_amount, 10, '0') as deposit_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,LPAD(receipt_no, 5, '0') as receipt_no";
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
         
+        
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
+        // console.log("=====================", res_dt)
+        
         // console.log("=====================", res_dt)
         
         const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
@@ -396,6 +399,8 @@ const normal_version_download = (user_data, agent_code, transitionNumber) => {
         let formattedData = '', tot_coll_amt = 0, tot_coll = 1, 
         agent_code_final = await createStrWithZero(10, agent_code.toString(), '0', 'P');
 
+        currTime = dateFormat(new Date(), "HH.MM.ss")
+        
         if(res_dt.suc > 0){
             for(let item of res_dt.msg){
                 const {
