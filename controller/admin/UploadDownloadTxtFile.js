@@ -240,18 +240,65 @@ const download_pcrx_file = async (req, res) => {
         const tDate = req.query.tDate;
         const transitionNumber = req.query.transaction_number;
         const user_data = req.session.user.user_data.msg[0];
-        var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,RPAD(account_number, 19, ' ') as account_number,RPAD(UPPER(account_holder_name), 20, ' ') as name,LPAD(deposit_amount, 10, '0') as deposit_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,LPAD(receipt_no, 5, '0') as receipt_no";
+        // console.log(user_data);
+        const currTimeStamp = new Date().getTime();
+        var text = '';
+        switch (user_data.data_version) { // S-> Coching; C-> Dhanbad; N-> Normal;
+            case "S":
+                text = await coching_version_download(
+                    user_data,
+                    agent_code,
+                    transitionNumber
+                    );
+                    break;
+            case "C":
+                // console.log(user_data.data_version, 'dataversion');
+                text = await dhanbad_version_download(
+                user_data,
+                agent_code,
+                transitionNumber
+                );
+                break;
+            case "N":
+                text = await normal_version_download(
+                user_data,
+                agent_code,
+                transitionNumber
+                );
+                break;
+
+            default:
+                break;
+        }
+
+        // console.log(text, 'TEXT IS HERE');
+        // res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + transitionNumber + '.txt"');
+        res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.txt"');
+        res.setHeader('Content-Type', 'text/plain');
+        const readable = new stream.Readable();
+        readable._read = () => { };
+        readable.push(text);
+        readable.push(null);
+        readable.pipe(res);
+    } catch (error) {
+        res.redirect('/admin/download_pcrx');
+    }
+}
+
+const coching_version_download = (user_data, agent_code, transitionNumber) => {
+    return new Promise(async (resolve, reject) => {
+        var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,RPAD(account_number, 19, ' ') as account_number,RPAD(UPPER(account_holder_name), 20, ' ') as name,LPAD(deposit_amount, 10, '0') as deposit_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,RIGHT(receipt_no, 5) as receipt_no";
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
-        //AND download_flag='N'// onetime download
-        // var whr = null;
+        
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
-        console.log("=====================", res_dt)
-        // Format the date as "dd.mm.yy"
-        const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
-        currTime = dateFormat(new Date(), "HH.MM.ss"),
-        currTimeStamp = new Date().getTime();
-        // let formattedData = `000,12345,0000000000106100.00,00000000000000000402,${String(agent_code).padStart(10, '0')},${formattedDate},12345\n`;
-        let formattedData = '', tot_coll_amt = 0, tot_coll = 1, agent_code_final = await createStrWithZero(10, agent_code.toString(), '0', 'P');
+        // console.log("=====================", res_dt)
+        
+        const formattedDate = dateFormat(new Date(), "dd.mm.yy"),
+        currTime = dateFormat(new Date(), "HH.MM.ss")
+        
+        let formattedData = '', tot_coll_amt = 0, tot_coll = 1, 
+        agent_code_final = await createStrWithZero(10, agent_code.toString(), '0', 'P');
+
         if(res_dt.suc > 0){
             for(let item of res_dt.msg){
                 const {
@@ -270,9 +317,6 @@ const download_pcrx_file = async (req, res) => {
                 tot_coll++
             }
         }
-        // let tot_col_amt_final = await createStrWithZero(10, tot_coll_amt.toString(), '0', 'P'),
-        // tot_col_final = await createStrWithZero(4, tot_coll.toString(), '0', 'P');
-        // let col_header = `000,12345,${tot_col_amt_final},${tot_col_final},${agent_code_final},${formattedDate},${currTime},12345,0,00000000,${agent_code_final}`
 
         let tot_col_amt_final = await createStrWithZero(19, tot_coll_amt.toString(), '0', 'P'),
         tot_col_final = await createStrWithZero(20, tot_coll.toString(), '0', 'P');
@@ -280,22 +324,106 @@ const download_pcrx_file = async (req, res) => {
 
         formattedData = col_header + '\n' + formattedData
 
-        // var whr3 = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}' AND download_flag='N' AND agent_trans_no IS NOT NULL`,
-        //     fields = `download_flag='Y'`;
-        // await db_Insert("td_collection", fields, null, whr3, 1)
+        const text = formattedData + "";
+        resolve(text)
+    })
+}
+
+const dhanbad_version_download = (user_data, agent_code, transitionNumber) => {
+    return new Promise(async (resolve, reject) => {
+        try{
+            var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,LPAD(account_number, 6, '0') as account_number,RPAD(UPPER(account_holder_name), 16, ' ') as name,LPAD(ROUND(deposit_amount, 0), 6, '0') as deposit_amount, LPAD(ROUND(balance_amount, 0), 6, '0') as balance_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,LPAD(receipt_no, 5, '0') as receipt_no";
+            var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
+            
+            let res_dt = await db_Select(select_q, "td_collection", whr, null);
+            // console.log("=====================", res_dt)
+            
+            const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
+            currTime = dateFormat(new Date(), "HH.MM.ss")
+            
+            let formattedData = '', tot_coll_amt = 0, tot_coll = 0, 
+            agent_code_final = await createStrWithZero(3, agent_code.toString(), '0', 'S'), last_ac_no = 0;
+    
+            if(res_dt.suc > 0){
+                last_ac_no = res_dt.msg.length > 0 ? res_dt.msg[res_dt.msg.length - 1].account_number : 0;
+                for(let item of res_dt.msg){
+                    const {
+                      branch_code,
+                      product_code,
+                      account_number,
+                      name,
+                      deposit_amount,
+                      balance_amount,
+                      transaction_date,
+                      transaction_time,
+                      receipt_no,
+                    } = item;
+                    const formattedLine = `${account_number},${deposit_amount},${name},${balance_amount},${transaction_date},${deposit_amount}  `;
+                    formattedData += formattedLine + "\n";
+                    tot_coll_amt += parseFloat(deposit_amount)
+                    tot_coll++
+                }
+            }
+    
+            let tot_col_amt_final = await createStrWithZero(6, tot_coll_amt.toString(), '0', 'P'),
+            tot_col_count = await createStrWithZero(6, tot_coll.toString(), '0', 'P'),
+            tot_col_amount_final = await createStrWithZero(16, tot_col_amt_final.toString(), ' ', 'S');
+            let col_header = `${last_ac_no},${tot_col_count},${tot_col_amount_final},${res_dt.msg[0].branch_code}${agent_code_final},${formattedDate},12341234`;
+    
+            formattedData = col_header + '\n' + formattedData
+    
+            const text = formattedData + "";
+            // console.log(text, 'LAALALLALALALALAL');
+            resolve(text)
+        }catch(err){
+            console.log(err);
+            reject(err)
+        }
+    })
+}
+
+const normal_version_download = (user_data, agent_code, transitionNumber) => {
+    return new Promise(async (resolve, reject) => {
+        var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,RPAD(account_number, 19, ' ') as account_number,RPAD(UPPER(account_holder_name), 20, ' ') as name,LPAD(deposit_amount, 10, '0') as deposit_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,LPAD(receipt_no, 5, '0') as receipt_no";
+        var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
+        
+        let res_dt = await db_Select(select_q, "td_collection", whr, null);
+        // console.log("=====================", res_dt)
+        
+        const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
+        currTime = dateFormat(new Date(), "HH.MM.ss")
+        
+        let formattedData = '', tot_coll_amt = 0, tot_coll = 1, 
+        agent_code_final = await createStrWithZero(10, agent_code.toString(), '0', 'P');
+
+        if(res_dt.suc > 0){
+            for(let item of res_dt.msg){
+                const {
+                    branch_code,
+                    product_code,
+                    account_number,
+                    name,
+                    deposit_amount,
+                    transaction_date,
+                    transaction_time,
+                    receipt_no
+                } = item;
+                const formattedLine = `${branch_code},${product_code},${account_number},${name},${deposit_amount},${transaction_date},${receipt_no}`;
+                formattedData += formattedLine + "\n";
+                tot_coll_amt += parseFloat(deposit_amount)
+                tot_coll++
+            }
+        }
+
+        let tot_col_amt_final = await createStrWithZero(19, tot_coll_amt.toString(), '0', 'P'),
+        tot_col_final = await createStrWithZero(20, tot_coll.toString(), '0', 'P');
+        let col_header = `000,12345,${tot_col_amt_final},${tot_col_final},${agent_code_final},${formattedDate},12345`
+
+        formattedData = col_header + '\n' + formattedData
 
         const text = formattedData + "";
-        // res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + transitionNumber + '.txt"');
-        res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.txt"');
-        res.setHeader('Content-Type', 'text/plain');
-        const readable = new stream.Readable();
-        readable._read = () => { };
-        readable.push(text);
-        readable.push(null);
-        readable.pipe(res);
-    } catch (error) {
-        res.redirect('/admin/download_pcrx');
-    }
+        resolve(text)
+    })
 }
 
 const fetch_pcrx_file3 = async (req, res) => {

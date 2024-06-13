@@ -39,8 +39,8 @@ const transaction = async (req, res) => {
             });
             return res.json({ error: errors });
         }
-        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
-        datetimef = dateFormat(new Date(), "yyyy/mm/dd HH:MM:ss")
+        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
+        datetimef = dateFormat(new Date(), "yyyy/mm/dd HH:MM:ss");
 
         var timestamp = new Date().getTime();
         var fields = 'sl_no',

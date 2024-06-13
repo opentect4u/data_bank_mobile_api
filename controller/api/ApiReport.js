@@ -303,14 +303,28 @@ const account_wise_scroll_report = async (req, res) => {
         }
 
         const currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() - 30);
+        currentDate.setDate(currentDate.getDate() - 20);
         const from_date = dateFormat(currentDate, "yyyy-mm-dd")
         const to_date = dateFormat(new Date(), "yyyy-mm-dd")
-        let select = "DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,account_type,account_number,account_holder_name,deposit_amount,receipt_no,collected_at",
-            where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number=${value.account_number} AND account_type='${value.account_type}'  AND transaction_date BETWEEN '${from_date}' AND '${to_date}'`;
-        var orderdata = `ORDER BY transaction_date DESC`
-        let resData = await db_Select(select, "td_collection", where, orderdata);
+        // let select = "DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,account_type,account_number,account_holder_name,deposit_amount,receipt_no,collected_at",
+        //     where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number=${value.account_number} AND account_type='${value.account_type}'  AND transaction_date BETWEEN '${from_date}' AND '${to_date}'`;
+        // var orderdata = `ORDER BY transaction_date DESC`
+        // let resData = await db_Select(select, "td_collection", where, orderdata);
 
+        let select = "DISTINCT DATE_FORMAT(a.transaction_date, '%Y-%m-%d') as date,a.account_type,a.account_number,a.account_holder_name,a.deposit_amount,a.receipt_no,a.collected_at, b.opening_date, b.current_balance",
+            where = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.agent_code AND a.account_type=b.acc_type AND a.account_number=b.account_number AND a.bank_id=${value.bank_id} AND a.branch_code='${value.branch_code}' AND a.agent_code='${value.agent_code}' AND a.account_number=${value.account_number} AND a.account_type='${value.account_type}' AND a.transaction_date BETWEEN '${from_date}' AND '${to_date}'`;
+        var orderdata = `ORDER BY a.transaction_date DESC`
+        let resData = await db_Select(select, "td_collection a, td_account_dtls b", where, orderdata);
+
+        if(resData.suc > 0){
+            var tot_col = 0
+            for(let dt of resData.msg){
+                dt['closing_bal'] = dt.current_balance - tot_col
+                tot_col += dt.deposit_amount
+                dt['opening_bal'] = dt.current_balance - tot_col
+            }
+        }
+        // console.log(resData);
         delete resData.sql
 
         res.json({
