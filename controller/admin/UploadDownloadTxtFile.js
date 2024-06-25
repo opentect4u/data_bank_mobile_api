@@ -238,6 +238,7 @@ const download_pcrx_file = async (req, res) => {
         const agent_code = req.query.agent_code;
         const fDate = req.query.fDate;
         const tDate = req.query.tDate;
+        const format = req.query.format;
         const transitionNumber = req.query.transaction_number;
         const user_data = req.session.user.user_data.msg[0];
         // console.log(user_data);
@@ -273,8 +274,13 @@ const download_pcrx_file = async (req, res) => {
 
         // console.log(text, 'TEXT IS HERE');
         // res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + transitionNumber + '.txt"');
-        res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.txt"');
-        res.setHeader('Content-Type', 'text/plain');
+        if(format != 'C'){
+            res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.txt"');
+            res.setHeader('Content-Type', 'text/plain');
+        }else{
+            res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.csv"');
+            res.setHeader('Content-Type', 'text/csv');
+        }
         const readable = new stream.Readable();
         readable._read = () => { };
         readable.push(text);

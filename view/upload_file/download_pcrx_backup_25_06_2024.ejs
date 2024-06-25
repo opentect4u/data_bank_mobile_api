@@ -21,21 +21,13 @@
         <!-- <input type="file" name="myFile" class="" id="pctxFile"> -->
         <div class="row">
           <div class="col-sm-12 row">
-            <div class="form-group col-4">
+            <div class="form-group col-6">
               <label for="agent">From Date:</label>
               <input type="date" name="fdate" class="form-control" id="fdate" value="<%= currentDate %>"/>
             </div>
-            <div class="form-group col-4">
+            <div class="form-group col-6">
               <label for="agent">To Date:</label>
               <input type="date" name="tdate" class="form-control" id="tdate" value="<%= currentDate %>"/>
-            </div>
-            
-            <div class="form-group col-4">
-              <label for="file_format">File Format:</label>
-              <select name="file_format" class="form-control" id="file_format">
-                <option value="T">TEXT (.txt)</option>
-                <option value="C">CSV (.csv)</option>
-              </select>
             </div>
 
             <table class="table pcrxTable">
@@ -104,10 +96,6 @@
     transitionNumber();
   });
 
-  $("#file_format").change(function () {
-    transitionNumber();
-  });
-
   $(".dwnbtn").click(function(){
     transitionNumber();
   });
@@ -145,7 +133,7 @@
             item.amount +
             "</td>" +
             "<td>" +
-              '<a href="/admin/download_pcrx_file?agent_code=' + item.agent_code + '&fDate=' + fDate + '&tDate=' + tDate + '&transaction_number=' + item.agent_trans_no + '&format='+$('#file_format').val()+'" class="dwnbtn btn btn-' + (item.download_flag == "Y" ? "danger" : "primary") + '"><i class="fa fa-download"></i> Download</a>' +
+              '<a href="/admin/download_pcrx_file?agent_code=' + item.agent_code + '&fDate=' + fDate + '&tDate=' + tDate + '&transaction_number=' + item.agent_trans_no + '" class="dwnbtn btn btn-' + (item.download_flag == "Y" ? "danger" : "primary") + '"><i class="fa fa-download"></i> Download</a>' +
             "</td>" +
             "</tr>";
           tbody.append(row);
