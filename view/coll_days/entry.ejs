@@ -1,0 +1,86 @@
+<div class="main-panel">
+    <div class="content-wrapper">
+      <div class="card col-12">
+        <div class="card-body">
+          <div class="titleSec">
+            <!-- <button type="button" class="btn btn-primary" id="myBtn">Add</button> -->
+            <h2><%= title %></h2>
+          </div>
+          <form action="/admin/col_days %>" method="post">
+            <div class="row">  
+              <div class="form-group col-6">
+                <label for="allow_collection_str_dt">Start Date:</label>
+                <input
+                id="allow_collection_str_dt"
+                  type="date"
+                  name="allow_collection_str_dt"
+                  class="form-control"
+                  placeholder="Enter Name"
+                  min="<%= dateFormat(new Date(), 'yyyy-mm-dd') %>"
+                  value="<%= data.length > 0 ? dateFormat(data[0].allow_collection_str_dt, 'yyyy-mm-dd') : '' %>"
+                  required
+                />
+              </div>
+  
+              <div class="form-group col-6">
+                <label for="allow_collection_end_dt">End Date:</label>
+                <input type="date" id="allow_collection_end_dt" name="allow_collection_end_dt" class="form-control" value="<%= data.length > 0 ? dateFormat(data[0].allow_collection_end_dt, 'yyyy-mm-dd') : '' %>" required/>
+              </div>
+  
+              <div class="form-group col-6" style="display: none;">
+                <label for="allow_collection_days">Max allowable no.of days :</label>
+                <input
+                  type="number"
+                  name="allow_collection_days"
+                  class="form-control"
+                  id="allow_collection_days"
+                  value="<%=data.length > 0 ? data[0].allow_collection_days : 0 %>"
+                  required
+                  readonly
+                />
+              </div>
+  
+              <div class="form-group col-12">
+                <input
+                  type="submit"
+                  value="SUBMIT"
+                  class="btn btn-primary btn-block"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    function formatDateYMD(inputDate) {
+        const date = new Date(inputDate);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    function datediff(first, second) {        
+        return Math.round((second - first) / (1000 * 60 * 60 * 24));
+    }
+    $('#allow_collection_str_dt').on('change', function(){
+        var str_dt = new Date($(this).val())
+        var end_dt_start = new Date($(this).val())
+        end_dt_start = end_dt_start.setDate(end_dt_start.getDate() + 1)
+        var end_dt_start_format = formatDateYMD(end_dt_start)
+        $('#allow_collection_end_dt').attr('min', end_dt_start_format)
+        $('#allow_collection_end_dt').val(end_dt_start_format)
+        // if(end_dt_start > 0){
+            var tot_days = datediff(new Date($(this).val()), new Date(end_dt_start))
+            $('#allow_collection_days').val(tot_days + 1)
+        // }
+    })
+    $('#allow_collection_end_dt').on('change', function(){
+        var str_dt = new Date($('#allow_collection_str_dt').val())
+        var tot_days = datediff(new Date(str_dt), new Date($(this).val()))
+        $('#allow_collection_days').val(tot_days + 1)
+    })
+  </script>
+  

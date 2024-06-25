@@ -24,6 +24,15 @@
       </a>
     </li>
 
+    <% if(user.user_data.msg[0].max_day_entry_flag!='D'){ %>
+      <li class="nav-item active">
+        <a class="nav-link" href="/admin/col_days">
+          <i class="fa fa-cogs" aria-hidden="true"></i>
+          <span class="menu-title">Agent Collection Days</span>
+          <i class="fa fa-chevron-right arowRight" aria-hidden="true"></i>
+        </a>
+      </li>
+    <% } %>
     
 
     <hr />

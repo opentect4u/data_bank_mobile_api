@@ -6,7 +6,7 @@ const { upload_pctx, upload_pctx_file_data, download_pcrx, download_pcrx_file, c
 const { check_and_collection, settings, check_sync_data } = require("../controller/admin/AdminTransaction");
 const { day_scroll_report, day_scroll_report_post, account_type_wise_report, account_type_wise_report_post, individual_day_scroll_report_post, individual_day_scroll_report, summary_report, summary_report_post, acc_type_list_ajax } = require("../controller/admin/AdminReport");
 const { agent_info, fetchtransNumber, fetch_account } = require("../controller/admin/FetchData");
-const { agent, addAgent, editAgent, edit_save_agent, checkedUnicUser, fetch_agent_max_all_col, fetch_agent_name } = require("../controller/admin/Agent.controller");
+const { agent, addAgent, editAgent, edit_save_agent, checkedUnicUser, fetch_agent_max_all_col, fetch_agent_name, col_days, col_days_save } = require("../controller/admin/Agent.controller");
 
 const AdminRoutes = express.Router()
 
@@ -68,6 +68,8 @@ AdminRoutes.post('/agent_info',AuthCheckedMW,agent_info)
 
 
 AdminRoutes.get('/agent',AuthCheckedMW,agent)
+AdminRoutes.get('/col_days',AuthCheckedMW,col_days)
+AdminRoutes.post('/col_days',AuthCheckedMW,col_days_save)
 AdminRoutes.post('/fetch_agent_max_all_col',AuthCheckedMW,fetch_agent_max_all_col)
 AdminRoutes.post('/fetch_agent_name',AuthCheckedMW,fetch_agent_name)
 AdminRoutes.post('/add_agent',AuthCheckedMW,addAgent)

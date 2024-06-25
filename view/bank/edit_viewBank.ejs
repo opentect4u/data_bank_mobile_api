@@ -98,6 +98,22 @@
               </select>
             </div>
 
+            <div class="form-group col-4">
+              <label for="max_day_entry_flag">Max Collection Day Entry Flag:</label>
+              <select name="max_day_entry_flag"
+                class="form-control"
+                id="max_day_entry_flag" style="background-color: antiquewhite;"
+                required>
+                <option value="">Select max Collection day entry flag</option>
+                <% Object.keys(max_dt_col_entry_flag).forEach(dt => {
+                  var _selected = ''
+                  if(data.max_day_entry_flag)
+                  if(data.max_day_entry_flag == dt)
+                    _selected = 'selected' %>
+                  <option value="<%= dt %>" <%= _selected %>><%= max_dt_col_entry_flag[dt] %></option>
+                <% }) %>
+              </select>
+            </div>
 
             <div class="form-group col-4">
               <label for="receipt_type">Receipt type:</label>

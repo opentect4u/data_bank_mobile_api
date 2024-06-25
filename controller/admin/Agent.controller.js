@@ -138,6 +138,51 @@ const edit_save_agent = async (req, res) => {
     }
 }
 
+const col_days = async (req, res) => {
+    var user = req.session.user.user_data.msg[0]
+    var res_dt = await db_Select('DISTINCT allow_collection_days, allow_collection_str_dt, allow_collection_end_dt', 'md_agent', `bank_id = ${user.bank_id}`, null)
+    delete res_dt.sql
+    var viewData = {
+        dateFormat,
+        title: "Agent Max Collection Days",
+        page_path: "coll_days/entry",
+        data: res_dt.suc > 0 ? res_dt.msg : []
+    };
+    res.render('common/layouts/main', viewData)
+}
+
+const col_days_save = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            allow_collection_str_dt: Joi.required(),
+            allow_collection_end_dt: Joi.required(),
+            allow_collection_days:Joi.required(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+        const user_data = req.session.user.user_data.msg[0];
+        let fields = `allow_collection_str_dt='${value.allow_collection_str_dt}', allow_collection_end_dt='${value.allow_collection_end_dt}',allow_collection_days='${value.allow_collection_days}',modified_by='${user_data.id}',updated_at='${datetime}'`,
+            whr = `bank_id='${user_data.bank_id}'`;
+        let res_dt = await db_Insert("md_agent", fields, null, whr, 1);
+        if(res_dt.suc > 0){
+            req.flash('success', 'Successfully Updated')
+        }else{
+            req.flash('danger', 'Something went wrong while updating please try again later.')
+        }
+        res.redirect('/admin/col_days')
+    } catch (error) {
+        console.log(error);
+        req.flash('danger', 'Something went wrong while updating please try again later.')
+        res.redirect('/admin/col_days')
+    }
+}
 
 
 const checkedUnicUser = async (req, res) => {
@@ -225,4 +270,4 @@ const fetch_agent_name= async (req, res) => {
     }
 }
 
-module.exports = { agent, addAgent, editAgent, edit_save_agent,checkedUnicUser,fetch_agent_max_all_col,fetch_agent_name}
+module.exports = { agent, addAgent, editAgent, edit_save_agent,checkedUnicUser,fetch_agent_max_all_col,fetch_agent_name, col_days, col_days_save}

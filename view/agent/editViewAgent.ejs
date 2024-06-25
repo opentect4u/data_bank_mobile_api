@@ -73,7 +73,7 @@
                 <%=(data[0].active_flag=='N')?'readonly':''%>
               />
             </div>
-            <div class="form-group col-6">
+            <div class="form-group col-6" style="display: <%= user.user_data.msg[0].max_day_entry_flag!='D' ? 'none' : 'block' %>;">
               <label for="allow_collection_days">Max allowable no.of days :</label>
               <input
                 type="number"
@@ -82,7 +82,7 @@
                 id="allow_collection_days"
                 value="<%=data[0].allow_collection_days%>"
                 required
-                <%=(data[0].active_flag=='N')?'readonly':''%>
+                <%=(data[0].active_flag=='N' || user.user_data.msg[0].max_day_entry_flag!='D')?'readonly':''%>
               />
             </div>
 

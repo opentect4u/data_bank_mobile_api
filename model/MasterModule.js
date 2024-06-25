@@ -120,4 +120,9 @@ const createStrWithZero = (tot_row, str, chr_pad_with, flag) => { // S -> Suffix
     })
 }
 
-module.exports = { db_Select, db_Insert, db_Delete, db_Check, db_db_Select_Sqery, createStrWithZero }
+const MAX_DATE_COL_ENTRY_FLAG = {
+    'D': 'Days',
+    'R': 'Date Range'
+}
+
+module.exports = { db_Select, db_Insert, db_Delete, db_Check, db_db_Select_Sqery, createStrWithZero, MAX_DATE_COL_ENTRY_FLAG }

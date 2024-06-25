@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const { db_Select, db_Insert } = require("../../model/MasterModule");
+const { db_Select, db_Insert, MAX_DATE_COL_ENTRY_FLAG } = require("../../model/MasterModule");
 const dateFormat = require("dateformat");
 const bcrypt = require("bcrypt");
 const fileUpload = require("express-fileupload");
@@ -13,6 +13,7 @@ const bank_list = async (req, res) => {
   order = null;
   var bank = await db_Select(select, table_name, whr, order);
   const viewData = {
+    max_dt_col_entry_flag: MAX_DATE_COL_ENTRY_FLAG,
     title: "Adminn",
     page_path: "/bank/viewBank",
     data: bank,
@@ -47,6 +48,7 @@ const add_bank_list = async (req, res) => {
       data_transfer_type: Joi.string().valid("M", "A").required(),
       receipt_type: Joi.string().valid("S", "P", "B").required(),
       active_flag: Joi.string().valid("Y", "N").required(),
+      max_day_entry_flag: Joi.string().valid("D", "R").required(),
       password: Joi.string().required(),
       confirmPassword: Joi.string().required().valid(Joi.ref("password")),
     });
@@ -68,8 +70,8 @@ const add_bank_list = async (req, res) => {
 
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     const user_data = req.session.user.user_data.msg[0];
-    var fields = `(bank_name, bank_address, contact_person, phone_no, email_id, device_type, data_version, data_trf, receipt_type, created_by, created_at, active_flag)`,
-      values = `('${value.bank_name}','${value.bank_address}','${value.contact_person}','${value.mobile}','${value.email}','${value.device_type}','${value.data_version}','${value.data_transfer_type}','${value.receipt_type}','${user_data.id}','${datetime}','${value.active_flag}')`;
+    var fields = `(bank_name, bank_address, contact_person, phone_no, email_id, device_type, data_version, data_trf, receipt_type, max_day_entry_flag, created_by, created_at, active_flag)`,
+      values = `('${value.bank_name}','${value.bank_address}','${value.contact_person}','${value.mobile}','${value.email}','${value.device_type}','${value.data_version}','${value.data_transfer_type}','${value.receipt_type}', '${value.max_day_entry_flag}','${user_data.id}','${datetime}','${value.active_flag}')`;
     var insmd_bank = await db_Insert("md_bank", fields, values, null, 0);
     var adduser = "";
     if (insmd_bank.lastId.insertId) {
@@ -98,6 +100,7 @@ const edit_bank_list = async (req, res) => {
   const viewData = {
     title: "Adminn",
     page_path: "/bank/edit_viewBank",
+    max_dt_col_entry_flag: MAX_DATE_COL_ENTRY_FLAG,
     data: data.suc > 0 && data.msg.length > 0 ? data.msg[0] : [],
     bank_id: req.query.bank_id,
   };
@@ -134,6 +137,11 @@ const edit_bank_list_save = async (req, res) => {
       data_transfer_type: Joi.string().valid("M", "A").required(),
       receipt_type: Joi.string().valid("S", "P", "B").required(),
       active_flag: Joi.string().valid("Y", "N").required(),
+      max_day_entry_flag: Joi.string().valid("D", "R").required(),
+      sucurity_amt_type: Joi.optional(),
+      after_maturity_coll: Joi.optional(),
+      start: Joi.optional(),
+      bank_id: Joi.required()
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
     if (error) {
@@ -141,8 +149,8 @@ const edit_bank_list_save = async (req, res) => {
       error.details.forEach((detail) => {
         errors[detail.context.key] = detail.message;
       });
-
-      res.redirect("/super-admin/bank");
+      console.log(error);
+      res.redirect("/super-admin/test");
     }
 
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -150,26 +158,26 @@ const edit_bank_list_save = async (req, res) => {
     // console.log(user_data);
     var table_name = "md_bank",
       fields = `bank_name ='${value.bank_name}', bank_address = '${value.bank_address}', contact_person = '${value.contact_person}', phone_no = '${value.mobile}', email_id ='${value.email}', device_type = '${value.device_type}', data_version = '${value.data_version}', data_trf = '${value.data_transfer_type}', 
-        receipt_type = '${value.receipt_type}', sec_amt_type = '${value.sucurity_amt_type}', active_flag = '${value.active_flag}', after_maturity_coll = '${value.after_maturity_coll}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        receipt_type = '${value.receipt_type}', sec_amt_type = '${value.sucurity_amt_type}', active_flag = '${value.active_flag}', after_maturity_coll = '${value.after_maturity_coll}', max_day_entry_flag = '${value.max_day_entry_flag}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
       values = null;
     whr = `bank_id=${value.bank_id}`;
     var insmd_bank = await db_Insert(table_name, fields, values, whr, 1);
 
     var table_name = "md_branch",
-      fields2 = `active_flag = 'N', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+      fields2 = `active_flag = '${value.active_flag}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
       values = null;
     whr = `bank_id= ${value.bank_id} AND active_flag = 'Y'`;
     var bank = await db_Insert(table_name, fields2, values, whr, 1);
     // console.log(bank);
 
     var table_name = "md_agent",
-      fields3 = `active_flag = 'N', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+      fields3 = `active_flag = '${value.active_flag}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
       values = null;
     whr = `bank_id= ${value.bank_id} AND active_flag = 'Y'`;
     var agent = await db_Insert(table_name, fields3, values, whr, 1);
 
     var table_name = "md_user",
-      fields4 = `active_flag = 'N', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+      fields4 = `active_flag = '${value.active_flag}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
       values = null;
     whr = `bank_id= ${value.bank_id} AND active_flag = 'Y'`;
     var user = await db_Insert(table_name, fields4, values, whr, 1);
@@ -178,6 +186,8 @@ const edit_bank_list_save = async (req, res) => {
     res.redirect("/super-admin/bank");
   } catch (error) {
     console.log(error);
+    req.flash("error","Bank not updated successfully")
+    res.redirect(`/super-admin/bank`);
   }
 };
 
