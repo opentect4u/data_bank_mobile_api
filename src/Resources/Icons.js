@@ -4,6 +4,7 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons"
 import IconIcons from "react-native-vector-icons/Ionicons"
 import AntDesign from "react-native-vector-icons/AntDesign"
 import { colors } from "./colors"
+
 const HomeFill = (color, size) => (
   <Entypo name="home" size={size} color={color} />
 )

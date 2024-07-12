@@ -39,7 +39,7 @@ const AccountPreview = ({ navigation, route }) => {
   const [isLoading,setLoading] = useState(false)
   const [receiptNumber, setReceiptNumber] = useState(() => "")
   const [isSaveEnabled, setIsSaveEnabled] = useState(() => false)
-
+  var todayDT
   const {
     id,
     userId,
@@ -56,9 +56,6 @@ const AccountPreview = ({ navigation, route }) => {
     secAmtType,
   } = useContext(AppStore)
   const { item, money } = route.params
-
-  // const [addedMoney, setAddedMoney] = useState(() => 0)
-
   const tableData = [
     [
       "A/c Type",
@@ -87,12 +84,13 @@ const AccountPreview = ({ navigation, route }) => {
 
   const sendCollectedMoney = async () => {
     setLoading(true)
+    todayDT= new Date().toISOString()
     const obj = {
       bank_id: item?.bank_id,
       branch_code: item?.branch_code,
       agent_code: userId,
       account_holder_name: item?.customer_name,
-      transaction_date: new Date().toISOString(),
+      transaction_date: todayDT,
       account_type: item?.acc_type,
       product_code: item?.product_code,
       account_number: item?.account_number,
@@ -114,9 +112,6 @@ const AccountPreview = ({ navigation, route }) => {
         console.log('result '+res.data.status)
         if (res.data.status) {
           setLoading(false)
-
-          // console.log("###### Preview: ", res.data)
-          // alert(`Receipt No is ${res.data.receipt_no}`)
           Alert.alert("Receipt No.", `Receipt No is ${res.data.receipt_no}`, [
             {
               text: "Okay",
@@ -129,10 +124,11 @@ const AccountPreview = ({ navigation, route }) => {
           navigation.dispatch(resetAction)
         } else {
     setLoading(false)
+    console.log('result else gggggggggggggggggg', res.data)
 
           alert("Data already submitted. Please upload new dataset.")
           ToastAndroid.showWithGravityAndOffset(
-            "Data already submitted. Please upload new dataset.",
+            res.data,
             ToastAndroid.SHORT,
             ToastAndroid.CENTER,
             25,
@@ -143,10 +139,9 @@ const AccountPreview = ({ navigation, route }) => {
       .catch(err => {
     setLoading(false)
 
-        console.log(err)
-        alert("Data already submitted. Please upload new dataset.")
+        alert(`An error occurred! ${err}`)
         ToastAndroid.showWithGravityAndOffset(
-          "Data already submitted. Please upload new dataset.",
+         err,
           ToastAndroid.SHORT,
           ToastAndroid.CENTER,
           25,
@@ -188,7 +183,7 @@ const AccountPreview = ({ navigation, route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["AGENT NAME", ":", agentName.substring(0, 12).toString()],
+        ["AGENT NAME", ":", agentName.toString()],
         {},
       )
 
@@ -203,13 +198,13 @@ const AccountPreview = ({ navigation, route }) => {
           "RCPT DATE",
           ":",
           (
-            new Date(todayDateFromServer).toLocaleDateString("en-GB", {
+            new Date(todayDT).toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "2-digit",
               year: "2-digit",
             }) +
             ", " +
-            new Date(todayDateFromServer).toLocaleTimeString("en-GB", {
+            new Date(todayDT).toLocaleTimeString("en-GB", {
               hour: "2-digit",
               minute: "2-digit",
             })
@@ -225,7 +220,7 @@ const AccountPreview = ({ navigation, route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["RCPT NO", ":", rcptNo.toString()],
+        ["RCPT NO", ":", rcptNo.toString().substring(0,6)],
         {},
       )
 
@@ -247,7 +242,7 @@ const AccountPreview = ({ navigation, route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["NAME", ":", ((item?.customer_name).substring(0, 12)).toString()],
+        ["NAME", ":", item?.customer_name.toString()],
         {},
       )
 

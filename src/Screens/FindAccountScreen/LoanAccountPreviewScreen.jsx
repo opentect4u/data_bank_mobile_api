@@ -38,6 +38,8 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
     const [receiptNumber, setReceiptNumber] = useState(() => "")
     const [isSaveEnabled, setIsSaveEnabled] = useState(() => false)
     const [isLoading,setLoading] = useState(false)
+    var todayDT
+
     const {
       id,
       userId,
@@ -77,19 +79,20 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
     const netTotalSectionTableData = [
       ["Tnx. Date", new Date(todayDateFromServer).toLocaleDateString("en-GB")],
       ["Deposit Amt.", money],
-      ["Current Balance", item?.current_balance + parseFloat(money)],
+      ["Current Balance", item?.current_balance - parseFloat(money)],
     ]
   
     const resetAction = StackActions.popToTop()
   
     const sendCollectedMoney = async () => {
       setLoading(true)
+      todayDT=new Date().toISOString()
       const obj = {
         bank_id: item?.bank_id,
         branch_code: item?.branch_code,
         agent_code: userId,
         account_holder_name: item?.customer_name,
-        transaction_date: new Date().toISOString(),
+        transaction_date:todayDT ,
         account_type: item?.acc_type,
         product_code: item?.product_code,
         account_number: item?.account_number,
@@ -154,15 +157,15 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
         .catch(err => {
       setLoading(false)
 
-          console.log(err)
-          alert("Data already submitted. Please upload new dataset.")
-          ToastAndroid.showWithGravityAndOffset(
-            "Data already submitted. Please upload new dataset.",
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
-            25,
-            50,
-          )
+        
+      alert(`An error occurred! ${err}`)
+      ToastAndroid.showWithGravityAndOffset(
+       err,
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+        25,
+        50,
+      )
         })
     }
   
@@ -239,7 +242,7 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
           [BluetoothEscposPrinter.ALIGN.LEFT],
           [
             "Tnx. Datetime: " +
-              new Date(todayDateFromServer).toLocaleDateString("en-GB") + ", " +  new Date(todayDateFromServer).toLocaleTimeString("en-GB")
+              new Date(todayDT).toLocaleDateString("en-GB") + ", " +  new Date(todayDT).toLocaleTimeString("en-GB")
           ],
           {},
         )

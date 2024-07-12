@@ -91,6 +91,10 @@ const LogInScreen = ({ navigation }) => {
           "fsdadgtreyhgtdhyrfujfyudx",
           res.data.data.app_download_link,
         )
+        console.log(
+          "fsdadgtreyhgtdhysdfsdfsdrfujfyudx",
+          res.data,
+        )
         setUpdateStatus(res.data.update_status)
 
         if (res.data.update_status == "Y") {

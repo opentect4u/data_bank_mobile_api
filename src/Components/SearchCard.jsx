@@ -64,9 +64,10 @@ const styles = StyleSheet.create({
   },
   head: {
     color: COLORS.lightScheme.primary,
-    padding: 2,
+    padding: 5,
     fontWeight: 'bold',
     fontSize: 18,
+    maxWidth:300
   },
   arrow:{
     flex:1,
