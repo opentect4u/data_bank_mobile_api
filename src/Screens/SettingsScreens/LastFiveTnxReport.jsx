@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ToastAndroid,
-
 } from "react-native"
 import React, { useContext, useEffect, useState } from "react"
 import axios from "axios"
@@ -24,8 +23,8 @@ export default function LastFiveTnxReport() {
   const [focusDrop, setFocusDrop] = useState(() => false)
   const [showModal, setShowModal] = useState(() => false)
   const [accountType, setAccountType] = useState(() => "")
-  const [isDisabled,setIsDisabled] = useState(true)
-  const [isLoading,setIsLoading] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const tableHead = ["Date", "Acc No", "Name", "Dep Amt"]
   let tableData = lastFiveData
 
@@ -40,7 +39,6 @@ export default function LastFiveTnxReport() {
           branch_code: branchCode,
           agent_code: userId,
           account_type: accountType,
-
         },
         {
           headers: {
@@ -64,11 +62,10 @@ export default function LastFiveTnxReport() {
           console.log("dfasjhgfisgyaf", row)
 
           tableData.push(...[row])
-    setIsLoading(false)
-    setIsDisabled(false)
-
+          setIsLoading(false)
+          setIsDisabled(false)
         })
-        if(tableData.length==0){
+        if (tableData.length == 0) {
           ToastAndroid.showWithGravityAndOffset(
             "No data found!",
             ToastAndroid.SHORT,
@@ -119,59 +116,56 @@ export default function LastFiveTnxReport() {
         }}>
         <Text style={styles.todayCollection}>Last Five Transactions</Text>
         <View style={styles.dropdownContainer}>
-            {renderLabel()}
-            <Dropdown
-              style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={data}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!focusDrop ? "Select type" : "..."}
-              searchPlaceholder="Search..."
-              value={accountType}
-              onFocus={() => setFocusDrop(true)}
-              onBlur={() => setFocusDrop(false)}
-              onChange={item => {
-                setIsDisabled(false)
+          {renderLabel()}
+          <Dropdown
+            style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={data}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!focusDrop ? "Select type" : "..."}
+            searchPlaceholder="Search..."
+            value={accountType}
+            onFocus={() => setFocusDrop(true)}
+            onBlur={() => setFocusDrop(false)}
+            onChange={item => {
+              setIsDisabled(false)
 
-                setAccountType(item.value)
-                setFocusDrop(false)
-              }}
-              // renderLeftIcon={() => (
-              //   <AntDesign
-              //     style={styles.icon}
-              //     color={isFocus ? 'blue' : 'black'}
-              //     name="Safety"
-              //     size={20}
-              //   />
-              // )}
-            />
-          </View>
+              setAccountType(item.value)
+              setFocusDrop(false)
+            }}
+            // renderLeftIcon={() => (
+            //   <AntDesign
+            //     style={styles.icon}
+            //     color={isFocus ? 'blue' : 'black'}
+            //     name="Safety"
+            //     size={20}
+            //   />
+            // )}
+          />
+        </View>
         <View>
           <TouchableOpacity
             disabled={isDisabled || isLoading}
-
             onPress={() => handleSubmit()}
-            style={isDisabled?styles.disabledContainer: styles.dateButton}>
-            {isLoading ? <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>:
-               <Text style={styles.btnlabel}>
-               SUBMIT  
-              
-               </Text>
-              }
-           
+            style={isDisabled ? styles.disabledContainer : styles.dateButton}>
+            {isLoading ? (
+              <ActivityIndicator
+                color={COLORS.lightScheme.primary}
+                size={"large"}></ActivityIndicator>
+            ) : (
+              <Text style={styles.btnlabel}>SUBMIT</Text>
+            )}
           </TouchableOpacity>
-         
         </View>
-       
+
         <ScrollView>
-          
-          {tableData.length!=0 && (
+          {tableData.length != 0 && (
             <Table
               borderStyle={{
                 borderWidth: 2,
@@ -183,7 +177,6 @@ export default function LastFiveTnxReport() {
               <Rows data={tableData} textStyle={styles.text} />
             </Table>
           )}
-         
         </ScrollView>
         {/* <View>
           <TouchableOpacity
@@ -258,11 +251,11 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
   },
-  disabledContainer:{
+  disabledContainer: {
     width: "40%",
     height: 40,
     borderWidth: 2,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     backgroundColor: "lightgray",
     margin: 15,
     borderRadius: 30,
@@ -270,8 +263,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  btnlabel:{
-    color:'white',
-    fontWeight:'bold'
+  btnlabel: {
+    color: "white",
+    fontWeight: "bold",
   },
 })

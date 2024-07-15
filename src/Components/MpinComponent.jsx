@@ -15,7 +15,7 @@ const MpinComponent = ({ value, handleChange }) => {
               height: 10,
               borderRadius: 25,
               backgroundColor: COLORS.lightScheme.primary,
-              borderWidth:2
+              borderWidth: 2,
             }}></View>
         }
         maskDelay={1000}

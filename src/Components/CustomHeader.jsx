@@ -19,7 +19,7 @@ const CustomHeader = () => {
       {
         text: "No",
         onPress: () => console.log("Cancel Pressed"),
-        style:'default'
+        style: "default",
       },
       {
         text: "Yes",
@@ -29,7 +29,6 @@ const CustomHeader = () => {
           navigation.navigate(mainNavigationRoutes.login)
         },
       },
-      
     ])
   }
   return (

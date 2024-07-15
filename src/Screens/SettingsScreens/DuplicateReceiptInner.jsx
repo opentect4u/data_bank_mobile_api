@@ -24,8 +24,15 @@ import { icon } from "../../Resources/Icons"
 const DuplicateReceiptInner = ({ route }) => {
   const { item } = route.params
 
-  const { userId, bankId, branchCode, bankName, branchName, agentName,todayDateFromServer } =
-    useContext(AppStore)
+  const {
+    userId,
+    bankId,
+    branchCode,
+    bankName,
+    branchName,
+    agentName,
+    todayDateFromServer,
+  } = useContext(AppStore)
 
   const [duplicateReceipts, setDuplicateReceipts] = useState(() => [])
 
@@ -40,9 +47,9 @@ const DuplicateReceiptInner = ({ route }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: item?.account_number,
-      account_type:item?.acc_type
+      account_type: item?.acc_type,
     }
-    console.log('obj'+obj)
+    console.log("obj" + obj)
     await axios
       .post(address.DUPLICATE_RECEIPT, obj, {
         headers: {
@@ -79,7 +86,7 @@ const DuplicateReceiptInner = ({ route }) => {
                           // item.account_number,
                           // item.account_type,
                           // item.deposit_amount,
-                          item
+                          item,
                         ),
                     },
                   ],
@@ -94,7 +101,7 @@ const DuplicateReceiptInner = ({ route }) => {
 
           setLoading(false)
         })
-        if(tableData.length==0){
+        if (tableData.length == 0) {
           ToastAndroid.showWithGravityAndOffset(
             "No data found!",
             ToastAndroid.SHORT,
@@ -188,7 +195,7 @@ const DuplicateReceiptInner = ({ route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["RCPT NO", ":", item?.receipt_no.toString().substring(0,6)],
+        ["RCPT NO", ":", item?.receipt_no.toString().substring(0, 6)],
         {},
       )
 
@@ -199,7 +206,7 @@ const DuplicateReceiptInner = ({ route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["ACC NO", ":", (item?.account_number)],
+        ["ACC NO", ":", item?.account_number],
         {},
       )
 
@@ -243,11 +250,7 @@ const DuplicateReceiptInner = ({ route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        [
-          "CLOSE BAL",
-          ":",
-          item?.closing_bal.toString(),
-        ],
+        ["CLOSE BAL", ":", item?.closing_bal.toString()],
         {},
       )
 
@@ -466,19 +469,19 @@ const DuplicateReceiptInner = ({ route }) => {
         }}>
         <Text style={styles.todayCollection}>Duplicate Receipts</Text>
         <ScrollView>
-          {tableData.length!=0 && (
+          {tableData.length != 0 && (
             <Table
               borderStyle={{
                 borderWidth: 2,
                 borderColor: COLORS.lightScheme.secondary,
                 borderRadius: 10,
-                fontSize:16
+                fontSize: 16,
               }}
               style={{ backgroundColor: COLORS.lightScheme.background }}>
               <Row data={tableHead} textStyle={styles.head} />
 
               {loading ? (
-                <ActivityIndicator animating={true} size={"large"}  />
+                <ActivityIndicator animating={true} size={"large"} />
               ) : (
                 <Rows data={tableData} textStyle={styles.text} />
               )}
@@ -504,8 +507,8 @@ const styles = StyleSheet.create({
     width: "40%",
     height: 40,
     borderWidth: 2,
-    borderColor: 'white',
-    backgroundColor: 'white',
+    borderColor: "white",
+    backgroundColor: "white",
     margin: 15,
     borderRadius: 10,
     alignSelf: "center",
@@ -540,5 +543,5 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-  }
+  },
 })

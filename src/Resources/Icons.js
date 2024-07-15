@@ -79,5 +79,5 @@ export const icon = {
   daily,
   man,
   duplicate,
-  right
+  right,
 }

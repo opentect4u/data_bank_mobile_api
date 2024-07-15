@@ -208,20 +208,20 @@ const PrintMain = () => {
     }
   }
 
-    const unPair = (address) => {
-      setLoading(true);
-      BluetoothManager.unpaire(address).then(
-        (s) => {
-          setLoading(false);
-          setBoundAddress("");
-          setName("");
-        },
-        (e) => {
-          setLoading(false);
-          // alert(e);
-        }
-      );
-    };
+  const unPair = address => {
+    setLoading(true)
+    BluetoothManager.unpaire(address).then(
+      s => {
+        setLoading(false)
+        setBoundAddress("")
+        setName("")
+      },
+      e => {
+        setLoading(false)
+        // alert(e);
+      },
+    )
+  }
 
   const scanDevices = useCallback(() => {
     setLoading(true)
@@ -338,7 +338,7 @@ const PrintMain = () => {
         Bluetooth connected to this phone:
       </Text>
       <Text style={styles.sectionSub}>
-      (If not, pair it from your bluetooth)
+        (If not, pair it from your bluetooth)
       </Text>
       {loading ? <ActivityIndicator animating={true} /> : null}
       <View style={styles.containerList}>

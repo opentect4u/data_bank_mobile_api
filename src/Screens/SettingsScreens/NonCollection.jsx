@@ -23,8 +23,8 @@ const NonCollection = () => {
   const [accountType, setAccountType] = useState(() => "")
   const [focusDrop, setFocusDrop] = useState(() => false)
   const [nonCollectionReport, setNonCollectionReport] = useState(() => [])
-  const [isDisabled,setIsDisabled] = useState(true)
-  const [isLoading,setIsLoading] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   // const [loading, setLoading] = useState(() => true)
   const renderLabel = () => {
     if (accountType || focusDrop) {
@@ -52,7 +52,6 @@ const NonCollection = () => {
       branch_code: branchCode,
       agent_code: userId,
       account_type: accountType,
-
     }
     await axios
       .post(address.NON_COLLECTON_REPORT, obj, {
@@ -61,7 +60,7 @@ const NonCollection = () => {
         },
       })
       .then(res => {
-    setIsLoading(false)
+        setIsLoading(false)
 
         res.data.success.msg.forEach((item, i) => {
           let rowArr = [
@@ -73,16 +72,16 @@ const NonCollection = () => {
           console.log("NONNNNN COLLLLL ITEMMM TABLEEE=====", rowArr)
           tableData.push(...[rowArr])
         })
-        if(tableData.length==0){
-        setIsDisabled(false)
-        // setLoading(false)
-        ToastAndroid.showWithGravityAndOffset(
-          "No data found!",
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER,
-          25,
-          50,
-        )
+        if (tableData.length == 0) {
+          setIsDisabled(false)
+          // setLoading(false)
+          ToastAndroid.showWithGravityAndOffset(
+            "No data found!",
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+            25,
+            50,
+          )
         }
         console.log("++++++ TABLE DATA ++++++++", tableData)
         setNonCollectionReport(tableData)
@@ -90,9 +89,9 @@ const NonCollection = () => {
         setIsDisabled(false)
       })
       .catch(err => {
-    setIsLoading(false)
-    setIsDisabled(false)
-        
+        setIsLoading(false)
+        setIsDisabled(false)
+
         ToastAndroid.showWithGravityAndOffset(
           "Error occurred in the server",
           ToastAndroid.SHORT,
@@ -126,55 +125,56 @@ const NonCollection = () => {
         }}>
         <Text style={styles.todayCollection}>Non Collection Report</Text>
         <View style={styles.dropdownContainer}>
-            {renderLabel()}
-            <Dropdown
-              style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={data}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!focusDrop ? "Select type" : "..."}
-              searchPlaceholder="Search..."
-              value={accountType}
-              onFocus={() => setFocusDrop(true)}
-              onBlur={() => setFocusDrop(false)}
-              onChange={item => {
-                setIsDisabled(false)
+          {renderLabel()}
+          <Dropdown
+            style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={data}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!focusDrop ? "Select type" : "..."}
+            searchPlaceholder="Search..."
+            value={accountType}
+            onFocus={() => setFocusDrop(true)}
+            onBlur={() => setFocusDrop(false)}
+            onChange={item => {
+              setIsDisabled(false)
 
-                setAccountType(item.value)
-                setFocusDrop(false)
-              }}
-              // renderLeftIcon={() => (
-              //   <AntDesign
-              //     style={styles.icon}
-              //     color={isFocus ? 'blue' : 'black'}
-              //     name="Safety"
-              //     size={20}
-              //   />
-              // )}
-            />
-          </View>
+              setAccountType(item.value)
+              setFocusDrop(false)
+            }}
+            // renderLeftIcon={() => (
+            //   <AntDesign
+            //     style={styles.icon}
+            //     color={isFocus ? 'blue' : 'black'}
+            //     name="Safety"
+            //     size={20}
+            //   />
+            // )}
+          />
+        </View>
         <View>
           <TouchableOpacity
-           disabled={isDisabled || isLoading}
+            disabled={isDisabled || isLoading}
             onPress={() => handleSubmit()}
-            style={isDisabled?styles.disabledContainer: styles.dateButton}>
-             {isLoading ? <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>:
-               <Text style={styles.btnlabel}>
-               SUBMIT  
-              
-               </Text>
-              }
+            style={isDisabled ? styles.disabledContainer : styles.dateButton}>
+            {isLoading ? (
+              <ActivityIndicator
+                color={COLORS.lightScheme.primary}
+                size={"large"}></ActivityIndicator>
+            ) : (
+              <Text style={styles.btnlabel}>SUBMIT</Text>
+            )}
           </TouchableOpacity>
         </View>
-       
+
         <ScrollView>
-          {tableData.length!=0 && (
+          {tableData.length != 0 && (
             <Table
               borderStyle={{
                 borderWidth: 2,
@@ -253,20 +253,20 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
   },
-  btnlabel:{
-    color:'white',
-    fontWeight:'bold'
+  btnlabel: {
+    color: "white",
+    fontWeight: "bold",
   },
-  disabledContainer:{
+  disabledContainer: {
     width: "40%",
     height: 40,
     borderWidth: 2,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     backgroundColor: "lightgray",
     margin: 15,
     borderRadius: 30,
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-  }
+  },
 })

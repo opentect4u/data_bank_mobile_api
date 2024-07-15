@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, ScrollView, ToastAndroid, PixelRatio,RefreshControl } from "react-native"
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  ToastAndroid,
+  PixelRatio,
+  RefreshControl,
+} from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS, colors } from "../../Resources/colors"
@@ -72,7 +80,7 @@ const EndWorkScreen = ({ navigation }) => {
         },
       })
       .then(res => {
-    setLoading(false)
+        setLoading(false)
 
         // console.log("###### Preview: ", res.data)
         if (res.data.status) {
@@ -87,14 +95,14 @@ const EndWorkScreen = ({ navigation }) => {
           setIsButtonEnabled(!isButtonEnabled)
           console.log("IF dshjklfhskdfuihsdk vtbstgubkui", res.data)
         } else {
-    setLoading(false)
+          setLoading(false)
 
           alert("No collection has been done yet.")
           console.log("FI dshjklfhskdfuihsdk vtbstgubkui", res.data)
         }
       })
       .catch(err => {
-    setLoading(false)
+        setLoading(false)
 
         console.log("############", err)
         alert("Collection already submitted.")
@@ -145,13 +153,11 @@ const EndWorkScreen = ({ navigation }) => {
       login()
     }, 2000)
     navigation.dispatch(popAction)
-
   }, [])
-  useEffect(()=>{
+  useEffect(() => {
     onRefresh()
     login()
-
-  },[])
+  }, [])
   useFocusEffect(
     useCallback(() => {
       setRefreshing(true)
@@ -184,8 +190,14 @@ const EndWorkScreen = ({ navigation }) => {
             justifyContent: "center",
             alignContent: "center",
           }}>
-          <ScrollView keyboardShouldPersistTaps="handled" refreshControl={
-              <RefreshControl refreshing={refreshing} color={COLORS.lightScheme.primary} onRefresh={onRefresh} />
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                color={COLORS.lightScheme.primary}
+                onRefresh={onRefresh}
+              />
             }>
             <Text style={styles.todayCollection}>Today's Collections</Text>
             <Table
@@ -201,8 +213,14 @@ const EndWorkScreen = ({ navigation }) => {
               handleChange={setEndScreenPassword}
             />
             <ButtonComponent
-              title={!isLoading?"End Work":<ActivityIndicator color={COLORS.lightScheme.primary}/>}
-              customStyle={{ marginTop: 10,width:'80%',marginLeft:30 }}
+              title={
+                !isLoading ? (
+                  "End Work"
+                ) : (
+                  <ActivityIndicator color={COLORS.lightScheme.primary} />
+                )
+              }
+              customStyle={{ marginTop: 10, width: "80%", marginLeft: 30 }}
               handleOnpress={handleEndWorkButton}
               disabled={isLoading}
             />

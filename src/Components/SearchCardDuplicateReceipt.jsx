@@ -8,20 +8,22 @@ const SearchCardDuplicateReceipt = ({ item, index, navigation }) => {
   return (
     <TouchableOpacity
       onPress={() =>
-        navigation.navigate(mainNavigationRoutes.duplicateReceiptInner, { item: item })
+        navigation.navigate(mainNavigationRoutes.duplicateReceiptInner, {
+          item: item,
+        })
       }
       style={styles.container}
       key={index}>
-     <View>
-      <Image
-        source={{
-          uri: "https://static.wikia.nocookie.net/artemisfowl/images/8/89/Portrait_Placeholder.png/revision/latest/thumbnail/width/360/height/450?cb=20190630050130",
-        }}
-        style={styles.image}
-      />
+      <View>
+        <Image
+          source={{
+            uri: "https://static.wikia.nocookie.net/artemisfowl/images/8/89/Portrait_Placeholder.png/revision/latest/thumbnail/width/360/height/450?cb=20190630050130",
+          }}
+          style={styles.image}
+        />
       </View>
-       <View>
-       <Text style={styles.head}>{item?.customer_name}</Text>
+      <View>
+        <Text style={styles.head}>{item?.customer_name}</Text>
         <Text style={styles.text}>Account No : {item?.account_number}</Text>
         <Text style={styles.text}>
           Account Type :{" "}
@@ -33,13 +35,10 @@ const SearchCardDuplicateReceipt = ({ item, index, navigation }) => {
             ? "Loan"
             : ""}
         </Text>
-       </View>
-       <View style={styles.arrow}>
-       <Text> 
-       {icon.right(COLORS.lightScheme.primary, 45)}
-        </Text>
-
-       </View>
+      </View>
+      <View style={styles.arrow}>
+        <Text>{icon.right(COLORS.lightScheme.primary, 45)}</Text>
+      </View>
     </TouchableOpacity>
   )
 }
@@ -49,7 +48,7 @@ export default SearchCardDuplicateReceipt
 const styles = StyleSheet.create({
   container: {
     width: "99%",
-    backgroundColor:'white',
+    backgroundColor: "white",
     padding: 10,
     borderRadius: 5,
     flexDirection: "row",
@@ -57,19 +56,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 10,
     elevation: 15,
-    borderBottomColor:COLORS.lightScheme.primary,
-    border:1
+    borderBottomColor: COLORS.lightScheme.primary,
+    border: 1,
   },
   head: {
     color: COLORS.lightScheme.primary,
     padding: 2,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 18,
   },
-  arrow:{
-    flex:1,
-    flexDirection:'row',
-    justifyContent:'flex-end'
+  arrow: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   text: {
     color: COLORS.lightScheme.primary,
@@ -82,6 +81,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 100,
-    marginRight:10
+    marginRight: 10,
   },
 })

@@ -8,7 +8,7 @@ import {
   View,
   ToastAndroid,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { AppStore } from "../../Context/AppContext"
@@ -26,25 +26,26 @@ import { NodePath } from "@babel/core"
 import NoData from "../../Components/NoData"
 
 const ReportDay = () => {
-  const { userId, bankId, branchCode, agentName, bankName, branchName } = useContext(AppStore)
+  const { userId, bankId, branchCode, agentName, bankName, branchName } =
+    useContext(AppStore)
 
   // const [startingDate, setStartingDate] = useState(() => "From Date") // date in yyyy-mm-dd
   // const [endingDate, setEndingDate] = useState(() => "To Date") // date in yyyy-mm-dd
 
   const [selectedStartDate, setSelectedStartDate] = useState(() => new Date())
   const [selectedEndDate, setSelectedEndDate] = useState(() => new Date())
-  const [isData,setIsData] = useState(true)
+  const [isData, setIsData] = useState(true)
   const [accountType, setAccountType] = useState(() => "")
   const [focusDrop, setFocusDrop] = useState(() => false)
   const [showModal, setShowModal] = useState(() => false)
-  const [isDisabled,setIsDisabled] = useState(true)
+  const [isDisabled, setIsDisabled] = useState(true)
   // const [isStartingDatePickerVisible, setIsStartingDatePickerVisible] = useState(() => false)
   // const [isEndingDatePickerVisible, setIsEndingDatePickerVisible] = useState(() => false)
 
   const [dayScrollReportArray, setDayScrollReportArray] = useState(() => [])
 
   const [totalAmount, setTotalAmount] = useState(() => 0)
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const startDate = selectedStartDate
     ? selectedStartDate.toISOString().slice(0, 10)
@@ -52,21 +53,21 @@ const ReportDay = () => {
   const endDate = selectedEndDate
     ? selectedEndDate.toISOString().slice(0, 10)
     : ""
-    const renderLabel = () => {
-      if (accountType || focusDrop) {
-        return (
-          <Text style={[styles.label, focusDrop && { color: "blue" }]}>
-            Select type
-          </Text>
-        )
-      }
-      return null
+  const renderLabel = () => {
+    if (accountType || focusDrop) {
+      return (
+        <Text style={[styles.label, focusDrop && { color: "blue" }]}>
+          Select type
+        </Text>
+      )
     }
-    const data = [
-      { label: "Daily", value: "D" },
-      { label: "Loan", value: "L" },
-      { label: "RD", value: "R" },
-    ]
+    return null
+  }
+  const data = [
+    { label: "Daily", value: "D" },
+    { label: "Loan", value: "L" },
+    { label: "RD", value: "R" },
+  ]
   // const showStartingDatePicker = () => {
   //   setIsStartingDatePickerVisible(true)
   // }
@@ -121,7 +122,6 @@ const ReportDay = () => {
       from_date: startDate,
       to_date: endDate,
       account_type: accountType,
-
     }
     let totalDepositedAmount = 0
     await axios
@@ -131,13 +131,17 @@ const ReportDay = () => {
         },
       })
       .then(res => {
-    setIsLoading(false)
-    setIsDisabled(false)
+        setIsLoading(false)
+        setIsDisabled(false)
 
         res.data.success.msg.forEach((item, i) => {
           let rowArr = [
             i + 1,
-            new Date(item.date).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"}),
+            new Date(item.date).toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+            }),
             // item.account_type == "D"
             //   ? "Daily"
             //   : item.account_type == "R"
@@ -154,9 +158,8 @@ const ReportDay = () => {
           console.log("ITEMMM TABLEEE=====", rowArr)
           tableData.push(...[rowArr])
           // printReceipt(item.date, startDate, endDate, item.account_number, item.account_holder_name, item.deposit_amount)
-        
         })
-        if(tableData.length==0){
+        if (tableData.length == 0) {
           console.log(tableData)
           ToastAndroid.showWithGravityAndOffset(
             "No data found!",
@@ -171,8 +174,8 @@ const ReportDay = () => {
         setDayScrollReportArray(tableData)
       })
       .catch(err => {
-    setIsLoading(false)
-    setIsDisabled(false)
+        setIsLoading(false)
+        setIsDisabled(false)
 
         ToastAndroid.showWithGravityAndOffset(
           "Error occurred in the server",
@@ -184,8 +187,6 @@ const ReportDay = () => {
         console.log(err)
       })
   }
-
-
 
   async function printReceipt() {
     try {
@@ -203,7 +204,17 @@ const ReportDay = () => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["Date", ":", new Date().toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"}).toString()],
+        [
+          "Date",
+          ":",
+          new Date()
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+            })
+            .toString(),
+        ],
         {},
       )
       await BluetoothEscposPrinter.printColumn(
@@ -226,9 +237,20 @@ const ReportDay = () => {
         align: "center",
       })
 
-      await BluetoothEscposPrinter.printText(`FROM: ${new Date(startDate).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"})}  TO: ${new Date(endDate).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"})}`, {
-        align: "center",
-      })
+      await BluetoothEscposPrinter.printText(
+        `FROM: ${new Date(startDate).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        })}  TO: ${new Date(endDate).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        })}`,
+        {
+          align: "center",
+        },
+      )
 
       await BluetoothEscposPrinter.printText("\r", {})
 
@@ -277,9 +299,12 @@ const ReportDay = () => {
         {},
       )
 
-      await BluetoothEscposPrinter.printText(`TOTAL AMOUNT: ${totalAmount}\r\n`, {
-        align: "center",
-      })
+      await BluetoothEscposPrinter.printText(
+        `TOTAL AMOUNT: ${totalAmount}\r\n`,
+        {
+          align: "center",
+        },
+      )
       // await BluetoothEscposPrinter.printText("Total Receipts: " + totalReceipts + "\n", { align: "center" })
       // await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", { align: "center" })
       await BluetoothEscposPrinter.printText(
@@ -299,8 +324,6 @@ const ReportDay = () => {
       )
     }
   }
-
-
 
   // useEffect(() => {
   //   tableData = []
@@ -353,9 +376,9 @@ const ReportDay = () => {
             style={{
               justifyContent: "space-around",
               flexDirection: "row",
-              backgroundColor:'white',
-              borderColor:COLORS.lightScheme.primary,
-              borderWidth:1,
+              backgroundColor: "white",
+              borderColor: COLORS.lightScheme.primary,
+              borderWidth: 1,
               padding: 10,
               margin: 10,
               borderRadius: 10,
@@ -404,61 +427,58 @@ const ReportDay = () => {
             <Text style={{ fontSize: 15, fontWeight: 500, color: COLORS.lightScheme.onPrimary, fontWeight: "bold" }}>From: {startDate}</Text>
             <Text style={{ fontSize: 15, fontWeight: 500, color: COLORS.lightScheme.onPrimary, fontWeight: "bold" }}>To: {endDate}</Text>
           </View> */}
-            <View style={styles.dropdownContainer}>
-            {renderLabel()}
-            <Dropdown
-              style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={data}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!focusDrop ? "Select type" : "..."}
-              searchPlaceholder="Search..."
-              value={accountType}
-              onFocus={() => setFocusDrop(true)}
-              onBlur={() => setFocusDrop(false)}
-              onChange={item => {
-                setIsDisabled(false)
-                setAccountType(item.value)
-                setFocusDrop(false)
-              }}
-              // renderLeftIcon={() => (
-              //   <AntDesign
-              //     style={styles.icon}
-              //     color={isFocus ? 'blue' : 'black'}
-              //     name="Safety"
-              //     size={20}
-              //   />
-              // )}
-            />
-          </View>
+        <View style={styles.dropdownContainer}>
+          {renderLabel()}
+          <Dropdown
+            style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={data}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!focusDrop ? "Select type" : "..."}
+            searchPlaceholder="Search..."
+            value={accountType}
+            onFocus={() => setFocusDrop(true)}
+            onBlur={() => setFocusDrop(false)}
+            onChange={item => {
+              setIsDisabled(false)
+              setAccountType(item.value)
+              setFocusDrop(false)
+            }}
+            // renderLeftIcon={() => (
+            //   <AntDesign
+            //     style={styles.icon}
+            //     color={isFocus ? 'blue' : 'black'}
+            //     name="Safety"
+            //     size={20}
+            //   />
+            // )}
+          />
+        </View>
         <View>
           <TouchableOpacity
             disabled={isDisabled || isLoading}
             onPress={() => handleSubmit()}
-            style={isDisabled?styles.disabledContainer: styles.dateButton}>
-              {isLoading ? <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>:
-               <Text style={styles.btnlabel}>
-               SUBMIT  
-              
-               </Text>
-              }
-             
-           
-            
-             
+            style={isDisabled ? styles.disabledContainer : styles.dateButton}>
+            {isLoading ? (
+              <ActivityIndicator
+                color={COLORS.lightScheme.primary}
+                size={"large"}></ActivityIndicator>
+            ) : (
+              <Text style={styles.btnlabel}>SUBMIT</Text>
+            )}
           </TouchableOpacity>
           {/* {isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>} */}
         </View>
         <ScrollView>
-         {/* <Text > {tableData.length}</Text>  */}
-         {/* {tableData.length==0 && !isLoading && <NoData/>} */}
-          {tableData.length!=0 && (
+          {/* <Text > {tableData.length}</Text>  */}
+          {/* {tableData.length==0 && !isLoading && <NoData/>} */}
+          {tableData.length != 0 && (
             <Table
               borderStyle={{
                 borderWidth: 2,
@@ -466,20 +486,25 @@ const ReportDay = () => {
                 borderRadius: 10,
               }}
               style={{ backgroundColor: COLORS.lightScheme.background }}>
-            
-             <Row hidden={!tableData}  data={tableHead} textStyle={styles.head} />
-            
+              <Row
+                hidden={!tableData}
+                data={tableHead}
+                textStyle={styles.head}
+              />
+
               <Rows data={tableData} textStyle={styles.text} />
             </Table>
           )}
         </ScrollView>
         <Text>Total Amount: {totalAmount}</Text>
         <TouchableOpacity
-            disabled={tableData.length==0}
-            onPress={() => printReceipt()}
-            style={tableData.length!=0?styles.dateButton: styles.disabledContainer}>
-            <Text style={styles.btnlabel}>PRINT</Text>
-          </TouchableOpacity>
+          disabled={tableData.length == 0}
+          onPress={() => printReceipt()}
+          style={
+            tableData.length != 0 ? styles.dateButton : styles.disabledContainer
+          }>
+          <Text style={styles.btnlabel}>PRINT</Text>
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -499,14 +524,14 @@ const styles = StyleSheet.create({
     width: "40%",
     height: 40,
     borderWidth: 2,
-    borderColor:'white',
+    borderColor: "white",
     backgroundColor: COLORS.lightScheme.primary,
     margin: 15,
     borderRadius: PixelRatio.roundToNearestPixel(30),
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    color:COLORS.lightScheme.primary
+    color: COLORS.lightScheme.primary,
   },
   text: {
     margin: 6,
@@ -514,9 +539,9 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 10,
   },
-  btnlabel:{
-    color:'white',
-    fontWeight:'bold',
+  btnlabel: {
+    color: "white",
+    fontWeight: "bold",
   },
   head: {
     margin: 6,
@@ -549,16 +574,16 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
   },
-  disabledContainer:{
+  disabledContainer: {
     width: "40%",
     height: 40,
     borderWidth: 2,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     backgroundColor: "lightgray",
     margin: 15,
-    borderRadius:  PixelRatio.roundToNearestPixel(30),
+    borderRadius: PixelRatio.roundToNearestPixel(30),
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-  }
+  },
 })

@@ -34,7 +34,7 @@ const RDAccountDetails = ({ navigation, route }) => {
     collectionFlag,
     endFlag,
     transDt,
-    allowCollectionDays
+    allowCollectionDays,
   } = useContext(AppStore)
 
   const { item } = route.params
@@ -83,7 +83,9 @@ const RDAccountDetails = ({ navigation, route }) => {
     console.log("CURRRRR DATEE", currentDate)
     let trans_dt = new Date(transDt.toISOString().slice(0, 10))
     console.log("MODDDD DATEsssssss", trans_dt)
-    let newTrans_dt = trans_dt.setDate(trans_dt.getDate() + parseInt(allowCollectionDays))
+    let newTrans_dt = trans_dt.setDate(
+      trans_dt.getDate() + parseInt(allowCollectionDays),
+    )
     newTrans_dt = new Date(newTrans_dt).toISOString().slice(0, 10)
     // console.log('NNNNEEEWWWWW TRANCE DT', new Date(newTrans_dt).toISOString().slice(0, 10), trans_dt);
 
@@ -94,7 +96,7 @@ const RDAccountDetails = ({ navigation, route }) => {
     // let afterAddingHolidayLockDays = modifiedAtDate.getDate() + 1
     // newModifiedDate.setDate(modifiedAtDate.getDate() + holidayLock)
     // console.log("HOLIIIIDDDAAAAYYYYY _+++++++>>>", holidayLock)
-    
+
     // return newTrans_dt >= currentDate
     return date_dif < allowCollectionDays
   }
@@ -158,9 +160,9 @@ const RDAccountDetails = ({ navigation, route }) => {
                 title={"Back"}
                 customStyle={{
                   marginTop: 10,
-                  marginRight:10,
-                  backgroundColor: 'white',
-                  colors:'red',
+                  marginRight: 10,
+                  backgroundColor: "white",
+                  colors: "red",
                   width: "40%",
                 }}
                 handleOnpress={() => {
@@ -168,7 +170,7 @@ const RDAccountDetails = ({ navigation, route }) => {
                   navigation.goBack()
                 }}
               />
-              {!checkIsCollectionEnded() && checkDayLock()? (
+              {!checkIsCollectionEnded() && checkDayLock() ? (
                 <ButtonComponent
                   title={"Preview / Save"}
                   customStyle={{ marginTop: 10, width: "50%" }}
@@ -231,14 +233,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 12,
   },
   inputContainer: {
-    padding:20,
+    padding: 20,
     marginVertical: 10,
     // padding: 10,
     backgroundColor: COLORS.lightScheme.onPrimary,
     borderRadius: 20,
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:0.8,
-    elevation:10
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 0.8,
+    elevation: 10,
   },
   buttonContainer: {
     flexDirection: "row",

@@ -122,13 +122,23 @@ const ChangePin = () => {
               <Text style={styles.title}>CHANGE YOUR M-PIN</Text>
             </View>
             <View style={styles.pinContainer}>
-              <Text style={{ color: COLORS.lightScheme.primary,fontWeight:'bold', fontSize:18 }}>
+              <Text
+                style={{
+                  color: COLORS.lightScheme.primary,
+                  fontWeight: "bold",
+                  fontSize: 18,
+                }}>
                 Old Pin
               </Text>
               <MpinComponent value={passCode} handleChange={changePasscode} />
             </View>
             <View style={styles.pinContainer}>
-              <Text style={{ color: COLORS.lightScheme.primary,fontWeight:'bold' , fontSize:18}}>
+              <Text
+                style={{
+                  color: COLORS.lightScheme.primary,
+                  fontWeight: "bold",
+                  fontSize: 18,
+                }}>
                 New Pin
               </Text>
               <MpinComponent
@@ -137,7 +147,12 @@ const ChangePin = () => {
               />
             </View>
             <View style={styles.pinContainer}>
-              <Text style={{ color: COLORS.lightScheme.primary,fontWeight:'bold' , fontSize:18}}>
+              <Text
+                style={{
+                  color: COLORS.lightScheme.primary,
+                  fontWeight: "bold",
+                  fontSize: 18,
+                }}>
                 Confirm Pin
               </Text>
               <MpinComponent
@@ -147,7 +162,12 @@ const ChangePin = () => {
             </View>
             <ButtonComponent
               title={"CHANGE NOW"}
-              customStyle={{ margin: 10, marginTop: 20, marginLeft:75, width:200 }}
+              customStyle={{
+                margin: 10,
+                marginTop: 20,
+                marginLeft: 75,
+                width: 200,
+              }}
               handleOnpress={handleChangePassword}
             />
           </View>
@@ -169,7 +189,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     marginBottom: 20,
-    color:'white'
+    color: "white",
   },
   pinContainer: {
     display: "flex",

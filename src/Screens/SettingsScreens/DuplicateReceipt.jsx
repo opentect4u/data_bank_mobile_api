@@ -1,4 +1,10 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native"
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS } from "../../Resources/colors"
@@ -74,15 +80,15 @@ const DuplicateReceipt = ({ navigation }) => {
 
         console.log("bank details", res.data)
         setUserBankDetails(res.data.success.msg)
-        if(!res.data.success.msg.length)
-        {ToastAndroid.showWithGravityAndOffset(
-          "No data found!",
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER,
-          25,
-          50,
-        )
-      }
+        if (!res.data.success.msg.length) {
+          ToastAndroid.showWithGravityAndOffset(
+            "No data found!",
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+            25,
+            50,
+          )
+        }
       })
       .catch(err => {
         setIsLoading(false)
@@ -95,9 +101,7 @@ const DuplicateReceipt = ({ navigation }) => {
           25,
           50,
         )
-      }
-      )
-
+      })
   }
 
   useFocusEffect(
@@ -121,9 +125,12 @@ const DuplicateReceipt = ({ navigation }) => {
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">
-         {isLoading && <ActivityIndicator size={"large"}
-                  color={COLORS.lightScheme.primary}
-                  />}
+          {isLoading && (
+            <ActivityIndicator
+              size={"large"}
+              color={COLORS.lightScheme.primary}
+            />
+          )}
           {userBankDetails &&
             userBankDetails?.map((props, index) => {
               console.log("========================", props)
@@ -170,9 +177,9 @@ const DuplicateReceipt = ({ navigation }) => {
           />
         </View> */}
         <View style={styles.searchContainer}>
-        {renderLabel()}
+          {renderLabel()}
 
-        <Dropdown
+          <Dropdown
             style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
@@ -197,7 +204,8 @@ const DuplicateReceipt = ({ navigation }) => {
               setReadonly(false)
               setAccountType(item.value)
               setFocusDrop(false)
-            }}/>
+            }}
+          />
           <InputComponent
             readOnly={isReadonly}
             label={"Account No. / Name"}
@@ -237,12 +245,12 @@ const styles = StyleSheet.create({
     bottom: 130,
     width: "100%",
     alignSelf: "center",
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:2.5,
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 2.5,
     backgroundColor: COLORS.lightScheme.onPrimary,
     padding: 20,
     borderRadius: 10,
-    elevation:10
+    elevation: 10,
   },
   dropdownContainer: {
     backgroundColor: "white",

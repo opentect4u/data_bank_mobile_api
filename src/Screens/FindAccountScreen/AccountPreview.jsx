@@ -7,9 +7,11 @@ import {
   Pressable,
   ToastAndroid,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  Image,
+  TouchableOpacity,
 } from "react-native"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
 import {
@@ -19,6 +21,8 @@ import {
   Rows,
   Col,
 } from "react-native-table-component"
+import RazorpayCheckout from "react-native-razorpay"
+import RadioGroup from "react-native-radio-buttons-group"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import InputComponent from "../../Components/InputComponent"
 import ButtonComponent from "../../Components/ButtonComponent"
@@ -34,9 +38,10 @@ import { glej } from "../../Resources/ImageStrings/glej"
 import { Alert } from "react-native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import logoCut from "../../Resources/Images/logo_cut.png"
+import razor from "../../Resources/Images/razorpay.webp"
 
 const AccountPreview = ({ navigation, route }) => {
-  const [isLoading,setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false)
   const [receiptNumber, setReceiptNumber] = useState(() => "")
   const [isSaveEnabled, setIsSaveEnabled] = useState(() => false)
   var todayDT
@@ -80,11 +85,29 @@ const AccountPreview = ({ navigation, route }) => {
     ["Current Balance", item?.current_balance + parseFloat(money)],
   ]
 
+  const radioButtons = useMemo(
+    () => [
+      {
+        id: "1", // acts as primary key, should be unique and non-empty string
+        label: "Receive Cash",
+        value: "C",
+      },
+      {
+        id: "2",
+        label: "Pay Online",
+        value: "O",
+      },
+    ],
+    [],
+  )
+
+  const [selectedId, setSelectedId] = useState(() => "1")
+
   const resetAction = StackActions.popToTop()
 
   const sendCollectedMoney = async () => {
     setLoading(true)
-    todayDT= new Date().toISOString()
+    todayDT = new Date().toISOString()
     const obj = {
       bank_id: item?.bank_id,
       branch_code: item?.branch_code,
@@ -109,7 +132,7 @@ const AccountPreview = ({ navigation, route }) => {
         },
       })
       .then(res => {
-        console.log('result '+res.data.status)
+        console.log("result " + res.data.status)
         if (res.data.status) {
           setLoading(false)
           Alert.alert("Receipt No.", `Receipt No is ${res.data.receipt_no}`, [
@@ -123,8 +146,8 @@ const AccountPreview = ({ navigation, route }) => {
           printReceipt(res.data.receipt_no)
           navigation.dispatch(resetAction)
         } else {
-    setLoading(false)
-    console.log('result else gggggggggggggggggg', res.data)
+          setLoading(false)
+          console.log("result else gggggggggggggggggg", res.data)
 
           alert("Data already submitted. Please upload new dataset.")
           ToastAndroid.showWithGravityAndOffset(
@@ -137,11 +160,11 @@ const AccountPreview = ({ navigation, route }) => {
         }
       })
       .catch(err => {
-    setLoading(false)
+        setLoading(false)
 
         alert(`An error occurred! ${err}`)
         ToastAndroid.showWithGravityAndOffset(
-         err,
+          err,
           ToastAndroid.SHORT,
           ToastAndroid.CENTER,
           25,
@@ -220,7 +243,7 @@ const AccountPreview = ({ navigation, route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["RCPT NO", ":", rcptNo.toString().substring(0,6)],
+        ["RCPT NO", ":", rcptNo.toString().substring(0, 6)],
         {},
       )
 
@@ -338,13 +361,13 @@ const AccountPreview = ({ navigation, route }) => {
       console.log("TTTTTYYYYYPPPPPEEEEE", allowCollectionDays)
       console.log("##$$$$###$$$", maximumAmount * allowCollectionDays)
       console.log("##$$$$+++++###$$$", parseFloat(money) + totalDepositedAmount)
-      console.log("##$$$$+++++###$$$ totalDepositedAmount", totalDepositedAmount)
+      console.log(
+        "##$$$$+++++###$$$ totalDepositedAmount",
+        totalDepositedAmount,
+      )
       console.log("##$$$$+++++###$$$ totalCollection", totalCollection)
 
-      if (
-        maximumAmount >=
-        parseFloat(money) + totalDepositedAmount
-      ) {
+      if (maximumAmount >= parseFloat(money) + totalDepositedAmount) {
         console.log("MMMMMMMMMMMMMMMM")
         setIsSaveEnabled(true)
         sendCollectedMoney()
@@ -364,15 +387,26 @@ const AccountPreview = ({ navigation, route }) => {
       console.log("AAAAAAAAAAAAAAAAAA")
 
       console.log("TTTTTYYYYYPPPPPEEEEE maximumAmount", maximumAmount)
-      console.log("TTTTTYYYYYPPPPPEEEEE allowCollectionDays", allowCollectionDays)
-      console.log("##$$$$###$$ maximumAmount * allowCollectionDays", maximumAmount * allowCollectionDays)
-      console.log("##$$$$+++++###$$$ (money) + totalDepositedAmount", parseFloat(money) + totalDepositedAmount)
+      console.log(
+        "TTTTTYYYYYPPPPPEEEEE allowCollectionDays",
+        allowCollectionDays,
+      )
+      console.log(
+        "##$$$$###$$ maximumAmount * allowCollectionDays",
+        maximumAmount * allowCollectionDays,
+      )
+      console.log(
+        "##$$$$+++++###$$$ (money) + totalDepositedAmount",
+        parseFloat(money) + totalDepositedAmount,
+      )
 
-      console.log("##$$$$+++++###$$$ totalDepositedAmount", totalDepositedAmount)
+      console.log(
+        "##$$$$+++++###$$$ totalDepositedAmount",
+        totalDepositedAmount,
+      )
       console.log("##$$$$+++++###$$$ totalCollection", totalCollection)
 
-
-      if (maximumAmount >= (parseFloat(money) + totalCollection)) {
+      if (maximumAmount >= parseFloat(money) + totalCollection) {
         setIsSaveEnabled(true)
         sendCollectedMoney()
         // maximumAmount -= money
@@ -400,6 +434,38 @@ const AccountPreview = ({ navigation, route }) => {
   //   console.log("Total Deposited Amount", totalDepositedAmount)
   // }
 
+  const handleRazorpayClient = () => {
+    // console.log("Razorpay client...")
+
+    const options = {
+      description: "Deposit Payment",
+      image:
+        "https://synergicsoftek.in/wp-content/themes/synergicsoftek-child/assets/images/sss-logo.png", // Your logo URL
+      currency: "INR",
+      key: "YOUR_RAZORPAY_KEY", // Your Razorpay Key
+      amount: money * 100, // amount in paise (INR 1 = 100 paise)
+      name: item.customer_name,
+      prefill: {
+        // email: "customer-email@example.com",
+        contact: item.mobile_no,
+        name: item.customer_name,
+      },
+      theme: { color: "#F37254" },
+    }
+
+    RazorpayCheckout.open(options)
+      .then(data => {
+        // handle success
+        alert(`Success: ${data.razorpay_payment_id}`)
+        // Proceed with saving the transaction
+        sendCollectedMoney()
+      })
+      .catch(error => {
+        // handle failure
+        alert(`Error: ${error.code} | ${error.description}`)
+      })
+  }
+
   return (
     <View>
       <CustomHeader />
@@ -410,20 +476,20 @@ const AccountPreview = ({ navigation, route }) => {
           padding: 10,
         }}>
         {/* <ScrollView> */}
-          <Text style={styles.info}>Preview</Text>
-          {/* Table Component */}
-          <View style={styles.tableConatiner}>
-            <Table
-              borderStyle={{
-                borderWidth: 5,
-                borderColor: COLORS.lightScheme.primary,
-              }}
-              style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
-              <Rows data={tableData} textStyle={styles.text} />
-            </Table>
-          </View>
+        <Text style={styles.info}>Preview</Text>
+        {/* Table Component */}
+        <View style={styles.tableConatiner}>
+          <Table
+            borderStyle={{
+              borderWidth: 5,
+              borderColor: COLORS.lightScheme.primary,
+            }}
+            style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
+            <Rows data={tableData} textStyle={styles.text} />
+          </Table>
+        </View>
 
-          {/* <View style={styles.netTotalTableContainer}>
+        {/* <View style={styles.netTotalTableContainer}>
             <Table
               borderStyle={{ borderWidth: 0, borderColor: COLORS.lightScheme.primary,  }}
               style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
@@ -431,6 +497,24 @@ const AccountPreview = ({ navigation, route }) => {
             </Table>
           </View> */}
 
+        <View
+          style={{
+            // alignSelf: "center",
+            marginVertical: 15,
+          }}>
+          <RadioGroup
+            radioButtons={radioButtons}
+            onPress={setSelectedId}
+            selectedId={selectedId}
+            layout="row"
+            labelStyle={{
+              fontWeight: "800",
+              fontSize: 20,
+            }}
+          />
+        </View>
+
+        {selectedId === "1" ? (
           <View style={styles.inputContainer}>
             <View style={styles.netTotalTableContainer}>
               <Table
@@ -447,14 +531,13 @@ const AccountPreview = ({ navigation, route }) => {
                 />
               </Table>
             </View>
-            {/* Input Field */}
             <View style={styles.buttonContainer}>
               <CancelButtonComponent
                 title={"Back"}
                 customStyle={{
                   marginTop: 10,
-                  backgroundColor: 'white',
-                  colors:'red',
+                  backgroundColor: "white",
+                  colors: "red",
                   width: "40%",
                 }}
                 handleOnpress={() => {
@@ -462,8 +545,14 @@ const AccountPreview = ({ navigation, route }) => {
                 }}
               />
               <ButtonComponent
-              disabled={isLoading}
-                title={!isLoading?"Save":<ActivityIndicator color={COLORS.lightScheme.primary}/>}
+                disabled={isLoading}
+                title={
+                  !isLoading ? (
+                    "Save"
+                  ) : (
+                    <ActivityIndicator color={COLORS.lightScheme.primary} />
+                  )
+                }
                 customStyle={{ marginTop: 10, width: "40%" }}
                 handleOnpress={() => {
                   handleSave()
@@ -472,6 +561,28 @@ const AccountPreview = ({ navigation, route }) => {
               />
             </View>
           </View>
+        ) : (
+          <TouchableOpacity
+            style={{
+              marginVertical: 20,
+              border: 5,
+              borderColor: "black",
+            }}
+            onPress={handleRazorpayClient}>
+            {/* <ButtonComponent
+              title={"Proceed to Razorpay"}
+              customStyle={{ width: "90%" }}
+              handleOnpress={handleRazorpayClient}
+            /> */}
+
+            <Image
+              source={razor}
+              style={styles.image}
+              resizeMode="cover"
+              // onError={err => setIsImageLoad(false)}
+            />
+          </TouchableOpacity>
+        )}
         {/* </ScrollView> */}
       </ScrollView>
     </View>
@@ -530,5 +641,10 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: COLORS.lightScheme.onTertiary,
     borderRadius: 5,
+  },
+  image: {
+    height: 80,
+    width: "80%",
+    alignSelf: "center",
   },
 })

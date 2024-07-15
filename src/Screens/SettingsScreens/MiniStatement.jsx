@@ -1,4 +1,11 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, ToastAndroid, View } from "react-native"
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  View,
+} from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS } from "../../Resources/colors"
@@ -10,14 +17,14 @@ import { useFocusEffect } from "@react-navigation/native"
 import SearchCardMiniStatement from "../../Components/SearchCardMiniStatement"
 import { Dropdown } from "react-native-element-dropdown"
 
-const MiniStatement = ({ navigation,item }) => {
+const MiniStatement = ({ navigation, item }) => {
   const [searchValue, changeSearchValue] = useState(() => "")
   const [userBankDetails, setUserBankDetails] = useState(() => [])
   const [focusDrop, setFocusDrop] = useState(() => false)
   const [showModal, setShowModal] = useState(() => false)
   const [accountType, setAccountType] = useState(() => "")
-  const [isReadonly,setReadonly] = useState(true)
-  const [isLoading,setIsLoading] = useState(false)
+  const [isReadonly, setReadonly] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const { userId, bankId, branchCode } = useContext(AppStore)
 
   function handleAccountSearch() {
@@ -55,7 +62,6 @@ const MiniStatement = ({ navigation,item }) => {
       agent_code: userId,
       account_number: searchValue,
       flag: accountType,
-
     }
     console.log(bankId, branchCode, userId, searchValue)
     console.log(userBankDetails)
@@ -67,21 +73,21 @@ const MiniStatement = ({ navigation,item }) => {
         },
       })
       .then(res => {
-    setIsLoading(false)
+        setIsLoading(false)
 
         console.log("bank details", res.data)
         setUserBankDetails(res.data.success.msg)
-        if(res.data.length==0)
-        ToastAndroid.showWithGravityAndOffset(
-          "No data found!",
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER,
-          25,
-          50,
-        )
+        if (res.data.length == 0)
+          ToastAndroid.showWithGravityAndOffset(
+            "No data found!",
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+            25,
+            50,
+          )
       })
       .catch(err => {
-    setIsLoading(false)
+        setIsLoading(false)
 
         console.log(err)
       })
@@ -104,8 +110,12 @@ const MiniStatement = ({ navigation,item }) => {
       <CustomHeader />
       <View style={styles.container}>
         {/* Account Cards */}
-        {isLoading && <ActivityIndicator size={"large"}
-                  color={COLORS.lightScheme.primary}/>}
+        {isLoading && (
+          <ActivityIndicator
+            size={"large"}
+            color={COLORS.lightScheme.primary}
+          />
+        )}
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">
@@ -123,7 +133,7 @@ const MiniStatement = ({ navigation,item }) => {
             })}
         </ScrollView>
         <View style={styles.dropdownContainer}>
-            {/* {renderLabel()}
+          {/* {renderLabel()}
             <Dropdown
               style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
               placeholderStyle={styles.placeholderStyle}
@@ -150,7 +160,7 @@ const MiniStatement = ({ navigation,item }) => {
                 setAccountType(item.value)
                 setFocusDrop(false)
               }} */}
-              {/* // renderLeftIcon={() => (
+          {/* // renderLeftIcon={() => (
               //   <AntDesign
               //     style={styles.icon}
               //     color={isFocus ? 'blue' : 'black'}
@@ -159,39 +169,40 @@ const MiniStatement = ({ navigation,item }) => {
               //   />
               // )}
             /> */}
-          </View>
+        </View>
         {/* <ScrollView> */}
-       
+
         {/* Search Component */}
         <View style={styles.searchContainer}>
-        {renderLabel()}
+          {renderLabel()}
 
-        <Dropdown
-              style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={data}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!focusDrop ? "Select type" : "..."}
-              searchPlaceholder="Search..."
-              value={accountType}
-              onFocus={() => setFocusDrop(true)}
-              onBlur={() => setFocusDrop(false)}
-              // onConfirmSelectItem={()=>
-              //   setReadonly(accountType?false:true)
+          <Dropdown
+            style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={data}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!focusDrop ? "Select type" : "..."}
+            searchPlaceholder="Search..."
+            value={accountType}
+            onFocus={() => setFocusDrop(true)}
+            onBlur={() => setFocusDrop(false)}
+            // onConfirmSelectItem={()=>
+            //   setReadonly(accountType?false:true)
 
-              // }
-              onChange={item => {
-                // console.log(accountType)
-                setReadonly(false)
-                setAccountType(item.value)
-                setFocusDrop(false)
-              }}/>
+            // }
+            onChange={item => {
+              // console.log(accountType)
+              setReadonly(false)
+              setAccountType(item.value)
+              setFocusDrop(false)
+            }}
+          />
           <InputComponent
             readOnly={isReadonly}
             label={"Account No. / Name"}
@@ -203,7 +214,6 @@ const MiniStatement = ({ navigation,item }) => {
         </View>
         {/* </ScrollView> */}
       </View>
-      
     </View>
   )
 }
@@ -221,17 +231,17 @@ const styles = StyleSheet.create({
     bottom: 130,
     width: "100%",
     alignSelf: "center",
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:2.5,
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 2.5,
     backgroundColor: COLORS.lightScheme.onPrimary,
     padding: 20,
     borderRadius: 10,
-    elevation:10
+    elevation: 10,
   },
   dropdownContainer: {
     backgroundColor: "white",
-    position:'absolute',
-    bottom:300,
+    position: "absolute",
+    bottom: 300,
     padding: 16,
     width: "100%",
   },

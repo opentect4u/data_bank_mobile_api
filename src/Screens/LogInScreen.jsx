@@ -44,7 +44,7 @@ const LogInScreen = ({ navigation }) => {
   const [latestAppVersion, setLatestAppVersion] = useState("")
   const [appDownloadLink, setAppDownloadLink] = useState("")
   const [updateStatus, setUpdateStatus] = useState("")
-  const [isDisable,setDisable] = useState(false)
+  const [isDisable, setDisable] = useState(false)
   // useEffect(() => {
   //   console.log(passcode)
   // }, [passcode])
@@ -91,10 +91,7 @@ const LogInScreen = ({ navigation }) => {
           "fsdadgtreyhgtdhyrfujfyudx",
           res.data.data.app_download_link,
         )
-        console.log(
-          "fsdadgtreyhgtdhysdfsdfsdrfujfyudx",
-          res.data,
-        )
+        console.log("fsdadgtreyhgtdhysdfsdfsdrfujfyudx", res.data)
         setUpdateStatus(res.data.update_status)
 
         if (res.data.update_status == "Y") {
@@ -169,7 +166,7 @@ const LogInScreen = ({ navigation }) => {
                   disabled={updateStatus == "Y" || !userId ? true : false}
                   title={"Next"}
                   handleOnpress={() => handlePressOnFirstScreen()}
-                  customStyle={{ width: "60%", marginTop:10 }}
+                  customStyle={{ width: "60%", marginTop: 10 }}
                 />
               </View>
 
@@ -213,8 +210,8 @@ const LogInScreen = ({ navigation }) => {
                   cellStyleFocused={null}
                   value={passcode}
                   onTextChange={code => {
-                    
-                    setPasscode(code)}}
+                    setPasscode(code)
+                  }}
                   onBackspace={() => {
                     // console.warn("hello")
                   }}
@@ -235,23 +232,26 @@ const LogInScreen = ({ navigation }) => {
                     setNext(!next)
                     setDisable(false)
                   }}
-                  
                   customStyle={{
                     marginTop: 10,
-                    backgroundColor: 'white',
-                    colors:'red',
+                    backgroundColor: "white",
+                    colors: "red",
                     width: "40%",
-                    
                   }}
                 />
                 <ButtonComponent
-                  disabled={isDisable || passcode.length!=4 }
-                  title={!isDisable?"Submit":<ActivityIndicator color={COLORS.lightScheme.primary}/>}
-                  handleOnpress={async() => {
+                  disabled={isDisable || passcode.length != 4}
+                  title={
+                    !isDisable ? (
+                      "Submit"
+                    ) : (
+                      <ActivityIndicator color={COLORS.lightScheme.primary} />
+                    )
+                  }
+                  handleOnpress={async () => {
                     setDisable(true)
                     let k = await login()
                     setDisable(false)
-                    
                   }}
                   customStyle={{ marginTop: 10, width: "40%" }}
                 />
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightScheme.primary,
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
-    color:'white',
+    color: "white",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",

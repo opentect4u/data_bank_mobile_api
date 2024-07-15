@@ -34,7 +34,7 @@ const AppContext = ({ children }) => {
   const [transDt, setTransDt] = useState(() => new Date())
   const [isDaily, setisDaily] = useState(false)
   const [isLoan, setIsLoan] = useState(false)
-  const [isRD,setIsRD] = useState(false)
+  const [isRD, setIsRD] = useState(false)
   const [todayDateFromServer, setTodayDateFromServer] = useState(
     () => new Date(),
   )
@@ -83,13 +83,21 @@ const AppContext = ({ children }) => {
           setBranchName(res.data.success.user_data.msg[0].branch_name)
           setBranchCode(res.data.success.user_data.msg[0].branch_code)
           setMaximumAmount(res.data.success.user_data.msg[0].max_amt)
-          setIsLoan(res.data.success.bank_acc_type[0].loan_flag=='Y'?true:false)
-          setisDaily(res.data.success.bank_acc_type[0].dds_flag=='Y'?true:false)
-          setIsRD(res.data.success.bank_acc_type[0].rd_flag=='Y'?true:false)
+          setIsLoan(
+            res.data.success.bank_acc_type[0].loan_flag == "Y" ? true : false,
+          )
+          setisDaily(
+            res.data.success.bank_acc_type[0].dds_flag == "Y" ? true : false,
+          )
+          setIsRD(
+            res.data.success.bank_acc_type[0].rd_flag == "Y" ? true : false,
+          )
           // setHolidayLock(
           //   res.data.success.user_data.msg[0].allow_collection_days,
           // )
-          setAllowCollectionDays(res.data.success.user_data.msg[0].allow_collection_days)
+          setAllowCollectionDays(
+            res.data.success.user_data.msg[0].allow_collection_days,
+          )
           setSecAmtType(res.data.success.user_data.msg[0].sec_amt_type)
 
           setTotalCollection(
@@ -97,8 +105,16 @@ const AppContext = ({ children }) => {
           )
 
           setReceiptNumber(res.data.success.setting.msg[0]?.receipt_no)
-          setModifiedAt(res.data.success.setting.msg.length > 0 ? new Date(res.data.success.setting.msg[0].modified_at) : new Date())
-          setTransDt(res.data.success.trans.msg.length > 0 ?new Date(res.data.success.trans.msg[0].trans_dt) : new Date())
+          setModifiedAt(
+            res.data.success.setting.msg.length > 0
+              ? new Date(res.data.success.setting.msg[0].modified_at)
+              : new Date(),
+          )
+          setTransDt(
+            res.data.success.trans.msg.length > 0
+              ? new Date(res.data.success.trans.msg[0].trans_dt)
+              : new Date(),
+          )
           return true
         } else {
           setIsLogin(false)
@@ -128,7 +144,7 @@ const AppContext = ({ children }) => {
       })
   }
 
-  console.log('dtdtdtdt', transDt, transDt)
+  console.log("dtdtdtdt", transDt, transDt)
 
   const nowDate = async () => {
     await axios
@@ -267,7 +283,7 @@ const AppContext = ({ children }) => {
         isLoan,
         isRD,
         transDt,
-        setTotalCollection
+        setTotalCollection,
       }}>
       {children}
     </AppStore.Provider>

@@ -7,7 +7,7 @@ import {
   Pressable,
   ToastAndroid,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native"
 import { useContext, useEffect, useState } from "react"
 import { COLORS, colors } from "../../Resources/colors"
@@ -38,7 +38,7 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
 const RDAccountPreview = ({ navigation, route }) => {
   const [receiptNumber, setReceiptNumber] = useState(() => "")
   const [isSaveEnabled, setIsSaveEnabled] = useState(() => false)
-  const [isLoading,setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false)
   const {
     id,
     userId,
@@ -55,7 +55,7 @@ const RDAccountPreview = ({ navigation, route }) => {
     secAmtType,
   } = useContext(AppStore)
   const { item, money } = route.params
-  var todayDT;
+  var todayDT
   // const [addedMoney, setAddedMoney] = useState(() => 0)
 
   const tableData = [
@@ -84,8 +84,8 @@ const RDAccountPreview = ({ navigation, route }) => {
 
   const resetAction = StackActions.popToTop()
   const sendCollectedMoney = async () => {
-   setLoading(true)
-   todayDT=new Date().toISOString()
+    setLoading(true)
+    todayDT = new Date().toISOString()
     const obj = {
       bank_id: item?.bank_id,
       branch_code: item?.branch_code,
@@ -110,9 +110,8 @@ const RDAccountPreview = ({ navigation, route }) => {
         },
       })
       .then(res => {
-
         if (res.data.status) {
-   setLoading(false)
+          setLoading(false)
 
           console.log("###### Preview: ", res.data)
           // alert(`Receipt No is ${res.data.receipt_no}`)
@@ -127,7 +126,7 @@ const RDAccountPreview = ({ navigation, route }) => {
           printReceipt(res.data.receipt_no)
           navigation.dispatch(resetAction)
         } else {
-   setLoading(false)
+          setLoading(false)
 
           alert("Data already submitted. Please upload new dataset.")
           ToastAndroid.showWithGravityAndOffset(
@@ -140,16 +139,16 @@ const RDAccountPreview = ({ navigation, route }) => {
         }
       })
       .catch(err => {
-   setLoading(false)
-    
-   alert(`An error occurred! ${err}`)
-   ToastAndroid.showWithGravityAndOffset(
-    err,
-     ToastAndroid.SHORT,
-     ToastAndroid.CENTER,
-     25,
-     50,
-   )
+        setLoading(false)
+
+        alert(`An error occurred! ${err}`)
+        ToastAndroid.showWithGravityAndOffset(
+          err,
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50,
+        )
       })
   }
 
@@ -330,7 +329,7 @@ const RDAccountPreview = ({ navigation, route }) => {
 
   const handleSave = () => {
     getTotalDepositAmount()
-    console.log('sec ',secAmtType)
+    console.log("sec ", secAmtType)
     // console.log("##$$$$###$$$", maximumAmount, money, totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", money + totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", typeof money, typeof totalDepositedAmount)
@@ -342,13 +341,13 @@ const RDAccountPreview = ({ navigation, route }) => {
       console.log("TTTTTYYYYYPPPPPEEEEE", allowCollectionDays)
       console.log("##$$$$###$$$", maximumAmount * allowCollectionDays)
       console.log("##$$$$+++++###$$$", parseFloat(money) + totalDepositedAmount)
-      console.log("##$$$$+++++###$$$ totalDepositedAmount", totalDepositedAmount)
+      console.log(
+        "##$$$$+++++###$$$ totalDepositedAmount",
+        totalDepositedAmount,
+      )
       console.log("##$$$$+++++###$$$ totalCollection", totalCollection)
 
-      if (
-        maximumAmount  >=
-        parseFloat(money) + totalDepositedAmount
-      ) {
+      if (maximumAmount >= parseFloat(money) + totalDepositedAmount) {
         console.log("MMMMMMMMMMMMMMMM")
         setIsSaveEnabled(true)
         sendCollectedMoney()
@@ -368,15 +367,26 @@ const RDAccountPreview = ({ navigation, route }) => {
       console.log("AAAAAAAAAAAAAAAAAA")
 
       console.log("TTTTTYYYYYPPPPPEEEEE maximumAmount", maximumAmount)
-      console.log("TTTTTYYYYYPPPPPEEEEE allowCollectionDays", allowCollectionDays)
-      console.log("##$$$$###$$ maximumAmount * allowCollectionDays", maximumAmount * allowCollectionDays)
-      console.log("##$$$$+++++###$$$ (money) + totalDepositedAmount", parseFloat(money) + totalDepositedAmount)
+      console.log(
+        "TTTTTYYYYYPPPPPEEEEE allowCollectionDays",
+        allowCollectionDays,
+      )
+      console.log(
+        "##$$$$###$$ maximumAmount * allowCollectionDays",
+        maximumAmount * allowCollectionDays,
+      )
+      console.log(
+        "##$$$$+++++###$$$ (money) + totalDepositedAmount",
+        parseFloat(money) + totalDepositedAmount,
+      )
 
-      console.log("##$$$$+++++###$$$ totalDepositedAmount", totalDepositedAmount)
+      console.log(
+        "##$$$$+++++###$$$ totalDepositedAmount",
+        totalDepositedAmount,
+      )
       console.log("##$$$$+++++###$$$ totalCollection", totalCollection)
 
-
-      if (maximumAmount >= (parseFloat(money) + totalCollection)) {
+      if (maximumAmount >= parseFloat(money) + totalCollection) {
         setIsSaveEnabled(true)
         sendCollectedMoney()
         // maximumAmount -= money
@@ -414,20 +424,20 @@ const RDAccountPreview = ({ navigation, route }) => {
           padding: 10,
         }}>
         {/* <ScrollView> */}
-          <Text style={styles.info}>Preview</Text>
-          {/* Table Component */}
-          <View style={styles.tableConatiner}>
-            <Table
-              borderStyle={{
-                borderWidth: 2,
-                borderColor: COLORS.lightScheme.primary,
-              }}
-              style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
-              <Rows data={tableData} textStyle={styles.text} />
-            </Table>
-          </View>
+        <Text style={styles.info}>Preview</Text>
+        {/* Table Component */}
+        <View style={styles.tableConatiner}>
+          <Table
+            borderStyle={{
+              borderWidth: 2,
+              borderColor: COLORS.lightScheme.primary,
+            }}
+            style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
+            <Rows data={tableData} textStyle={styles.text} />
+          </Table>
+        </View>
 
-          {/* <View style={styles.netTotalTableContainer}>
+        {/* <View style={styles.netTotalTableContainer}>
             <Table
               borderStyle={{ borderWidth: 0, borderColor: COLORS.lightScheme.primary,  }}
               style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
@@ -435,47 +445,53 @@ const RDAccountPreview = ({ navigation, route }) => {
             </Table>
           </View> */}
 
-          <View style={styles.inputContainer}>
-            <View style={styles.netTotalTableContainer}>
-              <Table
-                borderStyle={{
-                  borderWidth: 1,
-                  borderColor: COLORS.lightScheme.primary,
-                }}
-                style={{
-                  backgroundColor: COLORS.lightScheme.secondaryContainer,
-                }}>
-                <Rows
-                  data={netTotalSectionTableData}
-                  textStyle={styles.netTotalText}
-                />
-              </Table>
-            </View>
-            {/* Input Field */}
-            <View style={styles.buttonContainer}>
-              <CancelButtonComponent
-                title={"Back"}
-                customStyle={{
-                  marginTop: 10,
-                  marginRight:10,
-                  backgroundColor: 'white',
-                  colors:'red',
-                  width: "40%",
-                }}
-                handleOnpress={() => {
-                  navigation.goBack()
-                }}
+        <View style={styles.inputContainer}>
+          <View style={styles.netTotalTableContainer}>
+            <Table
+              borderStyle={{
+                borderWidth: 1,
+                borderColor: COLORS.lightScheme.primary,
+              }}
+              style={{
+                backgroundColor: COLORS.lightScheme.secondaryContainer,
+              }}>
+              <Rows
+                data={netTotalSectionTableData}
+                textStyle={styles.netTotalText}
               />
-              <ButtonComponent
-                title={!isLoading?"Save":<ActivityIndicator color={COLORS.lightScheme.primary}/>}
-                customStyle={{ marginTop: 10, width: "40%" }}
-                handleOnpress={() => {
-                  handleSave()
-                }}
-                disabled={isLoading}
-              />
-            </View>
+            </Table>
           </View>
+          {/* Input Field */}
+          <View style={styles.buttonContainer}>
+            <CancelButtonComponent
+              title={"Back"}
+              customStyle={{
+                marginTop: 10,
+                marginRight: 10,
+                backgroundColor: "white",
+                colors: "red",
+                width: "40%",
+              }}
+              handleOnpress={() => {
+                navigation.goBack()
+              }}
+            />
+            <ButtonComponent
+              title={
+                !isLoading ? (
+                  "Save"
+                ) : (
+                  <ActivityIndicator color={COLORS.lightScheme.primary} />
+                )
+              }
+              customStyle={{ marginTop: 10, width: "40%" }}
+              handleOnpress={() => {
+                handleSave()
+              }}
+              disabled={isLoading}
+            />
+          </View>
+        </View>
         {/* </ScrollView> */}
       </ScrollView>
     </View>

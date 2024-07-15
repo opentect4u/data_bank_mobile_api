@@ -1,4 +1,11 @@
-import { ActivityIndicator, AppState, ScrollView, StyleSheet, Text, View } from "react-native"
+import {
+  ActivityIndicator,
+  AppState,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS, colors } from "../../Resources/colors"
@@ -13,7 +20,7 @@ import { useFocusEffect } from "@react-navigation/native"
 const FindAccountScreen = ({ navigation }) => {
   const [searchValue, changeSearchValue] = useState(() => "")
   const [userBankDetails, setUserBankDetails] = useState(() => [])
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { userId, bankId, branchCode } = useContext(AppStore)
 
@@ -24,18 +31,18 @@ const FindAccountScreen = ({ navigation }) => {
     fetchBankDetails()
   }
 
-  const debounce = (func) => {
-    let timer;
+  const debounce = func => {
+    let timer
     return function (...args) {
       // console.log(args)
-      const context = this;
-      if (timer) clearTimeout(timer);
+      const context = this
+      if (timer) clearTimeout(timer)
       timer = setTimeout(() => {
-        timer = null;
-        func.apply(context, args);
-      }, 2000);
-    };
-  };
+        timer = null
+        func.apply(context, args)
+      }, 2000)
+    }
+  }
 
   // useEffect(() => {
   //   handleAccountSearch()
@@ -44,7 +51,6 @@ const FindAccountScreen = ({ navigation }) => {
 
   useEffect(() => {
     debounce(fetchBankDetails)()
-  
   }, [searchValue])
 
   const fetchBankDetails = async () => {
@@ -54,29 +60,28 @@ const FindAccountScreen = ({ navigation }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: searchValue,
-      flag:'D'
+      flag: "D",
     }
     console.log(bankId, branchCode, userId, searchValue)
     console.log(userBankDetails)
 
     await axios
       .post(address.SEARCH_ACCOUNT, obj, {
-        
         headers: {
           Accept: "application/json",
         },
       })
       .then(res => {
-    setIsLoading(false)
+        setIsLoading(false)
 
         console.log("bank details", res?.data.success.msg)
         setUserBankDetails(res?.data.success.msg)
       })
       .catch(err => {
-    setIsLoading(false)
+        setIsLoading(false)
 
         setUserBankDetails([])
-        console.log('error: '+err.response.data)
+        console.log("error: " + err.response.data)
       })
   }
 
@@ -88,7 +93,6 @@ const FindAccountScreen = ({ navigation }) => {
         // // Useful for cleanup functions
         changeSearchValue("")
         setUserBankDetails([])
-     
       }
     }, []),
   )
@@ -100,13 +104,18 @@ const FindAccountScreen = ({ navigation }) => {
         {/* Account Cards */}
         <Text style={styles.title}>Daily</Text>
         {/* {isLoading} */}
-        { isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} style={styles.loading} size={"large"}/>}
+        {isLoading && (
+          <ActivityIndicator
+            color={COLORS.lightScheme.primary}
+            style={styles.loading}
+            size={"large"}
+          />
+        )}
 
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">
-      
-          {userBankDetails && 
+          {userBankDetails &&
             userBankDetails?.map((props, index) => {
               console.log("========================", props)
               return (
@@ -115,7 +124,7 @@ const FindAccountScreen = ({ navigation }) => {
                   index={index}
                   navigation={navigation}
                   key={index}
-                  flag={'D'}
+                  flag={"D"}
                 />
               )
             })}
@@ -148,12 +157,12 @@ const styles = StyleSheet.create({
     bottom: 130,
     width: "100%",
     alignSelf: "center",
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:2,
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 2,
     backgroundColor: COLORS.lightScheme.onPrimary,
     padding: 20,
     borderRadius: 10,
-    elevation:10
+    elevation: 10,
   },
   title: {
     textAlign: "center",
@@ -168,8 +177,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
   },
-  loading:{
+  loading: {
     color: COLORS.lightScheme.tertiaryContainer,
-    marginTop:50
-  }
+    marginTop: 50,
+  },
 })

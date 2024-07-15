@@ -1,4 +1,11 @@
-import { ActivityIndicator, AppState, ScrollView, StyleSheet, Text, View } from "react-native"
+import {
+  ActivityIndicator,
+  AppState,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS, colors } from "../../Resources/colors"
@@ -13,7 +20,7 @@ import { useFocusEffect } from "@react-navigation/native"
 const FindLoanAccountScreen = ({ navigation }) => {
   const [searchValue, changeSearchValue] = useState(() => "")
   const [userBankDetails, setUserBankDetails] = useState(() => [])
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { userId, bankId, branchCode } = useContext(AppStore)
 
@@ -24,17 +31,17 @@ const FindLoanAccountScreen = ({ navigation }) => {
     fetchBankDetails()
   }
 
-  const debounce = (func) => {
-    let timer;
+  const debounce = func => {
+    let timer
     return function (...args) {
-      const context = this;
-      if (timer) clearTimeout(timer);
+      const context = this
+      if (timer) clearTimeout(timer)
       timer = setTimeout(() => {
-        timer = null;
-        func.apply(context, args);
-      }, 2000);
-    };
-  };
+        timer = null
+        func.apply(context, args)
+      }, 2000)
+    }
+  }
 
   // useEffect(() => {
   //   handleAccountSearch()
@@ -52,7 +59,7 @@ const FindLoanAccountScreen = ({ navigation }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: searchValue,
-      flag:'L'
+      flag: "L",
     }
     console.log(bankId, branchCode, userId, searchValue)
     console.log(userBankDetails)
@@ -96,11 +103,18 @@ const FindLoanAccountScreen = ({ navigation }) => {
       <View style={styles.container}>
         {/* Account Cards */}
         <Text style={styles.title}>Loan</Text>
-        { isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} style={styles.loading} size={"large"}/>}
+        {isLoading && (
+          <ActivityIndicator
+            color={COLORS.lightScheme.primary}
+            style={styles.loading}
+            size={"large"}
+          />
+        )}
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">
-          {userBankDetails && !isLoading &&
+          {userBankDetails &&
+            !isLoading &&
             userBankDetails?.map((props, index) => {
               console.log("========================", props)
               return (
@@ -109,7 +123,7 @@ const FindLoanAccountScreen = ({ navigation }) => {
                   index={index}
                   navigation={navigation}
                   key={index}
-                  flag={'L'}
+                  flag={"L"}
                 />
               )
             })}
@@ -142,12 +156,12 @@ const styles = StyleSheet.create({
     bottom: 130,
     width: "100%",
     alignSelf: "center",
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:2,
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 2,
     backgroundColor: COLORS.lightScheme.onPrimary,
     padding: 20,
     borderRadius: 10,
-    elevation:10
+    elevation: 10,
   },
   title: {
     textAlign: "center",

@@ -5,13 +5,11 @@ import {
   PixelRatio,
   ScrollView,
   RefreshControl,
-  TouchableOpacity
+  TouchableOpacity,
 } from "react-native"
 import { StackActions, useFocusEffect } from "@react-navigation/native"
 import { useState, useEffect, useContext, useCallback } from "react"
-import {
-  BluetoothEscposPrinter,
-} from "react-native-bluetooth-escpos-printer"
+import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { icon } from "../../Resources/Icons"
 import { Table, Rows, Row } from "react-native-table-component"
 import { COLORS, colors } from "../../Resources/colors"
@@ -36,7 +34,7 @@ const Home = ({ navigation }) => {
     login,
     isLoan,
     isRD,
-    isDaily
+    isDaily,
   } = useContext(AppStore)
 
   const [currentDateTime, setCurrentDateTime] = useState(new Date())
@@ -50,9 +48,7 @@ const Home = ({ navigation }) => {
     return () => clearInterval(timer)
   }, [])
 
-  let bank = [
-    [bankName]
-  ]
+  let bank = [[bankName]]
   // useEffect(())
   let tableData = [
     // ["Bank", bankName],
@@ -176,7 +172,7 @@ const Home = ({ navigation }) => {
 
   return (
     <>
-     {/* <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* <Stack.Navigator screenOptions={{ headerShown: false }}>
      <Stack.Screen
           name={mainNavigationRoutes.home}
           component={}
@@ -216,7 +212,11 @@ const Home = ({ navigation }) => {
           }}>
           <ScrollView
             refreshControl={
-              <RefreshControl refreshing={refreshing} color={COLORS.lightScheme.primary} onRefresh={onRefresh} />
+              <RefreshControl
+                refreshing={refreshing}
+                color={COLORS.lightScheme.primary}
+                onRefresh={onRefresh}
+              />
             }>
             <Text style={styles.todayCollection}>Agent Information</Text>
             <Table
@@ -233,40 +233,61 @@ const Home = ({ navigation }) => {
             </Table>
 
             <View style={styles.options}>
-      <TouchableOpacity disabled={!isDaily} style={styles.cardContainer}
-          onPress={() =>
-            navigation.navigate("Daily_Navigation")
-          }
-        >
-          {/* Icon */}
-          {icon.daily(isDaily?COLORS.lightScheme.primary:COLORS.lightScheme.secondary, 25)}
+              <TouchableOpacity
+                disabled={!isDaily}
+                style={styles.cardContainer}
+                onPress={() => navigation.navigate("Daily_Navigation")}>
+                {/* Icon */}
+                {icon.daily(
+                  isDaily
+                    ? COLORS.lightScheme.primary
+                    : COLORS.lightScheme.secondary,
+                  25,
+                )}
 
-          {/* label */}
-          <Text style={isDaily?styles.label:styles.disabledContainer}> Daily </Text>
-        </TouchableOpacity>
-        <TouchableOpacity disabled={!isLoan}
-          onPress={() =>
-            navigation.navigate('Loan_Navigation')
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.giver(isLoan?COLORS.lightScheme.primary:COLORS.lightScheme.secondary, 25)}
+                {/* label */}
+                <Text style={isDaily ? styles.label : styles.disabledContainer}>
+                  {" "}
+                  Daily{" "}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={!isLoan}
+                onPress={() => navigation.navigate("Loan_Navigation")}
+                style={styles.cardContainer}>
+                {/* Icon */}
+                {icon.giver(
+                  isLoan
+                    ? COLORS.lightScheme.primary
+                    : COLORS.lightScheme.secondary,
+                  25,
+                )}
 
-          {/* label */}
-          <Text style={isLoan?styles.label:styles.disabledContainer}> Loan </Text>
-        </TouchableOpacity>
-        <TouchableOpacity disabled={!isRD}
-          onPress={() => 
-            navigation.navigate('RD_Navigation')
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.loop(isRD?COLORS.lightScheme.primary:COLORS.lightScheme.secondary, 25)}
+                {/* label */}
+                <Text style={isLoan ? styles.label : styles.disabledContainer}>
+                  {" "}
+                  Loan{" "}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                disabled={!isRD}
+                onPress={() => navigation.navigate("RD_Navigation")}
+                style={styles.cardContainer}>
+                {/* Icon */}
+                {icon.loop(
+                  isRD
+                    ? COLORS.lightScheme.primary
+                    : COLORS.lightScheme.secondary,
+                  25,
+                )}
 
-          {/* label */}
-          <Text style={isRD?styles.label:styles.disabledContainer}> RD </Text>
-        </TouchableOpacity>
-      </View>
+                {/* label */}
+                <Text style={isRD ? styles.label : styles.disabledContainer}>
+                  {" "}
+                  RD{" "}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </ScrollView>
           {/* <View style={styles.printAgent}>
             <Button
@@ -276,8 +297,6 @@ const Home = ({ navigation }) => {
             />
           </View> */}
         </View>
-     
-        
       </View>
     </>
   )
@@ -293,9 +312,9 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 18,
   },
-  card:{
-    border:COLORS.lightScheme.primary,
-    borderWidth:1
+  card: {
+    border: COLORS.lightScheme.primary,
+    borderWidth: 1,
   },
   bnk: {
     margin: 6,
@@ -312,7 +331,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    
   },
   grettingText: {
     fontSize: 20,
@@ -349,15 +367,15 @@ const styles = StyleSheet.create({
     width: "25%",
     height: 70, //
     padding: 6,
-    paddingTop:20,
+    paddingTop: 20,
     margin: 5,
-    paddingBottom:5,
-    marginTop:10,
-    paddingHorizontal:10,
+    paddingBottom: 5,
+    marginTop: 10,
+    paddingHorizontal: 10,
     borderRadius: 10,
     justifyContent: "center",
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:3,
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 3,
     elevation: 30,
   },
   label: {
@@ -365,13 +383,12 @@ const styles = StyleSheet.create({
     padding: 10,
     textAlign: "center",
     fontSize: PixelRatio.roundToNearestPixel(13),
-    fontWeight:'bold'
+    fontWeight: "bold",
   },
-  options:{
-    flexDirection:'row',
-    justifyContent:'center',
-    alignItems:'center',
-    
+  options: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     textAlign: "center",
@@ -386,7 +403,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 100,
     borderBottomRightRadius: 100,
   },
-  disabledContainer:{
-    color:'gray'
-  }
+  disabledContainer: {
+    color: "gray",
+  },
 })

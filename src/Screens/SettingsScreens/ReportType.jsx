@@ -8,7 +8,7 @@ import {
   View,
   ToastAndroid,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native"
 // import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { AppStore } from "../../Context/AppContext"
@@ -37,12 +37,12 @@ const ReportType = () => {
 
   const [typeWiseReportArray, setTypeWiseReportArray] = useState(() => [])
   const [accountType, setAccountType] = useState(() => "")
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const [showModal, setShowModal] = useState(() => false)
   const [selectedStartDate, setSelectedStartDate] = useState(() => new Date())
   const [selectedEndDate, setSelectedEndDate] = useState(() => new Date())
-  const [isDisabled,setIsDisabled] = useState(true)
+  const [isDisabled, setIsDisabled] = useState(true)
 
   const [focusDrop, setFocusDrop] = useState(() => false)
 
@@ -112,7 +112,7 @@ const ReportType = () => {
     { label: "RD", value: "R" },
   ]
 
-  const tableHead = ["Sl No.", "Date","A/C Type", "A/c No.", "Name", "Amount"]
+  const tableHead = ["Sl No.", "Date", "A/C Type", "A/c No.", "Name", "Amount"]
   let tableData = typeWiseReportArray
 
   const getReportsTypeScroll = async () => {
@@ -134,8 +134,8 @@ const ReportType = () => {
         },
       })
       .then(res => {
-    setIsLoading(false)
-    setIsDisabled(false)
+        setIsLoading(false)
+        setIsDisabled(false)
         res.data.success.msg.forEach((item, i) => {
           let rowArr = [
             i + 1,
@@ -155,8 +155,8 @@ const ReportType = () => {
         setTypeWiseReportArray(tableData)
 
         if (tableData.length === 0) {
-    setIsLoading(false)
-    setIsDisabled(false)
+          setIsLoading(false)
+          setIsDisabled(false)
           ToastAndroid.showWithGravityAndOffset(
             "No data found!",
             ToastAndroid.SHORT,
@@ -173,8 +173,8 @@ const ReportType = () => {
           ToastAndroid.CENTER,
           25,
           50,
-    setIsLoading(false),
-    setIsDisabled(false)
+          setIsLoading(false),
+          setIsDisabled(false),
         )
         console.log(err)
       })
@@ -224,9 +224,9 @@ const ReportType = () => {
             style={{
               justifyContent: "space-around",
               flexDirection: "row",
-              backgroundColor:'white',
-              borderColor:COLORS.lightScheme.primary,
-              borderWidth:1,
+              backgroundColor: "white",
+              borderColor: COLORS.lightScheme.primary,
+              borderWidth: 1,
               padding: 10,
               margin: 10,
               borderRadius: 10,
@@ -322,20 +322,21 @@ const ReportType = () => {
           </View>
 
           <TouchableOpacity
-             disabled={isDisabled || isLoading}
+            disabled={isDisabled || isLoading}
             onPress={() => handleSubmit()}
-            style={isDisabled?styles.disabledContainer: styles.dateButton}>
-            {isLoading ? <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>:
-               <Text style={styles.btnlabel}>
-               SUBMIT  
-              
-               </Text>
-              }
+            style={isDisabled ? styles.disabledContainer : styles.dateButton}>
+            {isLoading ? (
+              <ActivityIndicator
+                color={COLORS.lightScheme.primary}
+                size={"large"}></ActivityIndicator>
+            ) : (
+              <Text style={styles.btnlabel}>SUBMIT</Text>
+            )}
           </TouchableOpacity>
         </View>
         <ScrollView>
-        {/* {isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>} */}
-          {tableData.length!=0 && (
+          {/* {isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>} */}
+          {tableData.length != 0 && (
             <Table
               borderStyle={{
                 borderWidth: 2,
@@ -439,20 +440,20 @@ const styles = StyleSheet.create({
   submitBtnTxt: {
     color: "white",
   },
-  btnlabel:{
-    color:'white',
-    fontWeight:'bold'
+  btnlabel: {
+    color: "white",
+    fontWeight: "bold",
   },
-  disabledContainer:{
+  disabledContainer: {
     width: "40%",
     height: 40,
     borderWidth: 2,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     backgroundColor: "lightgray",
     margin: 15,
     borderRadius: 30,
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-  }
+  },
 })

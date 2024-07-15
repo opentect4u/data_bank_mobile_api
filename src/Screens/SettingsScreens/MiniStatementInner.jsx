@@ -8,7 +8,7 @@ import {
   View,
   ToastAndroid,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { AppStore } from "../../Context/AppContext"
@@ -23,14 +23,15 @@ import { removeIndexes } from "../../Functions/removeIndexes"
 const MiniStatementInner = ({ route }) => {
   const { item } = route.params
   // console.log('item '+item.acc_type)
-  const { userId, bankId, branchCode, bankName, branchName, agentName } = useContext(AppStore)
+  const { userId, bankId, branchCode, bankName, branchName, agentName } =
+    useContext(AppStore)
 
   const [selectedStartDate, setSelectedStartDate] = useState(() => new Date())
   const [selectedEndDate, setSelectedEndDate] = useState(() => new Date())
   const [showModal, setShowModal] = useState(() => false)
   const [miniStatementArray, setMiniStatementArray] = useState(() => [])
   const [totalAmount, setTotalAmount] = useState(() => 0)
-  const [isLoading,setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const startDate = selectedStartDate
     ? selectedStartDate.toISOString().slice(0, 10)
     : ""
@@ -52,21 +53,18 @@ const MiniStatementInner = ({ route }) => {
   const accountDetailsTable = [[item?.customer_name], [item?.account_number]]
   let tableData = miniStatementArray
 
+  const dateFormatters = dateData => {
+    const originalDate = dateData
+    const date = new Date(originalDate)
 
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+    const day = String(date.getDate()).padStart(2, "0")
 
-  const dateFormatters = (dateData) => {
-    const originalDate = dateData;
-    const date = new Date(originalDate);
-
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-
-    const formattedDate = `${day}/${month}/${year}`;
-    console.log(formattedDate);
-    return formattedDate;
+    const formattedDate = `${day}/${month}/${year}`
+    console.log(formattedDate)
+    return formattedDate
   }
-
 
   const getMiniStatement = async () => {
     setIsLoading(true)
@@ -75,7 +73,7 @@ const MiniStatementInner = ({ route }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: item?.account_number,
-      account_type:item?.acc_type
+      account_type: item?.acc_type,
       // from_date: startDate,
       // to_date: endDate,
     }
@@ -88,7 +86,7 @@ const MiniStatementInner = ({ route }) => {
       })
       .then(res => {
         setIsLoading(false)
-        console.log(res.data.success.msg);
+        console.log(res.data.success.msg)
         res.data.success.msg.forEach((item, i) => {
           let rowArr = [
             i + 1,
@@ -98,14 +96,14 @@ const MiniStatementInner = ({ route }) => {
               year: "2-digit",
             }),
             //dateFormatters(item.PAID_DT),
-            (item.PAID_AMT),
-            (item.BALANCE_AMT),
+            item.PAID_AMT,
+            item.BALANCE_AMT,
           ]
-          totalDepositedAmount += (item.PAID_AMT)
+          totalDepositedAmount += item.PAID_AMT
           console.log("ITEMMM TABLEEE=====", rowArr)
           tableData.push(...[rowArr])
         })
-         if(tableData.length==0){
+        if (tableData.length == 0) {
           ToastAndroid.showWithGravityAndOffset(
             "No data found!",
             ToastAndroid.SHORT,
@@ -113,7 +111,7 @@ const MiniStatementInner = ({ route }) => {
             25,
             50,
           )
-         }
+        }
         setTotalAmount(totalDepositedAmount)
         console.log("++++++ TABLE DATA ++++++++", tableData)
         setMiniStatementArray(tableData)
@@ -132,7 +130,6 @@ const MiniStatementInner = ({ route }) => {
       })
   }
 
-
   async function printReceipt() {
     try {
       await BluetoothEscposPrinter.printerAlign(
@@ -149,7 +146,17 @@ const MiniStatementInner = ({ route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["Date", ":", new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" }).toString()],
+        [
+          "Date",
+          ":",
+          new Date()
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+            })
+            .toString(),
+        ],
         {},
       )
       await BluetoothEscposPrinter.printColumn(
@@ -192,7 +199,6 @@ const MiniStatementInner = ({ route }) => {
       await BluetoothEscposPrinter.printText("MINI STATEMENT\n", {
         align: "center",
       })
-
 
       // await BluetoothEscposPrinter.printText(`FROM: ${new Date(startDate).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"})}  TO: ${new Date(endDate).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"})}`, {
       //   align: "center",
@@ -245,9 +251,12 @@ const MiniStatementInner = ({ route }) => {
         {},
       )
 
-      await BluetoothEscposPrinter.printText(`TOTAL AMOUNT: ${totalAmount}\r\n`, {
-        align: "center",
-      })
+      await BluetoothEscposPrinter.printText(
+        `TOTAL AMOUNT: ${totalAmount}\r\n`,
+        {
+          align: "center",
+        },
+      )
       // await BluetoothEscposPrinter.printText("Total Receipts: " + totalReceipts + "\n", { align: "center" })
       // await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", { align: "center" })
       await BluetoothEscposPrinter.printText(
@@ -291,7 +300,7 @@ const MiniStatementInner = ({ route }) => {
         }}>
         <Text style={styles.todayCollection}>Mini Statement</Text>
         {/* <View style={styles.dateWrapper}> */}
-          {/* <TouchableOpacity
+        {/* <TouchableOpacity
             onPress={() => setShowModal(true)}
             style={{
               justifyContent: "space-around",
@@ -304,7 +313,7 @@ const MiniStatementInner = ({ route }) => {
               width: "100%",
             }}>
             {/* <Text>Show Calendar</Text> */}
-           {/* <Text
+        {/* <Text
               style={{
                 fontSize: 15,
                 fontWeight: 500,
@@ -323,7 +332,7 @@ const MiniStatementInner = ({ route }) => {
               To: {new Date(endDate).toLocaleDateString("en-GB")}
             </Text>
           </TouchableOpacity> */}
-          {/* <Modal visible={showModal} animationType="fade">
+        {/* <Modal visible={showModal} animationType="fade">
             <View
               style={{
                 flex: 1,
@@ -362,9 +371,13 @@ const MiniStatementInner = ({ route }) => {
             <Text>SUBMIT</Text>
           </TouchableOpacity>
         </View> */}
-         {isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>}
+        {isLoading && (
+          <ActivityIndicator
+            color={COLORS.lightScheme.primary}
+            size={"large"}></ActivityIndicator>
+        )}
         <ScrollView style={styles.scrollViewStyle}>
-          {tableData.length!=0 && (
+          {tableData.length != 0 && (
             <Table
               borderStyle={{
                 borderWidth: 2,
@@ -380,9 +393,11 @@ const MiniStatementInner = ({ route }) => {
         </ScrollView>
         <Text style={{ fontWeight: "bold" }}>Total Amount: {totalAmount}</Text>
         <TouchableOpacity
-        disabled={tableData.length==0}
+          disabled={tableData.length == 0}
           onPress={() => printReceipt()}
-          style={tableData.length!=0?styles.dateButton: styles.disabledContainer}>
+          style={
+            tableData.length != 0 ? styles.dateButton : styles.disabledContainer
+          }>
           <Text style={styles.btnLabel}>PRINT</Text>
         </TouchableOpacity>
       </View>
@@ -442,14 +457,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
   },
 
-  scrollViewStyle:{
+  scrollViewStyle: {
     marginTop: 15,
   },
-  disabledContainer:{
+  disabledContainer: {
     width: "40%",
     height: 40,
     borderWidth: 2,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     backgroundColor: "lightgray",
     margin: 15,
     borderRadius: 30,
@@ -457,7 +472,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  btnLabel:{
-    color:'white'
-  }
+  btnLabel: {
+    color: "white",
+  },
 })

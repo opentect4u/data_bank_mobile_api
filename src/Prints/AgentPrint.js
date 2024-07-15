@@ -2,7 +2,6 @@ import { useContext } from "react"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { AppStore } from "../Context/AppContext"
 
-
 export const printAgentInfo = async () => {
   const {
     userId,
@@ -23,10 +22,15 @@ export const printAgentInfo = async () => {
     await BluetoothEscposPrinter.printText(branchName, { align: "center" })
     await BluetoothEscposPrinter.printText("\r\n", {})
 
-    await BluetoothEscposPrinter.printText("AGENT INFORMATION", { align: "center" })
+    await BluetoothEscposPrinter.printText("AGENT INFORMATION", {
+      align: "center",
+    })
 
     await BluetoothEscposPrinter.printText("\r\n\r\n", {})
-    await BluetoothEscposPrinter.printText("-------------------------------", {})
+    await BluetoothEscposPrinter.printText(
+      "-------------------------------",
+      {},
+    )
     await BluetoothEscposPrinter.printText("\r\n", {})
 
     await BluetoothEscposPrinter.printColumn(
@@ -60,7 +64,10 @@ export const printAgentInfo = async () => {
     )
 
     // await BluetoothEscposPrinter.printText("\r\n", {})
-    await BluetoothEscposPrinter.printText("---------------X---------------", {})
+    await BluetoothEscposPrinter.printText(
+      "---------------X---------------",
+      {},
+    )
 
     // await BluetoothEscposPrinter.printColumn(
     //   [48],

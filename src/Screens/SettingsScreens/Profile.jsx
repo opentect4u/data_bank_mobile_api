@@ -23,43 +23,40 @@ const Profile = () => {
         <View style={styles.introText}>
           {/* Wellcome gretting */}
           <Text style={styles.containerText}>{`Hello! ${agentName}`}</Text>
-         
         </View>
-       
       </View>
       <Image
-            source={{
-              uri: "https://cdn.pixabay.com/photo/2015/03/04/22/35/avatar-659651_640.png",
-            }}
-            style={styles.image}
-          />
-     
-      <View
-        style={styles.listView}>
+        source={{
+          uri: "https://cdn.pixabay.com/photo/2015/03/04/22/35/avatar-659651_640.png",
+        }}
+        style={styles.image}
+      />
+
+      <View style={styles.listView}>
         {/* <Table style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
           <Rows data={tableData} textStyle={styles.text} />
         </Table> */}
         <View style={styles.profileContainer}>
-        <View style={styles.profileView}>
-         <Text style={styles.title}>Agent Code</Text>
-         <Text style={styles.content}>{userId}</Text>
-      </View>
-      <View style={styles.profileView}>
-         <Text style={styles.title}>Email</Text>
-         <Text style={styles.content}>{agentEmail}</Text>
-      </View>
-      <View style={styles.profileView}>
-         <Text style={styles.title}>Mobile No.</Text>
-         <Text style={styles.content}>{agentPhoneNumber}</Text>
-      </View>
-      <View style={styles.profileView}>
-         <Text style={styles.title}>Maximum Limit (₹)</Text>
-         <Text style={styles.content}>{maximumAmount}</Text>
-      </View>
+          <View style={styles.profileView}>
+            <Text style={styles.title}>Agent Code</Text>
+            <Text style={styles.content}>{userId}</Text>
+          </View>
+          <View style={styles.profileView}>
+            <Text style={styles.title}>Email</Text>
+            <Text style={styles.content}>{agentEmail}</Text>
+          </View>
+          <View style={styles.profileView}>
+            <Text style={styles.title}>Mobile No.</Text>
+            <Text style={styles.content}>{agentPhoneNumber}</Text>
+          </View>
+          <View style={styles.profileView}>
+            <Text style={styles.title}>Maximum Limit (₹)</Text>
+            <Text style={styles.content}>{maximumAmount}</Text>
+          </View>
         </View>
-      
-      {/* <hr/> */}
-    </View>
+
+        {/* <hr/> */}
+      </View>
     </View>
   )
 }
@@ -68,7 +65,7 @@ export default Profile
 
 const styles = StyleSheet.create({
   nameContainer: {
-    flex:1,
+    flex: 1,
     margin: 20,
     padding: 10,
     backgroundColor: "white",
@@ -76,34 +73,33 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 30,
-    borderTopRightRadius:50
+    borderTopRightRadius: 50,
   },
-  profileContainer:{
-    position:'relative',
+  profileContainer: {
+    position: "relative",
     // top:-80
-   
   },
   containerText: {
     fontSize: 20,
     color: COLORS.lightScheme.onPrimary,
   },
-  introText:{
-    flexDirection:"row",
-    justifyContent:'center',
-    marginTop:10
+  introText: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
   },
-  profileView:{
-    width:'100%',
-    borderBottomColor:'gray',
-    borderBottomWidth:0.5,
-    paddingBottom:7,
-    paddingTop:15,
+  profileView: {
+    width: "100%",
+    borderBottomColor: "gray",
+    borderBottomWidth: 0.5,
+    paddingBottom: 7,
+    paddingTop: 15,
   },
-  listView:{
+  listView: {
     backgroundColor: COLORS.lightScheme.background,
     height: "100%",
     padding: 20,
-    marginTop:-80
+    marginTop: -80,
   },
   text: {
     color: COLORS.lightScheme.onBackground,
@@ -113,37 +109,37 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 14,
   },
-  title:{
-    fontWeight:'bold',
-    color:COLORS.lightScheme.primary,
-    fontSize:16
+  title: {
+    fontWeight: "bold",
+    color: COLORS.lightScheme.primary,
+    fontSize: 16,
   },
-  content:{
-    color:'gray',
-    fontSize:20
+  content: {
+    color: "gray",
+    fontSize: 20,
   },
   logoContainer: {
-   borderBottomRightRadius:30,
-   borderBottomLeftRadius:30,
+    borderBottomRightRadius: 30,
+    borderBottomLeftRadius: 30,
     backgroundColor: COLORS.lightScheme.primary,
-    position:'relative',
+    position: "relative",
     // flexDirection: "row",
     // justifyContent: "space-between",
     // alignItems: "center",
- 
+
     paddingHorizontal: 20,
     height: 150,
-    overflow:'none'
+    overflow: "none",
   },
 
   image: {
     height: 150,
     width: 150,
-    backgroundColor: 'white',
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:6,
+    backgroundColor: "white",
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 6,
     borderRadius: 100,
     alignSelf: "center",
-    bottom:90
+    bottom: 90,
   },
 })

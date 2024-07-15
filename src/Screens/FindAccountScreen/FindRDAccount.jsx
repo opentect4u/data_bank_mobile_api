@@ -1,4 +1,11 @@
-import { ActivityIndicator, AppState, ScrollView, StyleSheet, Text, View } from "react-native"
+import {
+  ActivityIndicator,
+  AppState,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native"
 import { useCallback, useContext, useEffect, useState } from "react"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS, colors } from "../../Resources/colors"
@@ -24,17 +31,17 @@ const FindRDAccount = ({ navigation }) => {
     fetchBankDetails()
   }
 
-  const debounce = (func) => {
-    let timer;
+  const debounce = func => {
+    let timer
     return function (...args) {
-      const context = this;
-      if (timer) clearTimeout(timer);
+      const context = this
+      if (timer) clearTimeout(timer)
       timer = setTimeout(() => {
-        timer = null;
-        func.apply(context, args);
-      }, 2000);
-    };
-  };
+        timer = null
+        func.apply(context, args)
+      }, 2000)
+    }
+  }
 
   // useEffect(() => {
   //   handleAccountSearch()
@@ -53,7 +60,7 @@ const FindRDAccount = ({ navigation }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: searchValue,
-      flag:'R'
+      flag: "R",
     }
     console.log(bankId, branchCode, userId, searchValue)
     console.log(userBankDetails)
@@ -65,13 +72,13 @@ const FindRDAccount = ({ navigation }) => {
         },
       })
       .then(res => {
-    setIsLoading(false)
+        setIsLoading(false)
 
         console.log("bank details", res.data.success.msg)
         setUserBankDetails(res.data.success.msg)
       })
       .catch(err => {
-    setIsLoading(false)
+        setIsLoading(false)
 
         setUserBankDetails([])
         console.log(err.response.data)
@@ -96,7 +103,13 @@ const FindRDAccount = ({ navigation }) => {
       <View style={styles.container}>
         {/* Account Cards */}
         <Text style={styles.title}>Recurring Deposit</Text>
-        { isLoading && <ActivityIndicator color={COLORS.lightScheme.primary} style={styles.loading} size={"large"}/>}
+        {isLoading && (
+          <ActivityIndicator
+            color={COLORS.lightScheme.primary}
+            style={styles.loading}
+            size={"large"}
+          />
+        )}
         <ScrollView
           style={{ maxHeight: "60%" }}
           keyboardShouldPersistTaps="handled">
@@ -109,7 +122,7 @@ const FindRDAccount = ({ navigation }) => {
                   index={index}
                   navigation={navigation}
                   key={index}
-                  flag={'R'}
+                  flag={"R"}
                 />
               )
             })}
@@ -142,12 +155,12 @@ const styles = StyleSheet.create({
     bottom: 130,
     width: "100%",
     alignSelf: "center",
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:2,
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 2,
     backgroundColor: COLORS.lightScheme.onPrimary,
     padding: 20,
     borderRadius: 10,
-    elevation:10
+    elevation: 10,
   },
   title: {
     textAlign: "center",

@@ -24,7 +24,10 @@ async function printreciept() {
     await BluetoothEscposPrinter.printerAlign(
       BluetoothEscposPrinter.ALIGN.CENTER,
     )
-    await BluetoothEscposPrinter.printText("Synergic Softek Solutions Pvt. Ltd.", { align: "center" })
+    await BluetoothEscposPrinter.printText(
+      "Synergic Softek Solutions Pvt. Ltd.",
+      { align: "center" },
+    )
     await BluetoothEscposPrinter.printText("\r\n", {})
 
     await BluetoothEscposPrinter.printText(

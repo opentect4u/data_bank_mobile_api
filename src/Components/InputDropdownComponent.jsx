@@ -45,36 +45,35 @@ const InputDropdownComponent = ({
   return (
     <View style={styles.inputDropdownContainer}>
       <View style={styles.dropdownContainer}>
-          {renderLabel()}
-          <Dropdown
-            style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            data={data}
-            search
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={!focusDrop ? "Select type" : "..."}
-            searchPlaceholder="Search..."
-            value={accountType}
-            onFocus={() => setFocusDrop(true)}
-            onBlur={() => setFocusDrop(false)}
-            // onConfirmSelectItem={()=>
-            //   setReadonly(accountType?false:true)
+        {renderLabel()}
+        <Dropdown
+          style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          inputSearchStyle={styles.inputSearchStyle}
+          iconStyle={styles.iconStyle}
+          data={data}
+          search
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={!focusDrop ? "Select type" : "..."}
+          searchPlaceholder="Search..."
+          value={accountType}
+          onFocus={() => setFocusDrop(true)}
+          onBlur={() => setFocusDrop(false)}
+          // onConfirmSelectItem={()=>
+          //   setReadonly(accountType?false:true)
 
-            // }
-            onChange={item => {
-              // console.log(accountType)
-              setReadonly(false)
-              setAccountType(item.value)
-              setFocusDrop(false)
-            }}
-           
-          />
-        </View>
+          // }
+          onChange={item => {
+            // console.log(accountType)
+            setReadonly(false)
+            setAccountType(item.value)
+            setFocusDrop(false)
+          }}
+        />
+      </View>
       {label && <Text style={styles.label}>{label}</Text>}
       <TextInput
         style={styles.input}
@@ -151,9 +150,9 @@ const styles = StyleSheet.create({
   icon: {
     marginRight: 5,
   },
-  inputDropdownContainer:{
-    flex:1,
-    flexDirection:'row',
-    width:'40%'
-  }
+  inputDropdownContainer: {
+    flex: 1,
+    flexDirection: "row",
+    width: "40%",
+  },
 })

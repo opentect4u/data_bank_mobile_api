@@ -8,7 +8,7 @@ import {
   View,
   ToastAndroid,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { AppStore } from "../../Context/AppContext"
@@ -43,8 +43,8 @@ const DateWiseCollSummary = () => {
   const [focusDrop, setFocusDrop] = useState(() => false)
 
   const [showModal, setShowModal] = useState(() => false)
-  const [isDisabled,setIsDisabled] = useState(true)
-  const [isLoading,setIsLoading] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [dtWiseCollSummaryArray, setDtWiseCollSummaryArray] = useState(() => [])
 
   const [totalReceipts, setTotalReceipts] = useState(() => 0)
@@ -57,22 +57,22 @@ const DateWiseCollSummary = () => {
   const endDate = selectedEndDate
     ? selectedEndDate.toISOString().slice(0, 10)
     : ""
-    const renderLabel = () => {
-      if (accountType || focusDrop) {
-        return (
-          <Text style={[styles.label, focusDrop && { color: "blue" }]}>
-            Select type
-          </Text>
-        )
-      }
-      return null
+  const renderLabel = () => {
+    if (accountType || focusDrop) {
+      return (
+        <Text style={[styles.label, focusDrop && { color: "blue" }]}>
+          Select type
+        </Text>
+      )
     }
-    const data = [
-      { label: "Daily", value: "D" },
-      { label: "Loan", value: "L" },
-      { label: "RD", value: "R" },
-    ]
-  
+    return null
+  }
+  const data = [
+    { label: "Daily", value: "D" },
+    { label: "Loan", value: "L" },
+    { label: "RD", value: "R" },
+  ]
+
   const onDateChange = (date, type) => {
     if (type === "END_DATE") {
       setSelectedEndDate(date)
@@ -97,7 +97,6 @@ const DateWiseCollSummary = () => {
       from_date: startDate,
       to_date: endDate,
       account_type: accountType,
-
     }
     let rcpts = 0
     let totalAmount = 0
@@ -109,7 +108,7 @@ const DateWiseCollSummary = () => {
       })
       .then(res => {
         setIsLoading(false)
-    setIsDisabled(false)
+        setIsDisabled(false)
 
         res.data.success.msg.forEach((item, i) => {
           let rowArr = [
@@ -138,7 +137,7 @@ const DateWiseCollSummary = () => {
           console.log("ITEMMM TABLEEE=====", rowArr)
           tableData.push(...[rowArr])
         })
-         if(tableData.length==0){
+        if (tableData.length == 0) {
           ToastAndroid.showWithGravityAndOffset(
             "No data found!",
             ToastAndroid.SHORT,
@@ -146,14 +145,14 @@ const DateWiseCollSummary = () => {
             25,
             50,
           )
-         }
+        }
         // setTotalAmount(totalAmount)
         console.log("++++++ TABLE DATA ++++++++", tableData)
         setDtWiseCollSummaryArray(tableData)
       })
       .catch(err => {
         setIsLoading(false)
-    setIsDisabled(false)
+        setIsDisabled(false)
 
         ToastAndroid.showWithGravityAndOffset(
           "Error occurred in the server",
@@ -190,7 +189,17 @@ const DateWiseCollSummary = () => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["Date", ":", new Date().toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"}).toString()],
+        [
+          "Date",
+          ":",
+          new Date()
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+            })
+            .toString(),
+        ],
         {},
       )
 
@@ -243,8 +252,13 @@ const DateWiseCollSummary = () => {
         "-------------------------------\n",
         {},
       )
-      await BluetoothEscposPrinter.printText("Total Receipts: " + totalReceipts + "\n", { align: "center" })
-      await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", { align: "center" })
+      await BluetoothEscposPrinter.printText(
+        "Total Receipts: " + totalReceipts + "\n",
+        { align: "center" },
+      )
+      await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", {
+        align: "center",
+      })
       await BluetoothEscposPrinter.printText(
         "---------------X---------------",
         {},
@@ -281,9 +295,9 @@ const DateWiseCollSummary = () => {
             style={{
               justifyContent: "space-around",
               flexDirection: "row",
-              backgroundColor:'white',
-              borderColor:COLORS.lightScheme.primary,
-              borderWidth:1,
+              backgroundColor: "white",
+              borderColor: COLORS.lightScheme.primary,
+              borderWidth: 1,
               padding: 10,
               margin: 10,
               borderRadius: 10,
@@ -332,56 +346,56 @@ const DateWiseCollSummary = () => {
             <Text style={{ fontSize: 15, fontWeight: 500, color: COLORS.lightScheme.onPrimary, fontWeight: "bold" }}>From: {startDate}</Text>
             <Text style={{ fontSize: 15, fontWeight: 500, color: COLORS.lightScheme.onPrimary, fontWeight: "bold" }}>To: {endDate}</Text>
           </View> */}
-           <View style={styles.dropdownContainer}>
-            {renderLabel()}
-            <Dropdown
-              style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={data}
-              search
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!focusDrop ? "Select type" : "..."}
-              searchPlaceholder="Search..."
-              value={accountType}
-              onFocus={() => setFocusDrop(true)}
-              onBlur={() => setFocusDrop(false)}
-              onChange={item => {
-                setIsDisabled(false)
+        <View style={styles.dropdownContainer}>
+          {renderLabel()}
+          <Dropdown
+            style={[styles.dropdown, focusDrop && { borderColor: "blue" }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            inputSearchStyle={styles.inputSearchStyle}
+            iconStyle={styles.iconStyle}
+            data={data}
+            search
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!focusDrop ? "Select type" : "..."}
+            searchPlaceholder="Search..."
+            value={accountType}
+            onFocus={() => setFocusDrop(true)}
+            onBlur={() => setFocusDrop(false)}
+            onChange={item => {
+              setIsDisabled(false)
 
-                setAccountType(item.value)
-                setFocusDrop(false)
-              }}
-              // renderLeftIcon={() => (
-              //   <AntDesign
-              //     style={styles.icon}
-              //     color={isFocus ? 'blue' : 'black'}
-              //     name="Safety"
-              //     size={20}
-              //   />
-              // )}
-            />
-          </View>
+              setAccountType(item.value)
+              setFocusDrop(false)
+            }}
+            // renderLeftIcon={() => (
+            //   <AntDesign
+            //     style={styles.icon}
+            //     color={isFocus ? 'blue' : 'black'}
+            //     name="Safety"
+            //     size={20}
+            //   />
+            // )}
+          />
+        </View>
         <View>
           <TouchableOpacity
-          disabled={isDisabled || isLoading}
+            disabled={isDisabled || isLoading}
             onPress={() => handleSubmit()}
-            style={isDisabled?styles.disabledContainer: styles.dateButton}>
-            {isLoading ? <ActivityIndicator color={COLORS.lightScheme.primary} size={'large'}></ActivityIndicator>:
-               <Text style={styles.btnlabel}>
-               SUBMIT  
-              
-               </Text>
-              }
+            style={isDisabled ? styles.disabledContainer : styles.dateButton}>
+            {isLoading ? (
+              <ActivityIndicator
+                color={COLORS.lightScheme.primary}
+                size={"large"}></ActivityIndicator>
+            ) : (
+              <Text style={styles.btnlabel}>SUBMIT</Text>
+            )}
           </TouchableOpacity>
         </View>
         <ScrollView>
-      
-          {tableData.length!=0 && (
+          {tableData.length != 0 && (
             <Table
               borderStyle={{
                 borderWidth: 2,
@@ -400,9 +414,13 @@ const DateWiseCollSummary = () => {
         </View>
         <View>
           <TouchableOpacity
-          disabled={tableData.length==0}
+            disabled={tableData.length == 0}
             onPress={() => printReceipt()}
-            style={tableData.length!=0?styles.dateButton: styles.disabledContainer}>
+            style={
+              tableData.length != 0
+                ? styles.dateButton
+                : styles.disabledContainer
+            }>
             <Text style={styles.btnlabel}>PRINT</Text>
           </TouchableOpacity>
         </View>
@@ -421,9 +439,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     margin: 20,
   },
-  btnlabel:{
-    color:'white',
-    fontWeight:'bold'
+  btnlabel: {
+    color: "white",
+    fontWeight: "bold",
   },
   dateButton: {
     width: "40%",
@@ -478,16 +496,16 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "600",
   },
-  disabledContainer:{
+  disabledContainer: {
     width: "40%",
     height: 40,
     borderWidth: 2,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     backgroundColor: "lightgray",
     margin: 15,
     borderRadius: 30,
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-  }
+  },
 })

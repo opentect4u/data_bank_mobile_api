@@ -7,8 +7,10 @@ import {
   Alert,
   Pressable,
   ToastAndroid,
+  TouchableOpacity,
+  Image,
 } from "react-native"
-import { useContext, useState, useEffect, useCallback } from "react"
+import { useContext, useState, useEffect, useMemo } from "react"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
 import {
@@ -18,12 +20,15 @@ import {
   Rows,
   Col,
 } from "react-native-table-component"
+// import RadioGroup from "react-native-radio-buttons-group"
 import InputComponent from "../../Components/InputComponent"
 import ButtonComponent from "../../Components/ButtonComponent"
 import mainNavigationRoutes from "../../Routes/NavigationRoutes"
 import { AppStore } from "../../Context/AppContext"
 import { StackActions, useFocusEffect } from "@react-navigation/native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
+// import razor from "../../Resources/Images/razorpay.webp"
+
 const AccountDetails = ({ navigation, route }) => {
   const [collectionMoney, setCollectionMoney] = useState(() => 0)
   const {
@@ -34,10 +39,30 @@ const AccountDetails = ({ navigation, route }) => {
     getFlagsRequest,
     collectionFlag,
     endFlag,
-    allowCollectionDays
+    allowCollectionDays,
   } = useContext(AppStore)
 
   const { item } = route.params
+
+  // const radioButtons = useMemo(
+  //   () => [
+  //     {
+  //       id: "1", // acts as primary key, should be unique and non-empty string
+  //       label: "Receive Cash",
+  //       value: "C",
+  //     },
+  //     {
+  //       id: "2",
+  //       label: "Pay Online",
+  //       value: "O",
+  //     },
+  //   ],
+  //   [],
+  // )
+
+  // const [selectedId, setSelectedId] = useState(() => "1")
+
+  // console.log("RRRRTTTTTTTTTTTTTTT", selectedId)
 
   const tableData = [
     [
@@ -78,12 +103,19 @@ const AccountDetails = ({ navigation, route }) => {
       money: collectionMoney,
     })
   }
+
+  // const handleRazorpayClient = () => {
+  //   console.log("Razorpay client...")
+  // }
+
   const checkDayLock = () => {
     let currentDate = new Date(todayDateFromServer.toISOString().slice(0, 10))
     console.log("CURRRRR DATEE", currentDate)
     let trans_dt = new Date(transDt.toISOString().slice(0, 10))
     console.log("MODDDD DATEsssssss", trans_dt)
-    let newTrans_dt = trans_dt.setDate(trans_dt.getDate() + parseInt(allowCollectionDays))
+    let newTrans_dt = trans_dt.setDate(
+      trans_dt.getDate() + parseInt(allowCollectionDays),
+    )
     newTrans_dt = new Date(newTrans_dt).toISOString().slice(0, 10)
     // console.log('NNNNEEEWWWWW TRANCE DT', new Date(newTrans_dt).toISOString().slice(0, 10), trans_dt);
 
@@ -94,7 +126,7 @@ const AccountDetails = ({ navigation, route }) => {
     // let afterAddingHolidayLockDays = modifiedAtDate.getDate() + 1
     // newModifiedDate.setDate(modifiedAtDate.getDate() + holidayLock)
     // console.log("HOLIIIIDDDAAAAYYYYY _+++++++>>>", holidayLock)
-    
+
     // return newTrans_dt >= currentDate
     return date_dif < allowCollectionDays
   }
@@ -109,7 +141,7 @@ const AccountDetails = ({ navigation, route }) => {
     // let afterAddingHolidayLockDays = modifiedAtDate.getDate() + 1
     newModifiedDate.setDate(modifiedAtDate.getDate() + holidayLock)
     console.log("HOLIIIIDDDAAAAYYYYY _+++++++>>>", holidayLock)
-    
+
     return newModifiedDate >= currentDate
   }
 
@@ -139,13 +171,30 @@ const AccountDetails = ({ navigation, route }) => {
               borderStyle={{
                 borderWidth: 5,
                 borderColor: COLORS.lightScheme.primary,
-                fontSize:16
+                fontSize: 16,
               }}
               style={{ backgroundColor: COLORS.lightScheme.onPrimary }}>
               <Rows data={tableData} textStyle={styles.text} />
             </Table>
           </View>
           {/* Input Field */}
+
+          {/* <View
+            style={{
+              // alignSelf: "center",
+              marginVertical: 15,
+            }}>
+            <RadioGroup
+              radioButtons={radioButtons}
+              onPress={setSelectedId}
+              selectedId={selectedId}
+              layout="row"
+              labelStyle={{
+                fontWeight: "800",
+                fontSize: 20,
+              }}
+            />
+          </View> */}
           <View style={styles.inputContainer}>
             <InputComponent
               keyboardType={"numeric"}
@@ -160,9 +209,9 @@ const AccountDetails = ({ navigation, route }) => {
                 title={"Back"}
                 customStyle={{
                   marginTop: 10,
-                  marginRight:10,
-                  backgroundColor: 'white',
-                  colors:'red',
+                  marginRight: 10,
+                  backgroundColor: "white",
+                  colors: "red",
                   width: "40%",
                 }}
                 handleOnpress={() => {
@@ -171,26 +220,12 @@ const AccountDetails = ({ navigation, route }) => {
                 }}
               />
 
-              {!checkIsCollectionEnded() && checkDayLock()? (
-                <ButtonComponent
-                  title={"Preview / Save"}
-                  customStyle={{ marginTop: 10, width: "50%" }}
-                  handleOnpress={handlePreviewData}
-                />
-              ) : (
-                <ButtonComponent
-                  title={"Preview / Save"}
-                  customStyle={{ marginTop: 10, width: "50%" }}
-                  handleOnpress={handlePreviewData}
-                  disabled={true}
-                />
-              )}
-
-              {/* <ButtonComponent
-              title={'Preview / Save'}
-              customStyle={{ marginTop: 10, width: '60%' }}
-              handleOnpress={handlePreviewData}
-            /> */}
+              <ButtonComponent
+                title={"Preview / Save"}
+                customStyle={{ marginTop: 10, width: "50%" }}
+                handleOnpress={handlePreviewData}
+                disabled={!(!checkIsCollectionEnded() && checkDayLock())}
+              />
             </View>
           </View>
         </ScrollView>
@@ -234,14 +269,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 12,
   },
   inputContainer: {
-    padding:20,
+    padding: 20,
     marginVertical: 10,
     // padding: 10,
     backgroundColor: COLORS.lightScheme.onPrimary,
     borderRadius: 20,
-    borderColor:COLORS.lightScheme.primary,
-    borderWidth:0.8,
-    elevation:10
+    borderColor: COLORS.lightScheme.primary,
+    borderWidth: 0.8,
+    elevation: 10,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -252,4 +287,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.lightScheme.onPrimary,
     borderRadius: 5,
   },
+  // image: {
+  //   height: 100,
+  //   width: "100%",
+  //   alignSelf: "center",
+  // },
 })
