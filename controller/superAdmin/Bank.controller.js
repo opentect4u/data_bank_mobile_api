@@ -50,6 +50,7 @@ const add_bank_list = async (req, res) => {
       active_flag: Joi.string().valid("Y", "N").required(),
       max_day_entry_flag: Joi.string().valid("D", "R").required(),
       password: Joi.string().required(),
+      max_user: Joi.number().required(),
       confirmPassword: Joi.string().required().valid(Joi.ref("password")),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -70,8 +71,8 @@ const add_bank_list = async (req, res) => {
 
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     const user_data = req.session.user.user_data.msg[0];
-    var fields = `(bank_name, bank_address, contact_person, phone_no, email_id, device_type, data_version, data_trf, receipt_type, max_day_entry_flag, created_by, created_at, active_flag)`,
-      values = `('${value.bank_name}','${value.bank_address}','${value.contact_person}','${value.mobile}','${value.email}','${value.device_type}','${value.data_version}','${value.data_transfer_type}','${value.receipt_type}', '${value.max_day_entry_flag}','${user_data.id}','${datetime}','${value.active_flag}')`;
+    var fields = `(bank_name, bank_address, contact_person, phone_no, email_id, device_type, data_version, data_trf, receipt_type, max_day_entry_flag, max_user, created_by, created_at, active_flag)`,
+      values = `('${value.bank_name}','${value.bank_address}','${value.contact_person}','${value.mobile}','${value.email}','${value.device_type}','${value.data_version}','${value.data_transfer_type}','${value.receipt_type}', '${value.max_day_entry_flag}', '${value.max_user}','${user_data.id}','${datetime}','${value.active_flag}')`;
     var insmd_bank = await db_Insert("md_bank", fields, values, null, 0);
     var adduser = "";
     if (insmd_bank.lastId.insertId) {
@@ -138,6 +139,7 @@ const edit_bank_list_save = async (req, res) => {
       receipt_type: Joi.string().valid("S", "P", "B").required(),
       active_flag: Joi.string().valid("Y", "N").required(),
       max_day_entry_flag: Joi.string().valid("D", "R").required(),
+      max_user: Joi.number().required(),
       sucurity_amt_type: Joi.optional(),
       after_maturity_coll: Joi.optional(),
       start: Joi.optional(),
@@ -158,7 +160,7 @@ const edit_bank_list_save = async (req, res) => {
     // console.log(user_data);
     var table_name = "md_bank",
       fields = `bank_name ='${value.bank_name}', bank_address = '${value.bank_address}', contact_person = '${value.contact_person}', phone_no = '${value.mobile}', email_id ='${value.email}', device_type = '${value.device_type}', data_version = '${value.data_version}', data_trf = '${value.data_transfer_type}', 
-        receipt_type = '${value.receipt_type}', sec_amt_type = '${value.sucurity_amt_type}', active_flag = '${value.active_flag}', after_maturity_coll = '${value.after_maturity_coll}', max_day_entry_flag = '${value.max_day_entry_flag}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
+        receipt_type = '${value.receipt_type}', sec_amt_type = '${value.sucurity_amt_type}', active_flag = '${value.active_flag}', after_maturity_coll = '${value.after_maturity_coll}', max_day_entry_flag = '${value.max_day_entry_flag}', max_user = '${value.max_user}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
       values = null;
     whr = `bank_id=${value.bank_id}`;
     var insmd_bank = await db_Insert(table_name, fields, values, whr, 1);

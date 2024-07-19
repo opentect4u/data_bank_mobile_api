@@ -374,9 +374,21 @@ width: 100%;}
 
 .boxSecTable_Body{padding:15px 15px 15px 15px; }
 
+.userChip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
 
-
-
+.countChip {
+  width: 15%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px;
+}
 
 
 

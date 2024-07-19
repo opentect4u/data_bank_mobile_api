@@ -2,6 +2,7 @@ const Joi = require("joi");
 const {db_Select, db_db_Select_Sqery, db_Insert } = require("../../model/MasterModule");
 const dateFormat = require("dateformat");
 const bcrypt = require("bcrypt");
+const { getBankMaxUser, getTotalAgent } = require("../admin/Agent.controller");
 
 
 const fetch_bank_info=async (req,res)=>{
@@ -57,8 +58,13 @@ const get_branch_name=async (req,res)=>{
         //          where a.bank_id = ${value.bank_id}`
         var sql=`select branch_id,branch_code,branch_name,contact_person,phone_no from md_branch 
                  where bank_id = ${value.bank_id}`
+        
+        var max_bank_user = await getBankMaxUser(value.bank_id),
+        tot_user = await getTotalAgent(value.bank_id, 'Y');
 
         var branchData= await db_db_Select_Sqery(sql);
+        branchData['max_user'] = max_bank_user.suc > 0 ? max_bank_user.msg[0].max_user : 0
+        branchData['active_user'] = tot_user.suc > 0 ? tot_user.msg[0].tot_agent : 0
         res.json({
             "SUCCESS": {branchData},
             "status": true

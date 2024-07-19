@@ -4,6 +4,27 @@ const dateFormat = require('dateformat');
 const { db_Insert, db_Select } = require('../../model/MasterModule');
 const { F_Select } = require('../../model/OrcModel');
 const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+
+const getTotalAgent = (bank_id, flag = null) => {
+    return new Promise(async (resolve, reject) => {
+        let select = 'COUNT(agent_id) tot_agent',
+            table_name = 'md_agent',
+            whr = `bank_id='${bank_id}' ${flag ? `AND active_flag = '${flag}'` : ''}`;
+        const resData = await db_Select(select, table_name, whr, null)
+        resolve(resData)
+    })
+}
+
+const getBankMaxUser = (bank_id) => {
+    return new Promise(async (resolve, reject) => {
+        let select = 'max_user',
+            table_name = 'md_bank',
+            whr = `bank_id='${bank_id}'`;
+        const resData = await db_Select(select, table_name, whr, null)
+        resolve(resData)
+    })
+}
+
 //login View
 const agent = async (req, res) => {
     try {
@@ -12,11 +33,15 @@ const agent = async (req, res) => {
             table_name = 'md_user as a, md_agent as b',
             whr = `a.user_id=b.agent_code AND a.bank_id='${user_data.bank_id}' AND a.branch_code='${user_data.branch_code}' AND b.bank_id='${user_data.bank_id}' AND b.branch_code='${user_data.branch_code}' AND a.user_type='O'`;
         const resData = await db_Select(select, table_name, whr, null)
+        var tot_agent = await getTotalAgent(user_data.bank_id, 'Y'),
+        max_user = await getBankMaxUser(user_data.bank_id);
         delete resData.sql
         var viewData = {
             title: "Agent",
             page_path: "/agent/viewAgent",
-            data: resData
+            data: resData,
+            tot_user: tot_agent.suc > 0 ? tot_agent.msg[0].tot_agent : 0,
+            max_user: max_user.suc > 0 ? max_user.msg[0].max_user : 0
         };
         res.render('common/layouts/main', viewData)
     } catch (error) {
@@ -270,4 +295,4 @@ const fetch_agent_name= async (req, res) => {
     }
 }
 
-module.exports = { agent, addAgent, editAgent, edit_save_agent,checkedUnicUser,fetch_agent_max_all_col,fetch_agent_name, col_days, col_days_save}
+module.exports = { agent, addAgent, editAgent, edit_save_agent,checkedUnicUser,fetch_agent_max_all_col,fetch_agent_name, col_days, col_days_save, getTotalAgent, getBankMaxUser}

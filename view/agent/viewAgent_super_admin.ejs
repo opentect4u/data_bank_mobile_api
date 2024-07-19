@@ -94,12 +94,14 @@
       <div class="modal-body">
         <form action="/super-admin/add_agent" method="post" id="myForm">
           <div class="row">
-
+            <div class="col-md-12" id="userLimit" style="display: none;">
+              <label class="text-danger">*User limit exceeded.</label>
+            </div>
             <div class="form-group col-6">
               <label for="bank"><b>Bank Name:</b></label>
               <select name="bank"
               class="form-control"
-              id="bank"
+              id="bankModal"
               required>
                 <option value="">Select Bank Name</option>
                 <% bank.msg.forEach(function(item2,index) { %>
@@ -219,10 +221,10 @@
                   />
                 </div>
              <div class="form-group col-3 center">
-              <input
+              <input id="ag_submit"
                 type="submit"
                 value="SUBMIT"
-                class="btn btn-primary btn-block" style="margin-left: 32vw;"
+                class="btn btn-primary btn-block" style="margin-left: 32vw; display: none;"
               />
             </div>
           </div>
@@ -249,6 +251,32 @@
 </script>
 
 <script>
+  $('#bankModal').on('change', function(){
+    var bankId=$(this).val();
+    // alert(bank_id)
+      $.ajax({
+        type: "POST",
+        url: "/super-admin/get_branch_name",
+        data: { bank_id: bankId },
+        success: function(response) {
+          if((response.SUCCESS.branchData.max_user - response.SUCCESS.branchData.active_user) > 0){
+            $('#userLimit').hide()
+            $('#ag_submit').show()
+          }else{
+            $('#userLimit').show()
+            $('#ag_submit').hide()
+          }
+        },
+      error: function (error) {
+        console.log(error);
+      //   tbody.empty();
+        // $("#myBtn").hide()
+      },
+    });
+  })
+</script>
+
+<script>
   $('input[name="status"]').on('change', function(){
     var flag = $(this).val()
     console.log(flag);
@@ -260,7 +288,7 @@
 </script>
 
 <script>
-  $("#myBtn").hide()
+  // $("#myBtn").hide()
   $('#bank').change(function(){
     var bankId=$(this).val();
     // alert(bank_id)
@@ -272,6 +300,12 @@
             // console.log(response.SUCCESS.branchData.msg)
            $('#branch').empty();
            $('#branch').append(`<option value="">Select Branch Name</option>`)
+
+           if((response.SUCCESS.branchData.max_user - response.SUCCESS.branchData.active_user) > 0){
+            $('#ag_submit').show()
+          }else{
+            $('#ag_submit').hide()
+           }
            
             response.SUCCESS.branchData.msg.forEach(function(resData) {
                 $('#branch').append('<option value="' + resData.branch_code + '">' + resData.branch_name + '</option>');
@@ -282,7 +316,7 @@
         error: function (error) {
           // console.log(error);
         //   tbody.empty();
-         $("#myBtn").hide()
+        //  $("#myBtn").hide()
         },
       });
   });
