@@ -266,30 +266,41 @@ const ReportDay = () => {
       await BluetoothEscposPrinter.printColumn(
         columnWidthsHeader,
         [
+          BluetoothEscposPrinter.ALIGN.LEFT,
           BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.CENTER,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["Date", "A/c No", "Amt"],
+        // ["Date", "A/c No", "Amt"],
+        ["A/c No", "Name", "Amt"],
         {},
       )
 
       const copiedTableData = [...tableData]
       console.log("TABLLLELEEEEE DDDAAATAAAA  CPPPYYY ", copiedTableData)
 
-      let columnWidthsBody = [30]
+      let columnWidthsBody = [13, 12, 7]
       copiedTableData.forEach(async item => {
         let newItems = [...item]
         console.log("new itemsssssss", newItems)
-        const updatedItems = removeIndexes(newItems, [0, 2, 4])
+        // const updatedItems = removeIndexes(newItems, [0, 2, 4])
+        const updatedItems = removeIndexes(newItems, [0, 1, 2])
 
         // updatedItems[2] = updatedItems[2].slice(0, 8)
-        let items = updatedItems.join("   ")
-        console.log("++==++ PRINTED ITEM", items)
+        // let items = updatedItems.join(" ")
+        // console.log("++==++ PRINTED ITEM", items)
+        console.log("++==++ PRINTED ITEM", updatedItems)
         await BluetoothEscposPrinter.printColumn(
           columnWidthsBody,
-          [BluetoothEscposPrinter.ALIGN.CENTER],
-          [items.toString()],
+          [
+            BluetoothEscposPrinter.ALIGN.LEFT,
+            BluetoothEscposPrinter.ALIGN.CENTER,
+            BluetoothEscposPrinter.ALIGN.RIGHT,
+          ],
+          [
+            updatedItems[0].toString(),
+            updatedItems[1].toString(),
+            updatedItems[2].toString(),
+          ],
           {},
         )
       })

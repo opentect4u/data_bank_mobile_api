@@ -85,6 +85,24 @@ const AccountPreview = ({ navigation, route }) => {
     ["Current Balance", item?.current_balance + parseFloat(money)],
   ]
 
+  const radioButtons = useMemo(
+    () => [
+      {
+        id: "1", // acts as primary key, should be unique and non-empty string
+        label: "Receive Cash",
+        value: "C",
+      },
+      {
+        id: "2",
+        label: "Pay Online",
+        value: "O",
+      },
+    ],
+    [],
+  )
+
+  const [selectedId, setSelectedId] = useState(() => "1")
+
   const resetAction = StackActions.popToTop()
 
   const sendCollectedMoney = async () => {
@@ -480,53 +498,92 @@ const AccountPreview = ({ navigation, route }) => {
             </Table>
           </View> */}
 
-        <View style={styles.inputContainer}>
-          <View style={styles.netTotalTableContainer}>
-            <Table
-              borderStyle={{
-                borderWidth: 1,
-                borderColor: COLORS.lightScheme.primary,
-              }}
-              style={{
-                backgroundColor: COLORS.lightScheme.secondaryContainer,
-              }}>
-              <Rows
-                data={netTotalSectionTableData}
-                textStyle={styles.netTotalText}
-              />
-            </Table>
-          </View>
-          <View style={styles.buttonContainer}>
-            <CancelButtonComponent
-              title={"Back"}
-              customStyle={{
-                marginTop: 10,
-                backgroundColor: "white",
-                colors: "red",
-                width: "40%",
-              }}
-              handleOnpress={() => {
-                navigation.goBack()
-              }}
-            />
-            <ButtonComponent
-              disabled={isLoading}
-              title={
-                !isLoading ? (
-                  "Save"
-                ) : (
-                  <ActivityIndicator color={COLORS.lightScheme.primary} />
-                )
-              }
-              customStyle={{ marginTop: 10, width: "40%" }}
-              handleOnpress={() => {
-                handleSave()
-              }}
-              // disabled={isSaveEnabled}
-            />
-          </View>
+        <View
+          style={{
+            // alignSelf: "center",
+            marginVertical: 15,
+          }}>
+          <RadioGroup
+            radioButtons={radioButtons}
+            onPress={setSelectedId}
+            selectedId={selectedId}
+            layout="row"
+            labelStyle={{
+              fontWeight: "800",
+              fontSize: 20,
+            }}
+          />
         </View>
 
+        {selectedId === "1" ? (
+          <View style={styles.inputContainer}>
+            <View style={styles.netTotalTableContainer}>
+              <Table
+                borderStyle={{
+                  borderWidth: 1,
+                  borderColor: COLORS.lightScheme.primary,
+                }}
+                style={{
+                  backgroundColor: COLORS.lightScheme.secondaryContainer,
+                }}>
+                <Rows
+                  data={netTotalSectionTableData}
+                  textStyle={styles.netTotalText}
+                />
+              </Table>
+            </View>
+            <View style={styles.buttonContainer}>
+              <CancelButtonComponent
+                title={"Back"}
+                customStyle={{
+                  marginTop: 10,
+                  backgroundColor: "white",
+                  colors: "red",
+                  width: "40%",
+                }}
+                handleOnpress={() => {
+                  navigation.goBack()
+                }}
+              />
+              <ButtonComponent
+                disabled={isLoading}
+                title={
+                  !isLoading ? (
+                    "Save"
+                  ) : (
+                    <ActivityIndicator color={COLORS.lightScheme.primary} />
+                  )
+                }
+                customStyle={{ marginTop: 10, width: "40%" }}
+                handleOnpress={() => {
+                  handleSave()
+                }}
+                // disabled={isSaveEnabled}
+              />
+            </View>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={{
+              marginVertical: 20,
+              border: 5,
+              borderColor: "black",
+            }}
+            onPress={handleRazorpayClient}>
+            {/* <ButtonComponent
+              title={"Proceed to Razorpay"}
+              customStyle={{ width: "90%" }}
+              handleOnpress={handleRazorpayClient}
+            /> */}
+
+            <Image
+              source={razor}
+              style={styles.image}
+              resizeMode="cover"
+              // onError={err => setIsImageLoad(false)}
+            />
+          </TouchableOpacity>
+        )}
         {/* </ScrollView> */}
       </ScrollView>
     </View>
