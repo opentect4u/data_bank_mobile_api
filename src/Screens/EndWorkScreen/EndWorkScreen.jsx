@@ -97,7 +97,7 @@ const EndWorkScreen = ({ navigation }) => {
         } else {
           setLoading(false)
 
-          alert("No collection has been done yet.")
+          alert(res?.data?.error)
           console.log("FI vtbstgubkui", res.data)
         }
       })
