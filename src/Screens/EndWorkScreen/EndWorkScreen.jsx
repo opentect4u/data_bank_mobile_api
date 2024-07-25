@@ -93,21 +93,21 @@ const EndWorkScreen = ({ navigation }) => {
             50,
           )
           setIsButtonEnabled(!isButtonEnabled)
-          console.log("IF dshjklfhskdfuihsdk vtbstgubkui", res.data)
+          console.log("IF vtbstgubkui", res.data)
         } else {
           setLoading(false)
 
           alert("No collection has been done yet.")
-          console.log("FI dshjklfhskdfuihsdk vtbstgubkui", res.data)
+          console.log("FI vtbstgubkui", res.data)
         }
       })
       .catch(err => {
         setLoading(false)
 
         console.log("############", err)
-        alert("Collection already submitted.")
+        alert("Some error while ending work.")
         ToastAndroid.showWithGravityAndOffset(
-          "Collection already submitted.",
+          "Some error while ending work.",
           ToastAndroid.SHORT,
           ToastAndroid.CENTER,
           25,
