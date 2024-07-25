@@ -260,45 +260,51 @@ const end_collection = async (req, res) => {
         let lastagent_trans = await db_Select("sl_no", "md_agent_trans", wheree, null);
         // let transDate = dateFormat(value.transaction_date, "yyyymmdd")
 
-
-        let transDate = ((value.agent_code).toString() + (lastagent_trans.msg[0].sl_no).toString()).toString()
-        let slnoEndTrans = lastagent_trans.msg[0].sl_no;
-
-
-
-        let select = "count(*) total_collection",
-            where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND agent_trans_no IS NULL`;
-        let resData = await db_Select(select, "td_collection", where, null);
-        if (resData.msg[0].total_collection > 0) {
-            let dbvalers = `agent_trans_no='${transDate}'`,
-                dbwhere = `bank_id='${value.bank_id}'AND branch_code='${value.branch_code}'AND agent_code='${value.agent_code}' AND agent_trans_no IS NULL`;
-            let update_res = await db_Insert("td_collection", dbvalers, null, dbwhere, 1);
-            if (update_res.suc > 0) {
-                let fields = `agent_trans_no ='${transDate}', coll_flag='N', received_date='${dateFormat(new Date(), "yyyy-mm-dd")}', end_flag='Y'`,
-                    wherre = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND coll_flag='Y' AND end_flag='N' AND agent_trans_no IS NULL`;
+        if(lastagent_trans.suc > 0 && lastagent_trans.msg.length > 0){
+            let transDate = ((value.agent_code).toString() + (lastagent_trans.msg[0].sl_no).toString()).toString()
+            let slnoEndTrans = lastagent_trans.msg[0].sl_no;
+    
+            let select = "count(*) total_collection",
+                where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND agent_trans_no IS NULL`;
+            let resData = await db_Select(select, "td_collection", where, null);
+            if (resData.msg[0].total_collection > 0) {
+                let dbvalers = `agent_trans_no='${transDate}'`,
+                    dbwhere = `bank_id='${value.bank_id}'AND branch_code='${value.branch_code}'AND agent_code='${value.agent_code}' AND agent_trans_no IS NULL`;
+                let update_res = await db_Insert("td_collection", dbvalers, null, dbwhere, 1);
+                if (update_res.suc > 0) {
+                    let fields = `agent_trans_no ='${transDate}', coll_flag='N', received_date='${dateFormat(new Date(), "yyyy-mm-dd")}', end_flag='Y'`,
+                        wherre = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND coll_flag='Y' AND end_flag='N' AND agent_trans_no IS NULL`;
+                    let res_dt = await db_Insert("md_agent_trans", fields, null, wherre, 1);
+                    res.json({
+                        "success": res_dt,
+                        "status": true
+                    });
+                } else {
+                    res.json({
+                        "error": "Error while updating agent collection.",
+                        "status": false
+                    });
+                }
+            } else {
+                let fields = `coll_flag='N', received_date='${dateFormat(new Date(), "yyyy-mm-dd")}', end_flag='Y'`,
+                wherre = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND coll_flag='Y' AND end_flag='N' AND agent_trans_no IS NULL`;
                 let res_dt = await db_Insert("md_agent_trans", fields, null, wherre, 1);
                 res.json({
                     "success": res_dt,
                     "status": true
                 });
-            } else {
-                res.json({
-                    "error": "Collection Data Not Found 1",
-                    "status": false
-                });
             }
-
-        } else {
+        }else{
             res.json({
-                "error": "Collection Data Not Found 2",
+                "error": "No data found in agent transaction.",
                 "status": false
             });
         }
 
     } catch (error) {
         res.json({
-            "error": error,
-            "status": false
+            "error": "Something went wrong. Please try again later.",
+            "status": false,
         });
     }
 }

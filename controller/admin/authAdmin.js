@@ -59,9 +59,9 @@ const post_login = async (req, res) => {
 
         let logo_data = await db_Select(select, 'td_logo', where, null);
 
-        console.log(logo_data);
+        // console.log(logo_data);
 
-        console.log("=================================",user_data)
+        // console.log("=================================",user_data)
         delete user_data.sql;
         
     const datetime = dateFormat(new Date(), "dd/mm/yyyy hh:MM:ss")

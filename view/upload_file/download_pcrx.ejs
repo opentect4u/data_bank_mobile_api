@@ -29,12 +29,11 @@
               <label for="agent">To Date:</label>
               <input type="date" name="tdate" class="form-control" id="tdate" value="<%= currentDate %>"/>
             </div>
-            
             <div class="form-group col-4">
               <label for="file_format">File Format:</label>
               <select name="file_format" class="form-control" id="file_format">
-                <option value="T">TEXT (.txt)</option>
-                <option value="C">CSV (.csv)</option>
+                <option value="T" <%= user.user_data.msg[0].pcrx_format == 'T' ? 'selected' : '' %>>TEXT (.txt)</option>
+                <option value="C" <%= user.user_data.msg[0].pcrx_format == 'C' ? 'selected' : '' %>>CSV (.csv)</option>
               </select>
             </div>
 

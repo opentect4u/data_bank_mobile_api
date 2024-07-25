@@ -3,7 +3,7 @@ const { register, login, my_agent, change_pin, app_version } = require("../contr
 const { search_account, account_info } = require("../controller/api/AccountInfo");
 const { transaction, end_collection, now_date, collection_checked, total_collection } = require("../controller/api/Transaction");
 const { endcollectionMW } = require("../middleware/EndcollectionMW");
-const { day_scroll_report, type_wise_report, non_collection_report, mini_statement, date_wise_summary, date_wise_mini_statement, account_wise_scroll_report, last_five_transaction } = require("../controller/api/ApiReport");
+const { day_scroll_report, type_wise_report, non_collection_report, mini_statement, date_wise_summary, date_wise_mini_statement, account_wise_scroll_report, last_five_transaction, day_tot_report } = require("../controller/api/ApiReport");
 
 const UserRouter = express.Router();
 //find account No
@@ -42,6 +42,8 @@ UserRouter.post('/account_wise_scroll_report',account_wise_scroll_report)
 
 
 UserRouter.post('/last_five_transaction',last_five_transaction)
+
+UserRouter.post('/day_tot_report', day_tot_report)
 
 
 
