@@ -76,6 +76,10 @@ const AccountPreview = ({ navigation, route }) => {
     ["Name", item?.customer_name],
     ["Mobile No.", item?.mobile_no],
     ["Opening Date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
+    [
+      "Previous Transaction Date",
+      new Date(item?.last_trns_dt).toLocaleDateString("en-GB"),
+    ],
     ["Previous Balance", item?.current_balance],
   ]
 
@@ -296,6 +300,27 @@ const AccountPreview = ({ navigation, route }) => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
         [
+          "PRV TNX DT",
+          ":",
+          new Date(item?.last_trns_dt)
+            .toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "2-digit",
+            })
+            .toString(),
+        ],
+        {},
+      )
+
+      await BluetoothEscposPrinter.printColumn(
+        columnWidths,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.CENTER,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        [
           "ACC OPN DT",
           ":",
           new Date(item?.opening_date)
@@ -416,38 +441,38 @@ const AccountPreview = ({ navigation, route }) => {
   //   console.log("Total Deposited Amount", totalDepositedAmount)
   // }
 
-  const handleRazorpayClient = () => {
-    // console.log("Razorpay client...")
+  // const handleRazorpayClient = () => {
+  //   // console.log("Razorpay client...")
 
-    const options = {
-      description: "Deposit Payment",
-      image:
-        "https://synergicsoftek.in/wp-content/themes/synergicsoftek-child/assets/images/sss-logo.png", // Your logo URL
-      currency: "INR",
-      key: "YOUR_RAZORPAY_KEY", // Your Razorpay Key
-      // key: "rzp_live_6NEMkMwtW0VXWs", // Your Razorpay Key
-      amount: money * 100, // amount in paise (INR 1 = 100 paise)
-      name: item.customer_name,
-      prefill: {
-        // email: "customer-email@example.com",
-        contact: item.mobile_no,
-        name: item.customer_name,
-      },
-      theme: { color: "#F37254" },
-    }
+  //   const options = {
+  //     description: "Deposit Payment",
+  //     image:
+  //       "https://synergicsoftek.in/wp-content/themes/synergicsoftek-child/assets/images/sss-logo.png", // Your logo URL
+  //     currency: "INR",
+  //     key: "YOUR_RAZORPAY_KEY", // Your Razorpay Key
+  //     // key: "rzp_live_6NEMkMwtW0VXWs", // Your Razorpay Key
+  //     amount: money * 100, // amount in paise (INR 1 = 100 paise)
+  //     name: item.customer_name,
+  //     prefill: {
+  //       // email: "customer-email@example.com",
+  //       contact: item.mobile_no,
+  //       name: item.customer_name,
+  //     },
+  //     theme: { color: "#F37254" },
+  //   }
 
-    RazorpayCheckout.open(options)
-      .then(data => {
-        // handle success
-        alert(`Success: ${data.razorpay_payment_id}`)
-        // Proceed with saving the transaction
-        sendCollectedMoney()
-      })
-      .catch(error => {
-        // handle failure
-        alert(`Error: ${error.code} | ${error.description}`)
-      })
-  }
+  //   RazorpayCheckout.open(options)
+  //     .then(data => {
+  //       // handle success
+  //       alert(`Success: ${data.razorpay_payment_id}`)
+  //       // Proceed with saving the transaction
+  //       sendCollectedMoney()
+  //     })
+  //     .catch(error => {
+  //       // handle failure
+  //       alert(`Error: ${error.code} | ${error.description}`)
+  //     })
+  // }
 
   return (
     <View>

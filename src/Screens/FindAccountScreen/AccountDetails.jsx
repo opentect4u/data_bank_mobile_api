@@ -79,6 +79,10 @@ const AccountDetails = ({ navigation, route }) => {
     ["Name", item?.customer_name],
     ["Mobile No.", item?.mobile_no],
     ["Opening date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
+    [
+      "Previous Transaction Date",
+      new Date(item?.last_trns_dt).toLocaleDateString("en-GB"),
+    ],
     ["Current Balance", item?.current_balance],
   ]
 
