@@ -8,25 +8,38 @@ import ForgotPasscode from "../Screens/ForgotPasscode"
 import BottomNavigation from "./BottomNavigation"
 import { AppStore } from "../Context/AppContext"
 import NotificationScreen from "../Screens/Notification/NotificationScreen"
+import { useNetInfo } from "@react-native-community/netinfo"
+import NoInternetScreen from "../Screens/NoInternetScreen"
+
 const Stack = createNativeStackNavigator()
+
 const MainNavigation = () => {
   const { isLogin } = useContext(AppStore)
+  const { isConnected } = useNetInfo()
+
   return (
     <>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {isLogin ? ( // use '!' for bypassing for debugging
-            <>
+          {isLogin ? (
+            isConnected ? ( // use '!' for bypassing for debugging
+              <>
+                <Stack.Screen
+                  name={mainNavigationRoutes.tab_home}
+                  component={BottomNavigation}
+                />
+                <Stack.Screen
+                  name={mainNavigationRoutes.notificationScreen}
+                  component={NotificationScreen}
+                />
+              </>
+            ) : (
               <Stack.Screen
-                name={mainNavigationRoutes.tab_home}
-                component={BottomNavigation}
+                name={mainNavigationRoutes.noInternetScreen}
+                component={NoInternetScreen}
               />
-              <Stack.Screen
-                name={mainNavigationRoutes.notificationScreen}
-                component={NotificationScreen}
-              />
-            </>
-          ) : (
+            )
+          ) : isConnected ? (
             <>
               <Stack.Screen
                 name={mainNavigationRoutes.login}
@@ -37,6 +50,11 @@ const MainNavigation = () => {
                 component={ForgotPasscode}
               />
             </>
+          ) : (
+            <Stack.Screen
+              name={mainNavigationRoutes.noInternetScreen}
+              component={NoInternetScreen}
+            />
           )}
         </Stack.Navigator>
       </NavigationContainer>

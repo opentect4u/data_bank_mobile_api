@@ -3,38 +3,19 @@ import {
   Text,
   View,
   ScrollView,
-  Modal,
-  Pressable,
   ToastAndroid,
-  Dimensions,
   ActivityIndicator,
-  Image,
-  TouchableOpacity,
 } from "react-native"
-import { useContext, useEffect, useMemo, useState } from "react"
+import { useContext, useState } from "react"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
-import {
-  Table,
-  TableWrapper,
-  Row,
-  Rows,
-  Col,
-} from "react-native-table-component"
-import RazorpayCheckout from "react-native-razorpay"
-import RadioGroup from "react-native-radio-buttons-group"
+import { Table, Rows } from "react-native-table-component"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
-import InputComponent from "../../Components/InputComponent"
 import ButtonComponent from "../../Components/ButtonComponent"
 import axios from "axios"
 import { AppStore } from "../../Context/AppContext"
-import { REACT_APP_BASE_URL } from "../../Config/config"
-import mainNavigationRoutes from "../../Routes/NavigationRoutes"
 import { StackActions } from "@react-navigation/native"
 import { address } from "../../Routes/addresses"
-import { logo } from "../../Resources/ImageStrings/logo"
-import { gle } from "../../Resources/ImageStrings/gle"
-import { glej } from "../../Resources/ImageStrings/glej"
 import { Alert } from "react-native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import logoCut from "../../Resources/Images/logo_cut.png"
@@ -78,7 +59,9 @@ const AccountPreview = ({ navigation, route }) => {
     ["Opening Date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
     [
       "Previous Transaction Date",
-      new Date(item?.last_trns_dt).toLocaleDateString("en-GB"),
+      item?.last_trns_dt
+        ? new Date(item?.last_trns_dt).toLocaleDateString("en-GB")
+        : "No available date",
     ],
     ["Previous Balance", item?.current_balance],
   ]
@@ -302,13 +285,15 @@ const AccountPreview = ({ navigation, route }) => {
         [
           "PRV TNX DT",
           ":",
-          new Date(item?.last_trns_dt)
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            })
-            .toString(),
+          item?.last_trns_dt
+            ? new Date(item?.last_trns_dt)
+                .toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                })
+                .toString()
+            : "No date.",
         ],
         {},
       )

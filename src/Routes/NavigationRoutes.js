@@ -3,6 +3,7 @@ const mainNavigationRoutes = {
   tab_home: "TabHome",
   login: "LogIn",
   forgotPasscode: "ForgotPassCode",
+  noInternetScreen: "NoInternetScreen",
   accountDetails: "AccountDetails",
   loanAccountDetails: "loanAccountDetails",
   RDAccountDetails: "RDAccountDetails",

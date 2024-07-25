@@ -81,7 +81,9 @@ const AccountDetails = ({ navigation, route }) => {
     ["Opening date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
     [
       "Previous Transaction Date",
-      new Date(item?.last_trns_dt).toLocaleDateString("en-GB"),
+      item?.last_trns_dt
+        ? new Date(item?.last_trns_dt).toLocaleDateString("en-GB")
+        : "No available date",
     ],
     ["Current Balance", item?.current_balance],
   ]
