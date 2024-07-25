@@ -86,6 +86,17 @@ export default function ReportChoose({ navigation }) {
           {/* label */}
           <Text style={styles.label}> Last Five Tnx </Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate(mainNavigationRoutes.dayTotalReportScreen)
+          }
+          style={styles.cardContainer}>
+          {/* Icon */}
+          {icon.profile(COLORS.lightScheme.primary, 45)}
+
+          {/* label */}
+          <Text style={styles.label}> Day Total Report </Text>
+        </TouchableOpacity>
 
         <View
           style={{

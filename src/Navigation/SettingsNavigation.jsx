@@ -18,6 +18,7 @@ import DuplicateReceipt from "../Screens/SettingsScreens/DuplicateReceipt"
 import DuplicateReceiptInner from "../Screens/SettingsScreens/DuplicateReceiptInner"
 import About from "../Screens/SettingsScreens/About"
 import LastFiveTnxReport from "../Screens/SettingsScreens/LastFiveTnxReport"
+import DayTotalReportScreen from "../Screens/SettingsScreens/DayTotalReportScreen"
 
 const Stack = createNativeStackNavigator()
 
@@ -107,6 +108,10 @@ const SettingsNavigation = () => {
         <Stack.Screen
           name={mainNavigationRoutes.lastFiveTnxScreen}
           component={LastFiveTnxReport}
+        />
+        <Stack.Screen
+          name={mainNavigationRoutes.dayTotalReportScreen}
+          component={DayTotalReportScreen}
         />
       </Stack.Navigator>
     </>
