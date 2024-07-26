@@ -17,6 +17,7 @@ import { BluetoothManager } from "react-native-bluetooth-escpos-printer"
 import { PERMISSIONS, requestMultiple, RESULTS } from "react-native-permissions"
 import ItemList from "./ItemList"
 import SamplePrint from "./SamplePrint"
+import ThermalPrinterModule from "react-native-thermal-printer"
 
 const PrintMain = () => {
   const [pairedDevices, setPairedDevices] = useState([])
@@ -304,6 +305,64 @@ const PrintMain = () => {
     }
   }
 
+  const handlePrintReceipt = async () => {
+    // const result = await getVehicleRatesByVehicleId(id);
+    // const qrData = {
+    //   receiptNo: receiptNo,
+    //   vehicleType: type,
+    //   vehicle_id: id,
+    //   receipt_type: 'S',
+    //   vehicle_no: vehicleNumber,
+    //   date_time_in: currentTime.toISOString().slice(0, -5) + 'Z',
+    //   oprn_mode: dev_mod,
+    //   opratorName: operatorName,
+    //   user_id_in: userId,
+    //   mc_srl_no: mc_srl_no,
+    //   paid_amt: 0,
+    //   gst_flag: 'Y',
+    //   advance: 0,
+    //   isUploadedIN: isUploadedIN,
+    // };
+
+    try {
+      let payload = `[C]<font size='tall'><B>RECEIPT</font>\n`
+
+      // payload += `[R]<img>${pic}</img>\n\n` + "\n"
+
+      payload += `[C]sdfsdfsdfsdf\n`
+
+      payload += `[C]342rfwefswefgs\n`
+
+      payload += `[C]3242rsacfsdgfdshgdfh\n`
+
+      payload += `[C]8567y45rytryhfdhfgj\n`
+
+      payload +=
+        `[C]<B><font size='big'>---------------</font>\n` +
+        `[L]<b>RECEIPT NO : ${3242424}\n` +
+        `[L]<b>VEHICLE TYPE : ${"sad"}\n` +
+        `[L]<b>VEHICLE NO : ${"342sdfsd"}\n` +
+        `[L]<b>IN Time : ${"fiusadgfdsa"}\n\n` +
+        `[R]<qrcode size='35'>${"receiptNo"}-*-${"type"}-*-${"id"}-*-${"S"}-*-${"vehicleNumber.toUpperCase()"}-*-${
+          "currentTime.toISOString().slice(0, -5)" + "Z"
+        }-*-${"dev_mod"}-*-${"operatorName"}-*-${"userId"}-*-${"mc_srl_no"}-*-${0}-*-${"Y"}-*-${0}-*-${"isUploadedIN"}</qrcode>\n\n`
+
+      await ThermalPrinterModule.printBluetooth({
+        payload: payload,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      })
+    } catch (err) {
+      //error handling
+      //
+      // alert(JSON.stringify(err.message))
+      ToastAndroid.show("Print error", ToastAndroid.SHORT)
+      console.log("lullllluuuuuuullluulluullu", err.message)
+    }
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.bluetoothStatusContainer}>
@@ -358,6 +417,10 @@ const PrintMain = () => {
       </View>
       <SamplePrint />
       <Button onPress={() => scanBluetoothDevice()} title="Scan / Connect" />
+      <Button
+        onPress={() => handlePrintReceipt()}
+        title="NEW THERMAL PRINT TEST"
+      />
       <View style={{ height: 100 }} />
     </ScrollView>
   )

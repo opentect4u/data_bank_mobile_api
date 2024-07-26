@@ -247,8 +247,7 @@ const Home = ({ navigation }) => {
 
                 {/* label */}
                 <Text style={isDaily ? styles.label : styles.disabledContainer}>
-                  {" "}
-                  Daily{" "}
+                  Daily
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -265,8 +264,7 @@ const Home = ({ navigation }) => {
 
                 {/* label */}
                 <Text style={isLoan ? styles.label : styles.disabledContainer}>
-                  {" "}
-                  Loan{" "}
+                  Loan
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity

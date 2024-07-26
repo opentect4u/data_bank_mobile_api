@@ -168,6 +168,7 @@ const AccountDetails = ({ navigation, route }) => {
           backgroundColor: COLORS.lightScheme.background,
           height: "100%",
           padding: 10,
+          paddingBottom: 95,
         }}>
         <ScrollView keyboardShouldPersistTaps={"handled"}>
           <Text style={styles.info}>Daily Account Info</Text>
