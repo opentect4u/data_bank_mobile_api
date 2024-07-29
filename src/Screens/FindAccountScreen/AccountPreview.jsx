@@ -40,6 +40,8 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import logoCut from "../../Resources/Images/logo_cut.png"
 import razor from "../../Resources/Images/razorpay.webp"
 
+import RNEzetapSdk from "react-native-ezetap-sdk"
+
 const AccountPreview = ({ navigation, route }) => {
   const [isLoading, setLoading] = useState(false)
   const [receiptNumber, setReceiptNumber] = useState(() => "")
@@ -463,37 +465,84 @@ const AccountPreview = ({ navigation, route }) => {
   //   console.log("Total Deposited Amount", totalDepositedAmount)
   // }
 
-  const handleRazorpayClient = () => {
-    // console.log("Razorpay client...")
-
-    const options = {
-      description: "Deposit Payment",
-      image:
-        "https://synergicsoftek.in/wp-content/themes/synergicsoftek-child/assets/images/sss-logo.png", // Your logo URL
-      currency: "INR",
-      key: "YOUR_RAZORPAY_KEY", // Your Razorpay Key
-      // key: "rzp_live_6NEMkMwtW0VXWs", // Your Razorpay Key
-      amount: money * 100, // amount in paise (INR 1 = 100 paise)
-      name: item.customer_name,
-      prefill: {
-        // email: "customer-email@example.com",
-        contact: item.mobile_no,
-        name: item.customer_name,
-      },
-      theme: { color: "#F37254" },
+  const handleRazorpayClient = async () => {
+    let json = {
+      appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
+      username: "9903044748",
+      amount: +money,
+      customerMobileNumber: "8910792003",
+      externalRefNumber: "123456",
+      externalRefNumber2: "534534",
+      externalRefNumber3: "54345",
+      accountLabel: "AC1",
+      customerEmail: "soumyadeep.mondal@synergicsoftek.in",
+      pushTo: { deviceId: "1492621778|ezetap_android" },
+      mode: "UPI",
     }
 
-    RazorpayCheckout.open(options)
-      .then(data => {
-        // handle success
-        alert(`Success: ${data.razorpay_payment_id}`)
-        // Proceed with saving the transaction
-        sendCollectedMoney()
+    // Convert json object to string
+    let jsonString = JSON.stringify(json)
+
+    // await RNEzetapSdk.initialize(jsonString)
+    //   .then(res => {
+    //     console.log(">>>>>>>>>>>>>>>>>", res)
+    //   })
+    //   .catch(err => {
+    //     console.log("<<<<<<<<<<<<<<<<<", err)
+    //   })
+
+    var res = await RNEzetapSdk.prepareDevice()
+    console.log(res)
+
+    await RNEzetapSdk.pay(jsonString)
+      .then(res => {
+        console.log(">>>>>>>>>>>>>>>>>", res)
+
+        // if (res?.status == "success") {
+        //   handleSave()
+        //   Alert.alert("Txn ID", res?.txnId)
+        // } else {
+        //   Alert.alert("Error in Tnx", res?.error)
+        // }
       })
-      .catch(error => {
-        // handle failure
-        alert(`Error: ${error.code} | ${error.description}`)
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<", err)
       })
+  }
+
+  const init = async () => {
+    // var initPayloads =
+    //   '{"loginType":"USERID","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","userName":' +
+    //   "9903044748" +
+    //   ',"password":' +
+    //   "123456Q" +
+    //   ',"currencyCode":"INR","appMode":"DEV11","captureSignature":"true","prepareDevice":"false","appId":"ezetap_android","versionName":"8.6.59","versionCode":"279"}'
+    // var response = await RNEzetapSdk.initialize(initPayloads)
+    // console.log("YYYYYYYYYYYYYYYYYYYYYY", response)
+    // var jsonData = JSON.parse(response)
+
+    var withAppKey =
+      '{"userName":' +
+      "9903044748" +
+      ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+    var response = await RNEzetapSdk.initialize(withAppKey)
+    console.log(response)
+    var jsonData = JSON.parse(response)
+
+    if (jsonData.status == "success") {
+      await handleRazorpayClient()
+        .then(async res => {
+          console.log("###################", res)
+          var res = await RNEzetapSdk.close()
+          console.log("CLOSEEEEE TNXXXXX", res)
+          // var json = JSON.parse(res)
+        })
+        .catch(err => {
+          console.log("==================", err)
+        })
+    } else {
+      console.log("XXXXXXXXXXXXXXXXXXX", res)
+    }
   }
 
   return (
@@ -598,7 +647,8 @@ const AccountPreview = ({ navigation, route }) => {
               border: 5,
               borderColor: "black",
             }}
-            onPress={handleRazorpayClient}>
+            // onPress={handleRazorpayClient}
+            onPress={init}>
             {/* <ButtonComponent
               title={"Proceed to Razorpay"}
               customStyle={{ width: "90%" }}
