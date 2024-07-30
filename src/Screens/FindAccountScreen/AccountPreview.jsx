@@ -61,6 +61,7 @@ const AccountPreview = ({ navigation, route }) => {
     login,
     allowCollectionDays,
     secAmtType,
+    razorpayInitializationJson,
   } = useContext(AppStore)
   const { item, money } = route.params
   const tableData = [
@@ -492,18 +493,18 @@ const AccountPreview = ({ navigation, route }) => {
     //   })
 
     var res = await RNEzetapSdk.prepareDevice()
-    console.log(res)
+    console.log("RAZORPAY===PREPARE DEVICE", res)
 
     await RNEzetapSdk.pay(jsonString)
       .then(res => {
         console.log(">>>>>>>>>>>>>>>>>", res)
 
-        // if (res?.status == "success") {
-        //   handleSave()
-        //   Alert.alert("Txn ID", res?.txnId)
-        // } else {
-        //   Alert.alert("Error in Tnx", res?.error)
-        // }
+        if (res?.status == "success") {
+          handleSave()
+          Alert.alert("Txn ID", res?.txnId)
+        } else {
+          Alert.alert("Error in Tnx", res?.error)
+        }
       })
       .catch(err => {
         console.log("<<<<<<<<<<<<<<<<<", err)
@@ -511,30 +512,20 @@ const AccountPreview = ({ navigation, route }) => {
   }
 
   const init = async () => {
-    // var initPayloads =
-    //   '{"loginType":"USERID","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","userName":' +
+    // var withAppKey =
+    //   '{"userName":' +
     //   "9903044748" +
-    //   ',"password":' +
-    //   "123456Q" +
-    //   ',"currencyCode":"INR","appMode":"DEV11","captureSignature":"true","prepareDevice":"false","appId":"ezetap_android","versionName":"8.6.59","versionCode":"279"}'
-    // var response = await RNEzetapSdk.initialize(initPayloads)
-    // console.log("YYYYYYYYYYYYYYYYYYYYYY", response)
+    //   ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+    // var response = await RNEzetapSdk.initialize(withAppKey)
+    // console.log(response)
     // var jsonData = JSON.parse(response)
 
-    var withAppKey =
-      '{"userName":' +
-      "9903044748" +
-      ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
-    var response = await RNEzetapSdk.initialize(withAppKey)
-    console.log(response)
-    var jsonData = JSON.parse(response)
-
-    if (jsonData.status == "success") {
+    if (razorpayInitializationJson.status == "success") {
       await handleRazorpayClient()
         .then(async res => {
           console.log("###################", res)
-          var res = await RNEzetapSdk.close()
-          console.log("CLOSEEEEE TNXXXXX", res)
+          // var res = await RNEzetapSdk.close()
+          // console.log("CLOSEEEEE TNXXXXX", res)
           // var json = JSON.parse(res)
         })
         .catch(err => {
@@ -723,6 +714,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   image: {
+    marginTop: -20,
     height: 80,
     width: "80%",
     alignSelf: "center",

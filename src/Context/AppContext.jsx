@@ -4,6 +4,7 @@ import DeviceInfo from "react-native-device-info"
 import { ToastAndroid } from "react-native"
 import { REACT_APP_BASE_URL } from "../Config/config"
 import { address } from "../Routes/addresses"
+import RNEzetapSdk from "react-native-ezetap-sdk"
 
 export const AppStore = createContext()
 
@@ -46,6 +47,8 @@ const AppContext = ({ children }) => {
 
   const [next, setNext] = useState(() => false)
 
+  const [razorpayInitializationJson, setRazorpayInitializationJson] = useState()
+
   useEffect(() => {
     const uniqueId = DeviceInfo.getUniqueIdSync()
     setDeviceID(uniqueId)
@@ -68,7 +71,7 @@ const AppContext = ({ children }) => {
           Accept: "application/json",
         },
       })
-      .then(res => {
+      .then(async res => {
         if (res.data.status) {
           setIsLogin(true)
           // console.log('modified_dt '+new Date(res.data.success.setting.msg[0].modified_at))
@@ -115,6 +118,9 @@ const AppContext = ({ children }) => {
               ? new Date(res.data.success.trans.msg[0].trans_dt)
               : new Date(),
           )
+
+          await initRazorpay()
+
           return true
         } else {
           setIsLogin(false)
@@ -235,7 +241,19 @@ const AppContext = ({ children }) => {
       })
   }
 
-  const logout = () => {
+  const initRazorpay = async () => {
+    var withAppKey =
+      '{"userName":' +
+      "9903044748" +
+      ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+    var response = await RNEzetapSdk.initialize(withAppKey)
+    console.log(response)
+    var jsonData = JSON.parse(response)
+    setRazorpayInitializationJson(jsonData)
+  }
+
+  const logout = async () => {
+    await RNEzetapSdk.close()
     setIsLogin(false)
     setAgentName("")
     setAgentEmail("")
@@ -284,6 +302,7 @@ const AppContext = ({ children }) => {
         isRD,
         transDt,
         setTotalCollection,
+        razorpayInitializationJson,
       }}>
       {children}
     </AppStore.Provider>
