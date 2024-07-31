@@ -41,9 +41,11 @@ import CancelButtonComponent from "../../Components/CancelButtonComponent"
 import razor from "../../Resources/Images/razorpay.webp"
 
 import RNEzetapSdk from "react-native-ezetap-sdk"
+import OverlayLoader from "../../Components/OverlayLoader"
 
 const AccountPreview = ({ navigation, route }) => {
   const [isLoading, setLoading] = useState(false)
+  const [isLoadingOverlay, setLoadingOverlay] = useState(false)
   const [receiptNumber, setReceiptNumber] = useState(() => "")
   const [isSaveEnabled, setIsSaveEnabled] = useState(() => false)
   var todayDT
@@ -111,11 +113,14 @@ const AccountPreview = ({ navigation, route }) => {
   )
 
   const [selectedId, setSelectedId] = useState(() => "1")
+  // const [tnxResponse, setTnxResponse] = useState()
+  var tnxResponse
 
   const resetAction = StackActions.popToTop()
 
   const sendCollectedMoney = async () => {
     setLoading(true)
+    setLoadingOverlay(true)
     todayDT = new Date().toISOString()
     const obj = {
       bank_id: item?.bank_id,
@@ -180,6 +185,7 @@ const AccountPreview = ({ navigation, route }) => {
           50,
         )
       })
+    setLoadingOverlay(false)
   }
 
   async function printReceipt(rcptNo) {
@@ -472,12 +478,12 @@ const AccountPreview = ({ navigation, route }) => {
       username: "9903044748",
       amount: +money,
       customerMobileNumber: "8910792003",
-      externalRefNumber: "123456",
-      externalRefNumber2: "534534",
-      externalRefNumber3: "54345",
+      externalRefNumber: "",
+      externalRefNumber2: "",
+      externalRefNumber3: "",
       accountLabel: "AC1",
       customerEmail: "soumyadeep.mondal@synergicsoftek.in",
-      pushTo: { deviceId: "1492621778|ezetap_android" },
+      pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
       mode: "UPI",
     }
 
@@ -499,12 +505,14 @@ const AccountPreview = ({ navigation, route }) => {
       .then(res => {
         console.log(">>>>>>>>>>>>>>>>>", res)
 
-        if (res?.status == "success") {
-          handleSave()
-          Alert.alert("Txn ID", res?.txnId)
-        } else {
-          Alert.alert("Error in Tnx", res?.error)
-        }
+        // if (res?.status == "success") {
+        //   handleSave()
+        //   Alert.alert("Txn ID", res?.txnId)
+        // } else {
+        //   Alert.alert("Error in Tnx", res?.error)
+        // }
+        tnxResponse = res
+        // setTnxResponse(res)
       })
       .catch(err => {
         console.log("<<<<<<<<<<<<<<<<<", err)
@@ -539,123 +547,131 @@ const AccountPreview = ({ navigation, route }) => {
   return (
     <View>
       <CustomHeader />
-      <ScrollView
-        style={{
-          backgroundColor: COLORS.lightScheme.background,
-          height: "90%",
-          padding: 10,
-        }}>
-        {/* <ScrollView> */}
-        <Text style={styles.info}>Preview</Text>
-        {/* Table Component */}
-        <View style={styles.tableConatiner}>
-          <Table
-            borderStyle={{
-              borderWidth: 5,
-              borderColor: COLORS.lightScheme.primary,
-            }}
-            style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
-            <Rows data={tableData} textStyle={styles.text} />
-          </Table>
-        </View>
-
-        {/* <View style={styles.netTotalTableContainer}>
-            <Table
-              borderStyle={{ borderWidth: 0, borderColor: COLORS.lightScheme.primary,  }}
-              style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
-              <Rows data={netTotalSectionTableData} textStyle={styles.netTotalText} />
-            </Table>
-          </View> */}
-
-        <View
+      {isLoadingOverlay !== true ? (
+        <ScrollView
           style={{
-            // alignSelf: "center",
-            marginVertical: 15,
+            backgroundColor: COLORS.lightScheme.background,
+            height: "90%",
+            padding: 10,
           }}>
-          <RadioGroup
-            radioButtons={radioButtons}
-            onPress={setSelectedId}
-            selectedId={selectedId}
-            layout="row"
-            labelStyle={{
-              fontWeight: "800",
-              fontSize: 20,
-            }}
-          />
-        </View>
+          <Text style={styles.info}>Preview</Text>
 
-        {selectedId === "1" ? (
-          <View style={styles.inputContainer}>
-            <View style={styles.netTotalTableContainer}>
-              <Table
-                borderStyle={{
-                  borderWidth: 1,
-                  borderColor: COLORS.lightScheme.primary,
-                }}
-                style={{
-                  backgroundColor: COLORS.lightScheme.secondaryContainer,
-                }}>
-                <Rows
-                  data={netTotalSectionTableData}
-                  textStyle={styles.netTotalText}
-                />
-              </Table>
-            </View>
-            <View style={styles.buttonContainer}>
-              <CancelButtonComponent
-                title={"Back"}
-                customStyle={{
-                  marginTop: 10,
-                  backgroundColor: "white",
-                  colors: "red",
-                  width: "40%",
-                }}
-                handleOnpress={() => {
-                  navigation.goBack()
-                }}
-              />
-              <ButtonComponent
-                disabled={isLoading}
-                title={
-                  !isLoading ? (
-                    "Save"
-                  ) : (
-                    <ActivityIndicator color={COLORS.lightScheme.primary} />
-                  )
-                }
-                customStyle={{ marginTop: 10, width: "40%" }}
-                handleOnpress={() => {
-                  handleSave()
-                }}
-                // disabled={isSaveEnabled}
-              />
-            </View>
+          <View style={styles.tableConatiner}>
+            <Table
+              borderStyle={{
+                borderWidth: 5,
+                borderColor: COLORS.lightScheme.primary,
+              }}
+              style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
+              <Rows data={tableData} textStyle={styles.text} />
+            </Table>
           </View>
-        ) : (
-          <TouchableOpacity
-            style={{
-              marginVertical: 20,
-              border: 5,
-              borderColor: "black",
-            }}
-            // onPress={handleRazorpayClient}
-            onPress={init}>
-            {/* <ButtonComponent
-              title={"Proceed to Razorpay"}
-              customStyle={{ width: "90%" }}
-              handleOnpress={handleRazorpayClient}
-            /> */}
 
-            <Image
-              source={razor}
-              style={styles.image}
-              resizeMode="cover"
-              // onError={err => setIsImageLoad(false)}
+          <View
+            style={{
+              // alignSelf: "center",
+              marginVertical: 15,
+            }}>
+            <RadioGroup
+              radioButtons={radioButtons}
+              onPress={setSelectedId}
+              selectedId={selectedId}
+              layout="row"
+              labelStyle={{
+                fontWeight: "800",
+                fontSize: 20,
+              }}
             />
-          </TouchableOpacity>
-        )}
-        {/* </ScrollView> */}
-      </ScrollView>
+          </View>
+
+          {selectedId === "1" ? (
+            <View style={styles.inputContainer}>
+              <View style={styles.netTotalTableContainer}>
+                <Table
+                  borderStyle={{
+                    borderWidth: 1,
+                    borderColor: COLORS.lightScheme.primary,
+                  }}
+                  style={{
+                    backgroundColor: COLORS.lightScheme.secondaryContainer,
+                  }}>
+                  <Rows
+                    data={netTotalSectionTableData}
+                    textStyle={styles.netTotalText}
+                  />
+                </Table>
+              </View>
+              <View style={styles.buttonContainer}>
+                <CancelButtonComponent
+                  title={"Back"}
+                  customStyle={{
+                    marginTop: 10,
+                    backgroundColor: "white",
+                    colors: "red",
+                    width: "40%",
+                  }}
+                  handleOnpress={() => {
+                    navigation.goBack()
+                  }}
+                />
+                <ButtonComponent
+                  disabled={isLoading}
+                  title={
+                    !isLoading ? (
+                      "Save"
+                    ) : (
+                      <ActivityIndicator color={COLORS.lightScheme.primary} />
+                    )
+                  }
+                  customStyle={{ marginTop: 10, width: "40%" }}
+                  handleOnpress={() => {
+                    handleSave()
+                  }}
+                  // disabled={isSaveEnabled}
+                />
+              </View>
+            </View>
+          ) : (
+            <TouchableOpacity
+              style={{
+                marginVertical: 20,
+                border: 5,
+                borderColor: "black",
+              }}
+              // onPress={handleRazorpayClient}
+              onPress={async () =>
+                await init()
+                  .then(() => {
+                    console.log(
+                      "TRANSACTION RES DATA================",
+                      tnxResponse,
+                    )
+                    if (JSON.parse(tnxResponse)?.status === "success") {
+                      handleSave()
+                      // Alert.alert(
+                      //   `Transaction ID`,
+                      //   `${tnxResponse?.result?.txn?.txnId}`,
+                      // )
+                    } else {
+                      console.log("tnxResponse value error...")
+                    }
+                  })
+                  .catch(err => {
+                    console.error("TNX Response Error!")
+                  })
+              }>
+              <Image
+                source={razor}
+                style={styles.image}
+                resizeMode="cover"
+                // onError={err => setIsImageLoad(false)}
+              />
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      ) : (
+        <OverlayLoader />
+      )}
     </View>
   )
 }
