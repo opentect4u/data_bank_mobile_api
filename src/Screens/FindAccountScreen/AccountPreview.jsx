@@ -484,7 +484,9 @@ const AccountPreview = ({ navigation, route }) => {
       accountLabel: "AC1",
       customerEmail: "soumyadeep.mondal@synergicsoftek.in",
       pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
-      mode: "UPI",
+      // mode: "UPI",
+      paymentMode:
+        "Card/Cash/Cheque/UPI/UPI_VOUCHER/RemotePay/BHARATQR/Brand_Offers/Brand_EMI/Normal_EMI/Wallet ",
     }
 
     // Convert json object to string

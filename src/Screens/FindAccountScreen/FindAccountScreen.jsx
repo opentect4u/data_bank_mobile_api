@@ -74,8 +74,8 @@ const FindAccountScreen = ({ navigation }) => {
       .then(res => {
         setIsLoading(false)
 
-        console.log("bank details", res?.data.success.msg)
-        setUserBankDetails(res?.data.success.msg)
+        console.log("bank details", res?.data?.success?.msg)
+        setUserBankDetails(res?.data?.success?.msg)
       })
       .catch(err => {
         setIsLoading(false)
