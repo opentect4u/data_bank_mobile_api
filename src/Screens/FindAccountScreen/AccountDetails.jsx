@@ -11,6 +11,7 @@ import {
   Image,
 } from "react-native"
 import { useContext, useState, useEffect, useMemo } from "react"
+import axios from "axios"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
 import {
@@ -28,6 +29,7 @@ import { AppStore } from "../../Context/AppContext"
 import { StackActions, useFocusEffect } from "@react-navigation/native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import razor from "../../Resources/Images/razorpay.webp"
+import { address } from "../../Routes/addresses"
 
 const AccountDetails = ({ navigation, route }) => {
   const [collectionMoney, setCollectionMoney] = useState(() => 0)
@@ -40,9 +42,14 @@ const AccountDetails = ({ navigation, route }) => {
     collectionFlag,
     endFlag,
     allowCollectionDays,
+    userId,
+    bankId,
+    branchCode,
   } = useContext(AppStore)
 
   const { item } = route.params
+
+  const [lastTnxDate, setLastTnxDate] = useState(() => "")
 
   // const radioButtons = useMemo(
   //   () => [
@@ -81,12 +88,51 @@ const AccountDetails = ({ navigation, route }) => {
     ["Opening date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
     [
       "Previous Transaction Date",
-      item?.last_trns_dt
-        ? new Date(item?.last_trns_dt).toLocaleDateString("en-GB")
+      lastTnxDate
+        ? new Date(lastTnxDate).toLocaleDateString("en-GB")
         : "No available date",
     ],
     ["Current Balance", item?.current_balance],
   ]
+
+  const getLastTnxDate = async () => {
+    const obj = {
+      bank_id: bankId,
+      branch_code: branchCode,
+      agent_code: userId,
+      account_number: item?.account_number,
+      flag: "D",
+    }
+
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
+
+    await axios
+      .post(address.LAST_TNX_DATE, obj, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then(res => {
+        setLastTnxDate(
+          res?.data?.success?.length !== 0
+            ? res?.data?.success?.msg[0]?.last_trns_dt?.toString()
+            : "",
+        )
+
+        // {"status": true, "success": []}
+        console.log(
+          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+          res?.data?.success?.msg[0]?.last_trns_dt,
+        )
+      })
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", err)
+      })
+  }
+
+  useEffect(() => {
+    getLastTnxDate()
+  }, [])
 
   useEffect(() => {
     getFlagsRequest()

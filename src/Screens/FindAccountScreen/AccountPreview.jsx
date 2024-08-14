@@ -6,7 +6,7 @@ import {
   ToastAndroid,
   ActivityIndicator,
 } from "react-native"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
 import { Table, Rows } from "react-native-table-component"
@@ -43,7 +43,11 @@ const AccountPreview = ({ navigation, route }) => {
     bankId,
     branchCode,
   } = useContext(AppStore)
+
   const { item, money } = route.params
+
+  const [lastTnxDate, setLastTnxDate] = useState(() => "")
+
   const tableData = [
     [
       "A/c Type",
@@ -61,8 +65,8 @@ const AccountPreview = ({ navigation, route }) => {
     ["Opening Date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
     [
       "Previous Transaction Date",
-      item?.last_trns_dt
-        ? new Date(item?.last_trns_dt)?.toLocaleDateString("en-GB")
+      lastTnxDate
+        ? new Date(lastTnxDate).toLocaleDateString("en-GB")
         : "No available date",
     ],
     ["Previous Balance", item?.current_balance],
@@ -85,6 +89,8 @@ const AccountPreview = ({ navigation, route }) => {
       flag: "D",
     }
 
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
+
     await axios
       .post(address.LAST_TNX_DATE, obj, {
         headers: {
@@ -92,12 +98,26 @@ const AccountPreview = ({ navigation, route }) => {
         },
       })
       .then(res => {
-        console.log(res)
+        setLastTnxDate(
+          res?.data?.success?.length !== 0
+            ? res?.data?.success?.msg[0]?.last_trns_dt?.toString()
+            : "",
+        )
+
+        // {"status": true, "success": []}
+        console.log(
+          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+          res?.data?.success?.msg[0]?.last_trns_dt,
+        )
       })
       .catch(err => {
-        console.log(err)
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", err)
       })
   }
+
+  useEffect(() => {
+    getLastTnxDate()
+  }, [])
 
   const sendCollectedMoney = async () => {
     setLoading(true)
