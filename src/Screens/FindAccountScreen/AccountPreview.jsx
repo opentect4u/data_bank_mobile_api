@@ -40,6 +40,8 @@ const AccountPreview = ({ navigation, route }) => {
     login,
     allowCollectionDays,
     secAmtType,
+    bankId,
+    branchCode,
   } = useContext(AppStore)
   const { item, money } = route.params
   const tableData = [
@@ -60,7 +62,7 @@ const AccountPreview = ({ navigation, route }) => {
     [
       "Previous Transaction Date",
       item?.last_trns_dt
-        ? new Date(item?.last_trns_dt).toLocaleDateString("en-GB")
+        ? new Date(item?.last_trns_dt)?.toLocaleDateString("en-GB")
         : "No available date",
     ],
     ["Previous Balance", item?.current_balance],
@@ -73,6 +75,29 @@ const AccountPreview = ({ navigation, route }) => {
   ]
 
   const resetAction = StackActions.popToTop()
+
+  const getLastTnxDate = async () => {
+    const obj = {
+      bank_id: bankId,
+      branch_code: branchCode,
+      agent_code: userId,
+      account_number: item?.account_number,
+      flag: "D",
+    }
+
+    await axios
+      .post(address.LAST_TNX_DATE, obj, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
 
   const sendCollectedMoney = async () => {
     setLoading(true)

@@ -73,6 +73,12 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
     ["Name", item?.customer_name],
     ["Mobile No.", item?.mobile_no],
     ["Opening Date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
+    [
+      "Previous Transaction Date",
+      item?.last_trns_dt
+        ? new Date(item?.last_trns_dt)?.toLocaleDateString("en-GB")
+        : "No available date",
+    ],
     ["Previous Balance", item?.current_balance],
   ]
 

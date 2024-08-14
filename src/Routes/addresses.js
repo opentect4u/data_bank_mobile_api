@@ -8,6 +8,7 @@ export const address = {
   TOTAL_COLLECTION: `${REACT_APP_BASE_URL}/user/total_collection`,
   END_COLLECTION: `${REACT_APP_BASE_URL}/user/end_collection`,
   SEARCH_ACCOUNT: `${REACT_APP_BASE_URL}/user/search_account`,
+  LAST_TNX_DATE: `${REACT_APP_BASE_URL}/user/get_acc_prev_col`,
   TRANSACTION: `${REACT_APP_BASE_URL}/user/transaction`,
   CHANGE_PIN: `${REACT_APP_BASE_URL}/user/change_pin`,
   DAY_SCROLL_REPORT: `${REACT_APP_BASE_URL}/user/day_scroll_report`,
