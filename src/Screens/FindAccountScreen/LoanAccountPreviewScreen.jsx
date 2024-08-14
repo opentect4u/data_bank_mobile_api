@@ -338,19 +338,19 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
 
   const handleRazorpayClient = async () => {
     let json = {
-      appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
-      username: "9903044748",
-      amount: +money,
-      customerMobileNumber: "8910792003",
-      externalRefNumber: "",
-      externalRefNumber2: "",
-      externalRefNumber3: "",
-      accountLabel: "AC1",
-      customerEmail: "soumyadeep.mondal@synergicsoftek.in",
-      pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
-      mode: "UPI",
+      // appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
+      // username: "9903044748",
+      // amount: +money,
+      // customerMobileNumber: "8910792003",
+      // externalRefNumber: "",
+      // externalRefNumber2: "",
+      // externalRefNumber3: "",
+      // accountLabel: "AC1",
+      // customerEmail: "soumyadeep.mondal@synergicsoftek.in",
+      // pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
+      // mode: "UPI",
 
-      // amount: "5000",
+      amount: +money?.toString(),
       options: {
         // references: {
         //   reference1: "1234",
