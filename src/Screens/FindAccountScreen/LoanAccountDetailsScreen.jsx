@@ -26,6 +26,7 @@ import { AppStore } from "../../Context/AppContext"
 import { StackActions, useFocusEffect } from "@react-navigation/native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 import { address } from "../../Routes/addresses"
+
 const LoanAccountDetailsScreen = ({ navigation, route }) => {
   const [collectionMoney, setCollectionMoney] = useState(() => 0)
   const {
