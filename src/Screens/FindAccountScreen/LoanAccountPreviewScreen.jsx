@@ -53,9 +53,12 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
     totalCollection,
     login,
     secAmtType,
+    bankId,
+    branchCode,
   } = useContext(AppStore)
   const { item, money } = route.params
 
+  const [lastTnxDate, setLastTnxDate] = useState(() => "")
   // const [addedMoney, setAddedMoney] = useState(() => 0)
 
   const tableData = [
@@ -75,8 +78,8 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
     ["Opening Date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
     [
       "Previous Transaction Date",
-      item?.last_trns_dt
-        ? new Date(item?.last_trns_dt)?.toLocaleDateString("en-GB")
+      lastTnxDate
+        ? new Date(lastTnxDate).toLocaleDateString("en-GB")
         : "No available date",
     ],
     ["Previous Balance", item?.current_balance],
@@ -89,6 +92,45 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
   ]
 
   const resetAction = StackActions.popToTop()
+
+  const getLastTnxDate = async () => {
+    const obj = {
+      bank_id: bankId,
+      branch_code: branchCode,
+      agent_code: userId,
+      account_number: item?.account_number,
+      flag: "L",
+    }
+
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
+
+    await axios
+      .post(address.LAST_TNX_DATE, obj, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then(res => {
+        setLastTnxDate(
+          res?.data?.success?.length !== 0
+            ? res?.data?.success?.msg[0]?.last_trns_dt?.toString()
+            : "",
+        )
+
+        // {"status": true, "success": []}
+        console.log(
+          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+          res?.data?.success?.msg[0]?.last_trns_dt,
+        )
+      })
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", err)
+      })
+  }
+
+  useEffect(() => {
+    getLastTnxDate()
+  }, [])
 
   const sendCollectedMoney = async () => {
     setLoading(true)
