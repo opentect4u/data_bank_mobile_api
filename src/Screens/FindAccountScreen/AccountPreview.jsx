@@ -42,6 +42,7 @@ import razor from "../../Resources/Images/razorpay.webp"
 
 import RNEzetapSdk from "react-native-ezetap-sdk"
 import OverlayLoader from "../../Components/OverlayLoader"
+import ThermalPrinterModule from "react-native-thermal-printer"
 
 const AccountPreview = ({ navigation, route }) => {
   const [isLoading, setLoading] = useState(false)
@@ -234,201 +235,266 @@ const AccountPreview = ({ navigation, route }) => {
 
   async function printReceipt(rcptNo) {
     try {
-      await BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      )
-      await BluetoothEscposPrinter.printText(bankName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printText(branchName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
+      let payload = `[C]<font size='normal'>${bankName}</font>\n`
+      payload += `[C]<font size='normal'>${branchName}</font>\n`
+      payload += `[C]<font size='normal'>RECEIPT</font>\n`
+      // payload += `[C]<font size='big'><B>--------------</font>\n`
 
-      await BluetoothEscposPrinter.printText("RECEIPT", {
-        align: "center",
+      payload +=
+        `[C]<font size='big'><B>--------------</font>\n` +
+        `[L]<b>AGENT NAME [L]: ${agentName.toString()}\n` +
+        `[L]<b>RCPT DATE [L]: ${(
+          new Date(todayDT).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          }) +
+          "," +
+          new Date(todayDT).toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        ).toString()}\n` +
+        `[L]<b>RCPT NO [L]: ${rcptNo.toString().substring(0, 6)}\n` +
+        `[L]<b>A/C NO [L]: ${(item?.account_number).toString()}\n` +
+        `[L]<b>NAME [L]: ${item?.customer_name.toString()}\n` +
+        `[L]<b>OPEN BAL [L]: ${(item?.current_balance).toString()}\n` +
+        `[L]<b>COLL AMT [L]: ${money.toString()}\n` +
+        `[L]<b>CLOSE BAL [L]: ${parseFloat(
+          item?.current_balance + parseFloat(money),
+        ).toString()}\n` +
+        `[L]<b>PRV TNX DT [L]: ${
+          new Date(lastTnxDate).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          }) +
+          "," +
+          new Date(lastTnxDate).toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        }\n\n` +
+        `[L]<b>A/C OPN DT [L]: ${new Date(item?.opening_date)
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          })
+          .toString()}\n`
+
+      payload += `[C]<font size='big'><B>--------------</font>\n\n\n\n`
+
+      await ThermalPrinterModule.printBluetooth({
+        payload: payload,
+        printerNbrCharactersPerLine: 32,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+        autoCut: true,
       })
-
-      await BluetoothEscposPrinter.printText("\r", {})
-
-      // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
-
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------",
-        {},
-      )
-      await BluetoothEscposPrinter.printText("\r\n", {})
-
-      let columnWidths = [11, 1, 18]
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["AGENT NAME", ":", agentName.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "RCPT DATE",
-          ":",
-          (
-            new Date(todayDT).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            }) +
-            ", " +
-            new Date(todayDT).toLocaleTimeString("en-GB", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          ).toString(),
-        ],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["RCPT NO", ":", rcptNo.toString().substring(0, 6)],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["ACC NO", ":", (item?.account_number).toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["NAME", ":", item?.customer_name.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["OPEN BAL", ":", (item?.current_balance).toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["COLL AMT", ":", money.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "CLOSE BAL",
-          ":",
-          parseFloat(item?.current_balance + parseFloat(money)).toString(),
-        ],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "PRV TNX DT",
-          ":",
-          item?.last_trns_dt
-            ? new Date(item?.last_trns_dt)
-                .toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "2-digit",
-                })
-                .toString()
-            : "No date.",
-        ],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "ACC OPN DT",
-          ":",
-          new Date(item?.opening_date)
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            })
-            .toString(),
-        ],
-        {},
-      )
-
-      // await BluetoothEscposPrinter.printText("\r\n", {})
-
-      // await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printText(
-        "---------------X---------------",
-        {},
-      )
-
-      await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
     } catch (e) {
       console.log(e.message || "ERROR")
-      // ToastAndroid.showWithGravityAndOffset(
-      //   "Printer not connected.",
-      //   ToastAndroid.SHORT,
-      //   ToastAndroid.CENTER,
-      //   25,
-      //   50,
-      // )
     }
   }
+
+  // async function printReceipt(rcptNo) {
+  //   try {
+  //     await BluetoothEscposPrinter.printerAlign(
+  //       BluetoothEscposPrinter.ALIGN.CENTER,
+  //     )
+  //     await BluetoothEscposPrinter.printText(bankName, { align: "center" })
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printText(branchName, { align: "center" })
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+
+  //     await BluetoothEscposPrinter.printText("RECEIPT", {
+  //       align: "center",
+  //     })
+
+  //     await BluetoothEscposPrinter.printText("\r", {})
+
+  //     // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
+
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------",
+  //       {},
+  //     )
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+
+  //     let columnWidths = [11, 1, 18]
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["AGENT NAME", ":", agentName.toString()],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       [
+  //         "RCPT DATE",
+  //         ":",
+  //         (
+  //           new Date(todayDT).toLocaleDateString("en-GB", {
+  //             day: "2-digit",
+  //             month: "2-digit",
+  //             year: "2-digit",
+  //           }) +
+  //           ", " +
+  //           new Date(todayDT).toLocaleTimeString("en-GB", {
+  //             hour: "2-digit",
+  //             minute: "2-digit",
+  //           })
+  //         ).toString(),
+  //       ],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["RCPT NO", ":", rcptNo.toString().substring(0, 6)],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["ACC NO", ":", (item?.account_number).toString()],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["NAME", ":", item?.customer_name.toString()],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["OPEN BAL", ":", (item?.current_balance).toString()],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["COLL AMT", ":", money.toString()],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       [
+  //         "CLOSE BAL",
+  //         ":",
+  //         parseFloat(item?.current_balance + parseFloat(money)).toString(),
+  //       ],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       [
+  //         "PRV TNX DT",
+  //         ":",
+  //         item?.last_trns_dt
+  //           ? new Date(item?.last_trns_dt)
+  //               .toLocaleDateString("en-GB", {
+  //                 day: "2-digit",
+  //                 month: "2-digit",
+  //                 year: "2-digit",
+  //               })
+  //               .toString()
+  //           : "No date.",
+  //       ],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       [
+  //         "ACC OPN DT",
+  //         ":",
+  //         new Date(item?.opening_date)
+  //           .toLocaleDateString("en-GB", {
+  //             day: "2-digit",
+  //             month: "2-digit",
+  //             year: "2-digit",
+  //           })
+  //           .toString(),
+  //       ],
+  //       {},
+  //     )
+
+  //     // await BluetoothEscposPrinter.printText("\r\n", {})
+
+  //     // await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printText(
+  //       "---------------X---------------",
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
+  //   } catch (e) {
+  //     console.log(e.message || "ERROR")
+  //     // ToastAndroid.showWithGravityAndOffset(
+  //     //   "Printer not connected.",
+  //     //   ToastAndroid.SHORT,
+  //     //   ToastAndroid.CENTER,
+  //     //   25,
+  //     //   50,
+  //     // )
+  //   }
+  // }
 
   const handleSave = () => {
     getTotalDepositAmount()
