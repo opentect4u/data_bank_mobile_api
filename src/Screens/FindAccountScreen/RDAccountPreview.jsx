@@ -8,8 +8,10 @@ import {
   ToastAndroid,
   Dimensions,
   ActivityIndicator,
+  TouchableOpacity,
+  Image,
 } from "react-native"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState, useMemo } from "react"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
 import {
@@ -34,11 +36,16 @@ import { glej } from "../../Resources/ImageStrings/glej"
 import { Alert } from "react-native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import logoCut from "../../Resources/Images/logo_cut.png"
+import RadioGroup from "react-native-radio-buttons-group"
+import RNEzetapSdk from "react-native-ezetap-sdk"
+import OverlayLoader from "../../Components/OverlayLoader"
+import razor from "../../Resources/Images/razorpay.webp"
 
 const RDAccountPreview = ({ navigation, route }) => {
   const [receiptNumber, setReceiptNumber] = useState(() => "")
   const [isSaveEnabled, setIsSaveEnabled] = useState(() => false)
   const [isLoading, setLoading] = useState(false)
+  const [isLoadingOverlay, setLoadingOverlay] = useState(false)
   const {
     id,
     userId,
@@ -53,6 +60,7 @@ const RDAccountPreview = ({ navigation, route }) => {
     login,
     allowCollectionDays,
     secAmtType,
+    razorpayInitializationJson,
     bankId,
     branchCode,
   } = useContext(AppStore)
@@ -131,9 +139,28 @@ const RDAccountPreview = ({ navigation, route }) => {
     getLastTnxDate()
   }, [])
 
+  const radioButtons = useMemo(
+    () => [
+      {
+        id: "1", // acts as primary key, should be unique and non-empty string
+        label: "Receive Cash",
+        value: "C",
+      },
+      {
+        id: "2",
+        label: "Pay Online",
+        value: "O",
+      },
+    ],
+    [],
+  )
+
+  const [selectedId, setSelectedId] = useState(() => "1")
+
   const resetAction = StackActions.popToTop()
   const sendCollectedMoney = async () => {
     setLoading(true)
+    setLoadingOverlay(true)
     todayDT = new Date().toISOString()
     const obj = {
       bank_id: item?.bank_id,
@@ -199,6 +226,7 @@ const RDAccountPreview = ({ navigation, route }) => {
           50,
         )
       })
+    setLoadingOverlay(false)
   }
 
   async function printReceipt(rcptNo) {
@@ -463,86 +491,209 @@ const RDAccountPreview = ({ navigation, route }) => {
   //   console.log("Total Deposited Amount", totalDepositedAmount)
   // }
 
+  const handleRazorpayClient = async () => {
+    let json = {
+      appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
+      username: "9903044748",
+      amount: +money,
+      customerMobileNumber: "",
+      externalRefNumber: "",
+      externalRefNumber2: "",
+      externalRefNumber3: "",
+      accountLabel: "AC1",
+      customerEmail: "",
+      pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
+      mode: "ALL",
+    }
+
+    // Convert json object to string
+    let jsonString = JSON.stringify(json)
+
+    // await RNEzetapSdk.initialize(jsonString)
+    //   .then(res => {
+    //     console.log(">>>>>>>>>>>>>>>>>", res)
+    //   })
+    //   .catch(err => {
+    //     console.log("<<<<<<<<<<<<<<<<<", err)
+    //   })
+
+    var res = await RNEzetapSdk.prepareDevice()
+    console.log("RAZORPAY===PREPARE DEVICE", res)
+
+    await RNEzetapSdk.pay(jsonString)
+      .then(res => {
+        console.log(">>>>>>>>>>>>>>>>>", res)
+
+        // if (res?.status == "success") {
+        //   handleSave()
+        //   Alert.alert("Txn ID", res?.txnId)
+        // } else {
+        //   Alert.alert("Error in Tnx", res?.error)
+        // }
+        tnxResponse = res
+        // setTnxResponse(res)
+      })
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<", err)
+      })
+  }
+
+  const init = async () => {
+    if (razorpayInitializationJson.status == "success") {
+      await handleRazorpayClient()
+        .then(async res => {
+          console.log("###################", res)
+        })
+        .catch(err => {
+          console.log("==================", err)
+        })
+    } else {
+      console.log("XXXXXXXXXXXXXXXXXXX", res)
+    }
+  }
+
   return (
     <View>
       <CustomHeader />
-      <ScrollView
-        style={{
-          backgroundColor: COLORS.lightScheme.background,
-          height: "90%",
-          padding: 10,
-        }}>
-        {/* <ScrollView> */}
-        <Text style={styles.info}>Preview</Text>
-        {/* Table Component */}
-        <View style={styles.tableConatiner}>
-          <Table
-            borderStyle={{
-              borderWidth: 2,
-              borderColor: COLORS.lightScheme.primary,
-            }}
-            style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
-            <Rows data={tableData} textStyle={styles.text} />
-          </Table>
-        </View>
-
-        {/* <View style={styles.netTotalTableContainer}>
-            <Table
-              borderStyle={{ borderWidth: 0, borderColor: COLORS.lightScheme.primary,  }}
-              style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
-              <Rows data={netTotalSectionTableData} textStyle={styles.netTotalText} />
-            </Table>
-          </View> */}
-
-        <View style={styles.inputContainer}>
-          <View style={styles.netTotalTableContainer}>
+      {isLoadingOverlay !== true ? (
+        <ScrollView
+          style={{
+            backgroundColor: COLORS.lightScheme.background,
+            height: "90%",
+            padding: 10,
+          }}>
+          {/* <ScrollView> */}
+          <Text style={styles.info}>Preview</Text>
+          {/* Table Component */}
+          <View style={styles.tableConatiner}>
             <Table
               borderStyle={{
-                borderWidth: 1,
+                borderWidth: 2,
                 borderColor: COLORS.lightScheme.primary,
               }}
-              style={{
-                backgroundColor: COLORS.lightScheme.secondaryContainer,
-              }}>
-              <Rows
-                data={netTotalSectionTableData}
-                textStyle={styles.netTotalText}
-              />
+              style={{ backgroundColor: COLORS.lightScheme.onTertiary }}>
+              <Rows data={tableData} textStyle={styles.text} />
             </Table>
           </View>
-          {/* Input Field */}
-          <View style={styles.buttonContainer}>
-            <CancelButtonComponent
-              title={"Back"}
-              customStyle={{
-                marginTop: 10,
-                marginRight: 10,
-                backgroundColor: "white",
-                colors: "red",
-                width: "40%",
+
+          <View
+            style={{
+              // alignSelf: "center",
+              marginVertical: 15,
+            }}>
+            <RadioGroup
+              radioButtons={radioButtons}
+              onPress={setSelectedId}
+              selectedId={selectedId}
+              layout="row"
+              labelStyle={{
+                fontWeight: "800",
+                fontSize: 20,
               }}
-              handleOnpress={() => {
-                navigation.goBack()
-              }}
-            />
-            <ButtonComponent
-              title={
-                !isLoading ? (
-                  "Save"
-                ) : (
-                  <ActivityIndicator color={COLORS.lightScheme.primary} />
-                )
-              }
-              customStyle={{ marginTop: 10, width: "40%" }}
-              handleOnpress={() => {
-                handleSave()
-              }}
-              disabled={isLoading}
             />
           </View>
-        </View>
-        {/* </ScrollView> */}
-      </ScrollView>
+
+          {selectedId === "1" ? (
+            <View style={styles.inputContainer}>
+              <View style={styles.netTotalTableContainer}>
+                <Table
+                  borderStyle={{
+                    borderWidth: 1,
+                    borderColor: COLORS.lightScheme.primary,
+                  }}
+                  style={{
+                    backgroundColor: COLORS.lightScheme.secondaryContainer,
+                  }}>
+                  <Rows
+                    data={netTotalSectionTableData}
+                    textStyle={styles.netTotalText}
+                  />
+                </Table>
+              </View>
+              <View style={styles.buttonContainer}>
+                <CancelButtonComponent
+                  title={"Back"}
+                  customStyle={{
+                    marginTop: 10,
+                    backgroundColor: "white",
+                    colors: "red",
+                    width: "40%",
+                  }}
+                  handleOnpress={() => {
+                    navigation.goBack()
+                  }}
+                />
+                <ButtonComponent
+                  disabled={isLoading}
+                  title={
+                    !isLoading ? (
+                      "Save"
+                    ) : (
+                      <ActivityIndicator color={COLORS.lightScheme.primary} />
+                    )
+                  }
+                  customStyle={{ marginTop: 10, width: "40%" }}
+                  handleOnpress={() => {
+                    handleSave()
+                  }}
+                  // disabled={isSaveEnabled}
+                />
+              </View>
+            </View>
+          ) : (
+            <View
+              style={{
+                flexDirection: "row",
+                // padding: 10,
+                marginBottom: 20,
+                // borderWidth: 2,
+                // borderColor: COLORS.lightScheme.primary,
+                justifyContent: "space-evenly",
+                alignItems: "center",
+              }}>
+              <TouchableOpacity
+                onPress={async () =>
+                  await init()
+                    .then(() => {
+                      console.log(
+                        "TRANSACTION RES DATA================",
+                        tnxResponse,
+                      )
+                      if (JSON.parse(tnxResponse)?.status === "success") {
+                        handleSave()
+                        // Alert.alert(
+                        //   `Transaction ID`,
+                        //   `${tnxResponse?.result?.txn?.txnId}`,
+                        // )
+                      } else {
+                        console.log("tnxResponse value error...")
+                      }
+                    })
+                    .catch(err => {
+                      console.error("TNX Response Error!", err)
+                    })
+                }
+                style={{
+                  // marginVertical: 20,
+                  marginTop: 10,
+                  borderWidth: 1,
+                  borderColor: "black",
+                  padding: 10,
+                  borderRadius: 50,
+                }}>
+                <Image
+                  source={razor}
+                  style={styles.image}
+                  resizeMode="cover"
+                  // onError={err => setIsImageLoad(false)}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+        </ScrollView>
+      ) : (
+        <OverlayLoader />
+      )}
     </View>
   )
 }
@@ -599,5 +750,11 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: COLORS.lightScheme.onTertiary,
     borderRadius: 5,
+  },
+  image: {
+    // marginTop: -20,
+    height: 30,
+    width: 150,
+    alignSelf: "center",
   },
 })

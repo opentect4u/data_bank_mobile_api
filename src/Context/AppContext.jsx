@@ -72,50 +72,54 @@ const AppContext = ({ children }) => {
         },
       })
       .then(async res => {
-        if (res.data.status) {
+        if (res?.data?.status) {
           setIsLogin(true)
           // console.log('modified_dt '+new Date(res.data.success.setting.msg[0].modified_at))
           // console.log(res.data, res.status)
           // console.log("dataguli ",res.data.success.bank_acc_type)
-          setId(res.data.success.user_data.msg[0].id)
-          setAgentName(res.data.success.user_data.msg[0].agent_name)
-          setAgentEmail(res.data.success.user_data.msg[0].email_id)
-          setAgentPhoneNumber(res.data.success.user_data.msg[0].phone_no)
-          setBankId(res.data.success.user_data.msg[0].bank_id)
-          setBankName(res.data.success.user_data.msg[0].bank_name)
-          setBranchName(res.data.success.user_data.msg[0].branch_name)
-          setBranchCode(res.data.success.user_data.msg[0].branch_code)
-          setMaximumAmount(res.data.success.user_data.msg[0].max_amt)
+          setId(res?.data?.success?.user_data?.msg[0]?.id)
+          setAgentName(res?.data?.success?.user_data?.msg[0]?.agent_name)
+          setAgentEmail(res?.data?.success?.user_data?.msg[0]?.email_id)
+          setAgentPhoneNumber(res?.data?.success?.user_data?.msg[0]?.phone_no)
+          setBankId(res?.data?.success?.user_data?.msg[0]?.bank_id)
+          setBankName(res?.data?.success?.user_data?.msg[0]?.bank_name)
+          setBranchName(res?.data?.success?.user_data?.msg[0]?.branch_name)
+          setBranchCode(res?.data?.success?.user_data?.msg[0]?.branch_code)
+          setMaximumAmount(res?.data?.success?.user_data?.msg[0]?.max_amt)
           setIsLoan(
-            res.data.success.bank_acc_type[0].loan_flag == "Y" ? true : false,
+            res?.data?.success?.bank_acc_type[0]?.loan_flag == "Y"
+              ? true
+              : false,
           )
           setisDaily(
-            res.data.success.bank_acc_type[0].dds_flag == "Y" ? true : false,
+            res?.data?.success?.bank_acc_type[0]?.dds_flag == "Y"
+              ? true
+              : false,
           )
           setIsRD(
-            res.data.success.bank_acc_type[0].rd_flag == "Y" ? true : false,
+            res?.data?.success?.bank_acc_type[0]?.rd_flag == "Y" ? true : false,
           )
           // setHolidayLock(
-          //   res.data.success.user_data.msg[0].allow_collection_days,
+          //   res?.data?.success?.user_data?.msg[0]?.allow_collection_days,
           // )
           setAllowCollectionDays(
-            res.data.success.user_data.msg[0].allow_collection_days,
+            res?.data?.success?.user_data?.msg[0]?.allow_collection_days,
           )
-          setSecAmtType(res.data.success.user_data.msg[0].sec_amt_type)
+          setSecAmtType(res?.data?.success?.user_data?.msg[0]?.sec_amt_type)
 
           setTotalCollection(
-            res.data.success.total_collection.msg[0].total_collection,
+            res?.data?.success?.total_collection?.msg[0]?.total_collection,
           )
 
-          setReceiptNumber(res.data.success.setting.msg[0]?.receipt_no)
+          setReceiptNumber(res?.data?.success?.setting?.msg[0]?.receipt_no)
           setModifiedAt(
-            res.data.success.setting.msg.length > 0
-              ? new Date(res.data.success.setting.msg[0].modified_at)
+            res?.data?.success?.setting?.msg?.length > 0
+              ? new Date(res?.data?.success?.setting?.msg[0]?.modified_at)
               : new Date(),
           )
           setTransDt(
-            res.data.success.trans.msg.length > 0
-              ? new Date(res.data.success.trans.msg[0].trans_dt)
+            res?.data?.success?.trans?.msg?.length > 0
+              ? new Date(res?.data?.success?.trans?.msg[0]?.trans_dt)
               : new Date(),
           )
 
@@ -156,8 +160,8 @@ const AppContext = ({ children }) => {
     await axios
       .get(address.NOW_DATE)
       .then(res => {
-        console.log("NOW DATE FROM SERVER: ", new Date(res.data.now_date))
-        setTodayDateFromServer(new Date(res.data.now_date))
+        console.log("NOW DATE FROM SERVER: ", new Date(res?.data?.now_date))
+        setTodayDateFromServer(new Date(res?.data?.now_date))
       })
       .catch(err => {
         ToastAndroid.showWithGravityAndOffset(
@@ -185,8 +189,8 @@ const AppContext = ({ children }) => {
         },
       })
       .then(res => {
-        console.log("User ID: ", res.data.success.msg[0].user_id)
-        setUserId(res.data.success.msg[0].user_id)
+        console.log("User ID: ", res?.data?.success?.msg[0]?.user_id)
+        setUserId(res?.data?.success?.msg[0]?.user_id)
       })
       .catch(err => {
         ToastAndroid.showWithGravityAndOffset(
@@ -209,10 +213,10 @@ const AppContext = ({ children }) => {
         },
       })
       .then(res => {
-        setCollectionFlag(res.data.data.msg[0].coll_flag)
-        setEndFlag(res.data.data.msg[0].end_flag)
-        console.log("FLAGGGGGSSSS CF: ", res.data.data.msg[0].coll_flag)
-        console.log("FLAGGGGGSSSS EF: ", res.data.data.msg[0].end_flag)
+        setCollectionFlag(res?.data?.data?.msg[0]?.coll_flag)
+        setEndFlag(res?.data?.data?.msg[0]?.end_flag)
+        console.log("FLAGGGGGSSSS CF: ", res?.data?.data?.msg[0]?.coll_flag)
+        console.log("FLAGGGGGSSSS EF: ", res?.data?.data?.msg[0]?.end_flag)
       })
       .catch(err => {
         console.log("flags err", err)
@@ -236,8 +240,8 @@ const AppContext = ({ children }) => {
         },
       })
       .then(res => {
-        console.log(res.data.success.msg[0].deposit_amount)
-        setTotalDepositedAmount(res.data.success.msg[0].deposit_amount)
+        console.log(res?.data?.success?.msg[0]?.deposit_amount)
+        setTotalDepositedAmount(res?.data?.success?.msg[0]?.deposit_amount)
       })
   }
 

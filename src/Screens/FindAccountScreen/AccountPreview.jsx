@@ -521,16 +521,14 @@ const AccountPreview = ({ navigation, route }) => {
       appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
       username: "9903044748",
       amount: +money,
-      customerMobileNumber: "8910792003",
+      customerMobileNumber: "",
       externalRefNumber: "",
       externalRefNumber2: "",
       externalRefNumber3: "",
       accountLabel: "AC1",
-      customerEmail: "soumyadeep.mondal@synergicsoftek.in",
+      customerEmail: "",
       pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
-      // mode: "UPI",
-      paymentMode:
-        "Card/Cash/Cheque/UPI/UPI_VOUCHER/RemotePay/BHARATQR/Brand_Offers/Brand_EMI/Normal_EMI/Wallet ",
+      mode: "ALL",
     }
 
     // Convert json object to string
@@ -678,41 +676,54 @@ const AccountPreview = ({ navigation, route }) => {
               </View>
             </View>
           ) : (
-            <TouchableOpacity
+            <View
               style={{
-                marginVertical: 20,
-                border: 5,
-                borderColor: "black",
-              }}
-              // onPress={handleRazorpayClient}
-              onPress={async () =>
-                await init()
-                  .then(() => {
-                    console.log(
-                      "TRANSACTION RES DATA================",
-                      tnxResponse,
-                    )
-                    if (JSON.parse(tnxResponse)?.status === "success") {
-                      handleSave()
-                      // Alert.alert(
-                      //   `Transaction ID`,
-                      //   `${tnxResponse?.result?.txn?.txnId}`,
-                      // )
-                    } else {
-                      console.log("tnxResponse value error...")
-                    }
-                  })
-                  .catch(err => {
-                    console.error("TNX Response Error!")
-                  })
-              }>
-              <Image
-                source={razor}
-                style={styles.image}
-                resizeMode="cover"
-                // onError={err => setIsImageLoad(false)}
-              />
-            </TouchableOpacity>
+                flexDirection: "row",
+                // padding: 10,
+                marginBottom: 20,
+                // borderWidth: 2,
+                // borderColor: COLORS.lightScheme.primary,
+                justifyContent: "space-evenly",
+                alignItems: "center",
+              }}>
+              <TouchableOpacity
+                onPress={async () =>
+                  await init()
+                    .then(() => {
+                      console.log(
+                        "TRANSACTION RES DATA================",
+                        tnxResponse,
+                      )
+                      if (JSON.parse(tnxResponse)?.status === "success") {
+                        handleSave()
+                        // Alert.alert(
+                        //   `Transaction ID`,
+                        //   `${tnxResponse?.result?.txn?.txnId}`,
+                        // )
+                      } else {
+                        console.log("tnxResponse value error...")
+                      }
+                    })
+                    .catch(err => {
+                      console.error("TNX Response Error!")
+                    })
+                }
+                style={{
+                  // marginVertical: 20,
+                  marginTop: 10,
+                  borderWidth: 1,
+                  borderColor: "black",
+                  padding: 10,
+                  borderRadius: 50,
+                }}>
+                <Image
+                  source={razor}
+                  style={styles.image}
+                  resizeMode="cover"
+                  // onError={err => setIsImageLoad(false)}
+                />
+              </TouchableOpacity>
+            </View>
           )}
         </ScrollView>
       ) : (
@@ -776,9 +787,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   image: {
-    marginTop: -20,
-    height: 80,
-    width: "80%",
+    // marginTop: -20,
+    height: 30,
+    width: 150,
     alignSelf: "center",
   },
 })

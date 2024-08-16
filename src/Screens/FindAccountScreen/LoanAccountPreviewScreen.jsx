@@ -163,6 +163,7 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
 
   const sendCollectedMoney = async () => {
     setLoading(true)
+    setLoadingOverlay(true)
     todayDT = new Date().toISOString()
     const obj = {
       bank_id: item?.bank_id,
@@ -243,6 +244,7 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
           50,
         )
       })
+    setLoadingOverlay(false)
   }
 
   async function printReceipt(rcptNo) {
@@ -386,33 +388,17 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
 
   const handleRazorpayClient = async () => {
     let json = {
-      // appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
-      // username: "9903044748",
-      // amount: +money,
-      // customerMobileNumber: "8910792003",
-      // externalRefNumber: "",
-      // externalRefNumber2: "",
-      // externalRefNumber3: "",
-      // accountLabel: "AC1",
-      // customerEmail: "soumyadeep.mondal@synergicsoftek.in",
-      // pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
-      // mode: "UPI",
-
-      amount: +money?.toString(),
-      options: {
-        // references: {
-        //   reference1: "1234",
-        //   // additionalReferences: ["addRef_xx1", "addRef_xx2"],
-        // },
-        customer: {
-          name: "Soumyadeep Mondal",
-          mobileNo: "8910792003",
-          email: "soumyadeep891079@gmail.com",
-        },
-        upi: {
-          payerVPA: "8910792003@apl",
-        },
-      },
+      appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
+      username: "9903044748",
+      amount: +money,
+      customerMobileNumber: "",
+      externalRefNumber: "",
+      externalRefNumber2: "",
+      externalRefNumber3: "",
+      accountLabel: "AC1",
+      customerEmail: "",
+      pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
+      mode: "ALL",
     }
 
     // Convert json object to string
@@ -429,7 +415,7 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
     var res = await RNEzetapSdk.prepareDevice()
     console.log("RAZORPAY===PREPARE DEVICE", res)
 
-    await RNEzetapSdk.upiTransaction(jsonString)
+    await RNEzetapSdk.pay(jsonString)
       .then(res => {
         console.log(">>>>>>>>>>>>>>>>>", res)
 
@@ -445,40 +431,13 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
       .catch(err => {
         console.log("<<<<<<<<<<<<<<<<<", err)
       })
-    // await RNEzetapSdk.pay(jsonString)
-    //   .then(res => {
-    //     console.log(">>>>>>>>>>>>>>>>>", res)
-
-    //     // if (res?.status == "success") {
-    //     //   handleSave()
-    //     //   Alert.alert("Txn ID", res?.txnId)
-    //     // } else {
-    //     //   Alert.alert("Error in Tnx", res?.error)
-    //     // }
-    //     tnxResponse = res
-    //     // setTnxResponse(res)
-    //   })
-    //   .catch(err => {
-    //     console.log("<<<<<<<<<<<<<<<<<", err)
-    //   })
   }
 
   const init = async () => {
-    // var withAppKey =
-    //   '{"userName":' +
-    //   "9903044748" +
-    //   ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
-    // var response = await RNEzetapSdk.initialize(withAppKey)
-    // console.log(response)
-    // var jsonData = JSON.parse(response)
-
     if (razorpayInitializationJson.status == "success") {
       await handleRazorpayClient()
         .then(async res => {
           console.log("###################", res)
-          // var res = await RNEzetapSdk.close()
-          // console.log("CLOSEEEEE TNXXXXX", res)
-          // var json = JSON.parse(res)
         })
         .catch(err => {
           console.log("==================", err)
@@ -576,41 +535,54 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
               </View>
             </View>
           ) : (
-            <TouchableOpacity
+            <View
               style={{
-                marginVertical: 20,
-                border: 5,
-                borderColor: "black",
-              }}
-              // onPress={handleRazorpayClient}
-              onPress={async () =>
-                await init()
-                  .then(() => {
-                    console.log(
-                      "TRANSACTION RES DATA================",
-                      tnxResponse,
-                    )
-                    if (JSON.parse(tnxResponse)?.status === "success") {
-                      handleSave()
-                      // Alert.alert(
-                      //   `Transaction ID`,
-                      //   `${tnxResponse?.result?.txn?.txnId}`,
-                      // )
-                    } else {
-                      console.log("tnxResponse value error...")
-                    }
-                  })
-                  .catch(err => {
-                    console.error("TNX Response Error!", err)
-                  })
-              }>
-              <Image
-                source={razor}
-                style={styles.image}
-                resizeMode="cover"
-                // onError={err => setIsImageLoad(false)}
-              />
-            </TouchableOpacity>
+                flexDirection: "row",
+                // padding: 10,
+                marginBottom: 20,
+                // borderWidth: 2,
+                // borderColor: COLORS.lightScheme.primary,
+                justifyContent: "space-evenly",
+                alignItems: "center",
+              }}>
+              <TouchableOpacity
+                onPress={async () =>
+                  await init()
+                    .then(() => {
+                      console.log(
+                        "TRANSACTION RES DATA================",
+                        tnxResponse,
+                      )
+                      if (JSON.parse(tnxResponse)?.status === "success") {
+                        handleSave()
+                        // Alert.alert(
+                        //   `Transaction ID`,
+                        //   `${tnxResponse?.result?.txn?.txnId}`,
+                        // )
+                      } else {
+                        console.log("tnxResponse value error...")
+                      }
+                    })
+                    .catch(err => {
+                      console.error("TNX Response Error!")
+                    })
+                }
+                style={{
+                  // marginVertical: 20,
+                  marginTop: 10,
+                  borderWidth: 1,
+                  borderColor: "black",
+                  padding: 10,
+                  borderRadius: 50,
+                }}>
+                <Image
+                  source={razor}
+                  style={styles.image}
+                  resizeMode="cover"
+                  // onError={err => setIsImageLoad(false)}
+                />
+              </TouchableOpacity>
+            </View>
           )}
         </ScrollView>
       ) : (
@@ -674,9 +646,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   image: {
-    marginTop: -20,
-    height: 80,
-    width: "80%",
+    // marginTop: -20,
+    height: 30,
+    width: 150,
     alignSelf: "center",
   },
 })
