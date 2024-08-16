@@ -415,8 +415,8 @@ const PrintMain = () => {
           )
         })}
       </View>
-      <SamplePrint />
-      <Button onPress={() => scanBluetoothDevice()} title="Scan / Connect" />
+      {/* <SamplePrint /> */}
+      {/* <Button onPress={() => scanBluetoothDevice()} title="Scan / Connect" /> */}
       <Button
         onPress={() => handlePrintReceipt()}
         title="NEW THERMAL PRINT TEST"
