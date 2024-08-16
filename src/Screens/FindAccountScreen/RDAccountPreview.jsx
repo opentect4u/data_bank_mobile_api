@@ -53,10 +53,14 @@ const RDAccountPreview = ({ navigation, route }) => {
     login,
     allowCollectionDays,
     secAmtType,
+    bankId,
+    branchCode,
   } = useContext(AppStore)
+
   const { item, money } = route.params
   var todayDT
   // const [addedMoney, setAddedMoney] = useState(() => 0)
+  const [lastTnxDate, setLastTnxDate] = useState(() => "")
 
   const tableData = [
     [
@@ -73,6 +77,12 @@ const RDAccountPreview = ({ navigation, route }) => {
     ["Name", item?.customer_name],
     ["Mobile No.", item?.mobile_no],
     ["Opening Date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
+    [
+      "Previous Transaction Date",
+      lastTnxDate
+        ? new Date(lastTnxDate).toLocaleDateString("en-GB")
+        : "No available date",
+    ],
     ["Previous Balance", item?.current_balance],
   ]
 
@@ -81,6 +91,45 @@ const RDAccountPreview = ({ navigation, route }) => {
     ["Deposit Amt.", money],
     ["Current Balance", item?.current_balance + parseFloat(money)],
   ]
+
+  const getLastTnxDate = async () => {
+    const obj = {
+      bank_id: bankId,
+      branch_code: branchCode,
+      agent_code: userId,
+      account_number: item?.account_number,
+      flag: "R",
+    }
+
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
+
+    await axios
+      .post(address.LAST_TNX_DATE, obj, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then(res => {
+        setLastTnxDate(
+          res?.data?.success?.length !== 0
+            ? res?.data?.success?.msg[0]?.last_trns_dt?.toString()
+            : "",
+        )
+
+        // {"status": true, "success": []}
+        console.log(
+          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+          res?.data?.success?.msg[0]?.last_trns_dt,
+        )
+      })
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", err)
+      })
+  }
+
+  useEffect(() => {
+    getLastTnxDate()
+  }, [])
 
   const resetAction = StackActions.popToTop()
   const sendCollectedMoney = async () => {

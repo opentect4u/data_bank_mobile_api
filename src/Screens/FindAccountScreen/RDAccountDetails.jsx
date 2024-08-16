@@ -9,6 +9,7 @@ import {
   ToastAndroid,
 } from "react-native"
 import { useContext, useState, useEffect, useCallback } from "react"
+import axios from "axios"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
 import {
@@ -24,6 +25,8 @@ import mainNavigationRoutes from "../../Routes/NavigationRoutes"
 import { AppStore } from "../../Context/AppContext"
 import { StackActions, useFocusEffect } from "@react-navigation/native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
+import { address } from "../../Routes/addresses"
+
 const RDAccountDetails = ({ navigation, route }) => {
   const [collectionMoney, setCollectionMoney] = useState(() => 0)
   const {
@@ -35,9 +38,14 @@ const RDAccountDetails = ({ navigation, route }) => {
     endFlag,
     transDt,
     allowCollectionDays,
+    userId,
+    bankId,
+    branchCode,
   } = useContext(AppStore)
 
   const { item } = route.params
+
+  const [lastTnxDate, setLastTnxDate] = useState(() => "")
 
   const tableData = [
     [
@@ -54,8 +62,53 @@ const RDAccountDetails = ({ navigation, route }) => {
     ["Name", item?.customer_name],
     ["Mobile No.", item?.mobile_no],
     ["Opening date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
+    [
+      "Previous Transaction Date",
+      lastTnxDate
+        ? new Date(lastTnxDate).toLocaleDateString("en-GB")
+        : "No available date",
+    ],
     ["Current Balance", item?.current_balance],
   ]
+
+  const getLastTnxDate = async () => {
+    const obj = {
+      bank_id: bankId,
+      branch_code: branchCode,
+      agent_code: userId,
+      account_number: item?.account_number,
+      flag: "R",
+    }
+
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
+
+    await axios
+      .post(address.LAST_TNX_DATE, obj, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then(res => {
+        setLastTnxDate(
+          res?.data?.success?.length !== 0
+            ? res?.data?.success?.msg[0]?.last_trns_dt?.toString()
+            : "",
+        )
+
+        // {"status": true, "success": []}
+        console.log(
+          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+          res?.data?.success?.msg[0]?.last_trns_dt,
+        )
+      })
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", err)
+      })
+  }
+
+  useEffect(() => {
+    getLastTnxDate()
+  }, [])
 
   useEffect(() => {
     getFlagsRequest()
@@ -131,6 +184,7 @@ const RDAccountDetails = ({ navigation, route }) => {
           backgroundColor: COLORS.lightScheme.background,
           height: "100%",
           padding: 10,
+          paddingBottom: 100,
         }}>
         <ScrollView keyboardShouldPersistTaps={"handled"}>
           <Text style={styles.info}>RD Account Info</Text>
