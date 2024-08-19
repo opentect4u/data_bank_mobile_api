@@ -58,12 +58,21 @@ const DuplicateReceiptInner = ({ route }) => {
       })
       .then(res => {
         res.data.success.msg.forEach((item, i) => {
+          // console.log(
+          //   "&&&&&&&&&&&&&&&&&&&&&&&&&$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
+          //   item?.collected_at,
+          // )
           let rowArr = [
-            new Date(item.date).toLocaleDateString("en-GB", {
+            new Date(item?.collected_at).toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "2-digit",
               year: "2-digit",
-            }),
+            }) +
+              ", " +
+              new Date(item?.collected_at).toLocaleTimeString("en-GB", {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
             item.receipt_no,
             item.deposit_amount,
             <TouchableOpacity
@@ -173,13 +182,13 @@ const DuplicateReceiptInner = ({ route }) => {
           "RCPT DATE",
           ":",
           (
-            new Date(todayDateFromServer).toLocaleDateString("en-GB", {
+            new Date(item?.collected_at).toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "2-digit",
               year: "2-digit",
             }) +
             ", " +
-            new Date(todayDateFromServer).toLocaleTimeString("en-GB", {
+            new Date(item?.collected_at).toLocaleTimeString("en-GB", {
               hour: "2-digit",
               minute: "2-digit",
             })

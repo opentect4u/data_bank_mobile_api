@@ -78,9 +78,9 @@ const DuplicateReceipt = ({ navigation }) => {
         console.log("hello")
         setIsLoading(false)
 
-        console.log("bank details", res.data)
-        setUserBankDetails(res.data.success.msg)
-        if (!res.data.success.msg.length) {
+        console.log("bank details", res?.data)
+        setUserBankDetails(res?.data?.success?.msg)
+        if (!res?.data?.success?.msg?.length) {
           ToastAndroid.showWithGravityAndOffset(
             "No data found!",
             ToastAndroid.SHORT,
@@ -202,7 +202,7 @@ const DuplicateReceipt = ({ navigation }) => {
             onChange={item => {
               // console.log(accountType)
               setReadonly(false)
-              setAccountType(item.value)
+              setAccountType(item?.value)
               setFocusDrop(false)
             }}
           />
