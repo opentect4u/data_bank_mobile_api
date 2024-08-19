@@ -34,6 +34,7 @@ import { glej } from "../../Resources/ImageStrings/glej"
 import { Alert } from "react-native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import logoCut from "../../Resources/Images/logo_cut.png"
+// import moment from "moment"
 
 const RDAccountPreview = ({ navigation, route }) => {
   const [receiptNumber, setReceiptNumber] = useState(() => "")
@@ -76,12 +77,14 @@ const RDAccountPreview = ({ navigation, route }) => {
     ["A/c No.", item?.account_number],
     ["Name", item?.customer_name],
     ["Mobile No.", item?.mobile_no],
+    // ["Opening Date", moment.utc(item?.opening_date).format("DD/MM/YYYY HH:mm")],
     ["Opening Date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
     [
       "Previous Transaction Date",
       lastTnxDate
         ? new Date(lastTnxDate).toLocaleDateString("en-GB")
-        : "No available date",
+        : // ? moment.utc(lastTnxDate).format("DD/MM/YYYY HH:mm")
+          "No available date",
     ],
     ["Previous Balance", item?.current_balance],
   ]
@@ -159,20 +162,20 @@ const RDAccountPreview = ({ navigation, route }) => {
         },
       })
       .then(res => {
-        if (res.data.status) {
+        if (res?.data?.status) {
           setLoading(false)
 
-          console.log("###### Preview: ", res.data)
+          console.log("###### Preview: ", res?.data)
           // alert(`Receipt No is ${res.data.receipt_no}`)
-          Alert.alert("Receipt No.", `Receipt No is ${res.data.receipt_no}`, [
+          Alert.alert("Receipt No.", `Receipt No is ${res?.data?.receipt_no}`, [
             {
               text: "Okay",
               onPress: () => console.log("Receipt generated."),
             },
           ])
-          setReceiptNumber(res.data.receipt_no)
+          setReceiptNumber(res?.data?.receipt_no)
           setIsSaveEnabled(false)
-          printReceipt(res.data.receipt_no)
+          printReceipt(res?.data?.receipt_no)
           navigation.dispatch(resetAction)
         } else {
           setLoading(false)
@@ -351,6 +354,7 @@ const RDAccountPreview = ({ navigation, route }) => {
               year: "2-digit",
             })
             .toString(),
+          // moment.utc(item?.opening_date).format("DD/MM/YYYY"),
         ],
         {},
       )

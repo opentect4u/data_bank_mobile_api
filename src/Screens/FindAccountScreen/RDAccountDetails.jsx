@@ -26,6 +26,7 @@ import { AppStore } from "../../Context/AppContext"
 import { StackActions, useFocusEffect } from "@react-navigation/native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 import { address } from "../../Routes/addresses"
+import moment from "moment"
 
 const RDAccountDetails = ({ navigation, route }) => {
   const [collectionMoney, setCollectionMoney] = useState(() => 0)
@@ -45,6 +46,8 @@ const RDAccountDetails = ({ navigation, route }) => {
 
   const { item } = route.params
 
+  // console.log("*************************************", item?.opening_date)
+
   const [lastTnxDate, setLastTnxDate] = useState(() => "")
 
   const tableData = [
@@ -61,12 +64,17 @@ const RDAccountDetails = ({ navigation, route }) => {
     ["Account No.", item?.account_number],
     ["Name", item?.customer_name],
     ["Mobile No.", item?.mobile_no],
-    ["Opening date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
+    [
+      "Opening date",
+      new Date(item?.opening_date).toLocaleDateString("en-GB"),
+      // moment.utc(item?.opening_date).format("DD/MM/YYYY HH:mm"),
+    ],
     [
       "Previous Transaction Date",
       lastTnxDate
         ? new Date(lastTnxDate).toLocaleDateString("en-GB")
-        : "No available date",
+        : // ? moment.utc(lastTnxDate).format("DD/MM/YYYY HH:mm")
+          "No available date",
     ],
     ["Current Balance", item?.current_balance],
   ]

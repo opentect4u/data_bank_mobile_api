@@ -30,6 +30,7 @@ import { StackActions, useFocusEffect } from "@react-navigation/native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import razor from "../../Resources/Images/razorpay.webp"
 import { address } from "../../Routes/addresses"
+import moment from "moment"
 
 const AccountDetails = ({ navigation, route }) => {
   const [collectionMoney, setCollectionMoney] = useState(() => 0)
@@ -85,7 +86,9 @@ const AccountDetails = ({ navigation, route }) => {
     ["Account No.", item?.account_number],
     ["Name", item?.customer_name],
     ["Mobile No.", item?.mobile_no],
+    // ["Opening date", moment.utc(item?.opening_date).format("DD/MM/YYYY HH:mm")],
     ["Opening date", new Date(item?.opening_date).toLocaleDateString("en-GB")],
+
     [
       "Previous Transaction Date",
       lastTnxDate
