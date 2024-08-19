@@ -261,6 +261,8 @@ const ReportType = () => {
                 margin: 20,
               }}>
               <CalendarPicker
+                width={350}
+                height={350}
                 startFromMonday={true}
                 allowRangeSelection={true}
                 todayBackgroundColor="tomato"
