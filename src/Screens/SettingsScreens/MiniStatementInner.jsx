@@ -86,11 +86,11 @@ const MiniStatementInner = ({ route }) => {
       })
       .then(res => {
         setIsLoading(false)
-        console.log(res.data.success.msg)
-        res.data.success.msg.forEach((item, i) => {
+        console.log(res?.data?.success?.msg)
+        res?.data?.success?.msg?.forEach((item, i) => {
           let rowArr = [
             i + 1,
-            new Date(item.PAID_DT).toLocaleDateString("en-GB", {
+            new Date(item?.PAID_DT).toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "2-digit",
               year: "2-digit",

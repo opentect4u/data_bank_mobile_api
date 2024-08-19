@@ -75,8 +75,8 @@ const MiniStatement = ({ navigation, item }) => {
       .then(res => {
         setIsLoading(false)
 
-        console.log("bank details", res.data)
-        setUserBankDetails(res.data.success.msg)
+        console.log("bank details", res?.data)
+        setUserBankDetails(res?.data?.success?.msg)
         if (res.data.length == 0)
           ToastAndroid.showWithGravityAndOffset(
             "No data found!",
@@ -199,7 +199,7 @@ const MiniStatement = ({ navigation, item }) => {
             onChange={item => {
               // console.log(accountType)
               setReadonly(false)
-              setAccountType(item.value)
+              setAccountType(item?.value)
               setFocusDrop(false)
             }}
           />
