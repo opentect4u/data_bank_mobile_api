@@ -41,6 +41,7 @@ import RNEzetapSdk from "react-native-ezetap-sdk"
 import OverlayLoader from "../../Components/OverlayLoader"
 import razor from "../../Resources/Images/razorpay.webp"
 import ThermalPrinterModule from "react-native-thermal-printer"
+import { ezetapStorage } from "../../storage/appStorage"
 
 const RDAccountPreview = ({ navigation, route }) => {
   const [receiptNumber, setReceiptNumber] = useState(() => "")
@@ -583,8 +584,8 @@ const RDAccountPreview = ({ navigation, route }) => {
     //     console.log("<<<<<<<<<<<<<<<<<", err)
     //   })
 
-    var res = await RNEzetapSdk.prepareDevice()
-    console.log("RAZORPAY===PREPARE DEVICE", res)
+    // var res = await RNEzetapSdk.prepareDevice()
+    // console.log("RAZORPAY===PREPARE DEVICE", res)
 
     await RNEzetapSdk.pay(jsonString)
       .then(res => {
@@ -605,6 +606,10 @@ const RDAccountPreview = ({ navigation, route }) => {
   }
 
   const init = async () => {
+    let razorpayInitializationJson = JSON.parse(
+      ezetapStorage.getString("ezetap-initialization-json"),
+    )
+
     if (razorpayInitializationJson.status == "success") {
       await handleRazorpayClient()
         .then(async res => {

@@ -43,6 +43,7 @@ import razor from "../../Resources/Images/razorpay.webp"
 import RNEzetapSdk from "react-native-ezetap-sdk"
 import OverlayLoader from "../../Components/OverlayLoader"
 import ThermalPrinterModule from "react-native-thermal-printer"
+import { ezetapStorage } from "../../storage/appStorage"
 
 const AccountPreview = ({ navigation, route }) => {
   const [isLoading, setLoading] = useState(false)
@@ -64,7 +65,7 @@ const AccountPreview = ({ navigation, route }) => {
     login,
     allowCollectionDays,
     secAmtType,
-    razorpayInitializationJson,
+    // razorpayInitializationJson,
     bankId,
     branchCode,
   } = useContext(AppStore)
@@ -608,8 +609,8 @@ const AccountPreview = ({ navigation, route }) => {
     //     console.log("<<<<<<<<<<<<<<<<<", err)
     //   })
 
-    var res = await RNEzetapSdk.prepareDevice()
-    console.log("RAZORPAY===PREPARE DEVICE", res)
+    // var res = await RNEzetapSdk.prepareDevice()
+    // console.log("RAZORPAY===PREPARE DEVICE", res)
 
     await RNEzetapSdk.pay(jsonString)
       .then(res => {
@@ -637,6 +638,10 @@ const AccountPreview = ({ navigation, route }) => {
     // var response = await RNEzetapSdk.initialize(withAppKey)
     // console.log(response)
     // var jsonData = JSON.parse(response)
+
+    let razorpayInitializationJson = JSON.parse(
+      ezetapStorage.getString("ezetap-initialization-json"),
+    )
 
     if (razorpayInitializationJson.status == "success") {
       await handleRazorpayClient()
