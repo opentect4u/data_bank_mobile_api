@@ -345,16 +345,17 @@ const RDAccountPreview = ({ navigation, route }) => {
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
         [
-          "ACC OPN DT",
+          "PRV TNX DT",
           ":",
-          new Date(item?.opening_date)
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            })
-            .toString(),
-          // moment.utc(item?.opening_date).format("DD/MM/YYYY"),
+          lastTnxDate
+            ? new Date(lastTnxDate)
+                .toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                })
+                .toString()
+            : "No date.",
         ],
         {},
       )

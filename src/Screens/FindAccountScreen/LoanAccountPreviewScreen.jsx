@@ -300,6 +300,23 @@ const LoanAccountPreviewScreen = ({ navigation, route }) => {
       await BluetoothEscposPrinter.printColumn(
         [30],
         [BluetoothEscposPrinter.ALIGN.LEFT],
+        [
+          "PRV TNX DT : " + lastTnxDate
+            ? new Date(lastTnxDate)
+                .toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                })
+                .toString()
+            : "No date.",
+        ],
+        {},
+      )
+
+      await BluetoothEscposPrinter.printColumn(
+        [30],
+        [BluetoothEscposPrinter.ALIGN.LEFT],
         ["Collected By (Code) : " + userId],
         {},
       )

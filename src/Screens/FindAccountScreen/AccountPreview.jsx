@@ -330,8 +330,8 @@ const AccountPreview = ({ navigation, route }) => {
         [
           "PRV TNX DT",
           ":",
-          item?.last_trns_dt
-            ? new Date(item?.last_trns_dt)
+          lastTnxDate // this is shit -> to be changed later
+            ? new Date(lastTnxDate) // this is shit -> -> to be changed later
                 .toLocaleDateString("en-GB", {
                   day: "2-digit",
                   month: "2-digit",
