@@ -41,6 +41,8 @@ const DuplicateReceiptInner = ({ route }) => {
   const tableHead = ["Date", "Rcpt No", "Dep Amt", "Print"]
   let tableData = duplicateReceipts
 
+  // const [lastTnxDate, setLastTnxDate] = useState(() => "")
+
   const getDuplicateReceipts = async () => {
     const obj = {
       bank_id: bankId,
@@ -57,10 +59,10 @@ const DuplicateReceiptInner = ({ route }) => {
         },
       })
       .then(res => {
-        res.data.success.msg.forEach((item, i) => {
+        res?.data?.success?.msg?.forEach((item, i) => {
           // console.log(
           //   "&&&&&&&&&&&&&&&&&&&&&&&&&$$$$$$$$$$$$$$$$$$$$$$$$$$$$$",
-          //   item?.collected_at,
+          //   item?.date,
           // )
           let rowArr = [
             new Date(item?.collected_at).toLocaleDateString("en-GB", {
@@ -87,7 +89,8 @@ const DuplicateReceiptInner = ({ route }) => {
                     },
                     {
                       text: "Print",
-                      onPress: () =>
+                      onPress: async () => {
+                        await getLastTnxDate(item.receipt_no)
                         printReceipt(
                           // item.receipt_no,
                           // item.date,
@@ -96,7 +99,10 @@ const DuplicateReceiptInner = ({ route }) => {
                           // item.account_type,
                           // item.deposit_amount,
                           item,
-                        ),
+                        ).then(() => {
+                          prevTnxDate = ""
+                        })
+                      },
                     },
                   ],
                 )
@@ -133,6 +139,57 @@ const DuplicateReceiptInner = ({ route }) => {
         console.log(err)
       })
   }
+
+  let prevTnxDate = ""
+
+  const getLastTnxDate = async rcptNo => {
+    const obj = {
+      bank_id: bankId,
+      branch_code: branchCode,
+      agent_code: userId,
+      account_number: item?.account_number,
+      receipt_no: rcptNo,
+      flag: item?.acc_type,
+    }
+
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
+
+    await axios
+      .post(address.LAST_TNX_DATE, obj, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then(res => {
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", res?.data)
+        console.log(
+          ">>>>>>>>>>>>>jhgff>>>>>>>>>>>>>>>>>>",
+          res?.data?.success?.msg[0]?.last_trns_dt,
+        )
+
+        // setLastTnxDate(
+        //   res?.data?.success?.length !== 0
+        //     ? res?.data?.success?.msg[0]?.last_trns_dt?.toString()
+        //     : "",
+        // )
+
+        prevTnxDate = res?.data?.success?.msg[0]?.last_trns_dt
+
+        // {"status": true, "success": []}
+        // console.log(
+        //   ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+        //   res?.data?.success?.msg[0]?.last_trns_dt,
+        // )
+      })
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", err)
+      })
+  }
+
+  // useEffect(() => {
+  //   getLastTnxDate()
+  // }, [])
+
   async function printReceipt(item) {
     console.log(item)
     try {
@@ -237,7 +294,11 @@ const DuplicateReceiptInner = ({ route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["OPEN BAL", ":", item?.opening_bal.toString()],
+        [
+          item?.account_type == "L" ? "PREV BAL" : "OPEN BAL",
+          ":",
+          item?.opening_bal.toString(),
+        ],
         {},
       )
 
@@ -259,7 +320,34 @@ const DuplicateReceiptInner = ({ route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["CLOSE BAL", ":", item?.closing_bal.toString()],
+        [
+          item?.account_type == "L" ? "CURR BAL" : "CLOSE BAL",
+          ":",
+          item?.closing_bal.toString(),
+        ],
+        {},
+      )
+
+      await BluetoothEscposPrinter.printColumn(
+        columnWidths,
+        [
+          BluetoothEscposPrinter.ALIGN.LEFT,
+          BluetoothEscposPrinter.ALIGN.CENTER,
+          BluetoothEscposPrinter.ALIGN.RIGHT,
+        ],
+        [
+          "PRV TNX DT",
+          ":",
+          prevTnxDate
+            ? new Date(prevTnxDate)
+                .toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                })
+                .toString()
+            : "No date.",
+        ],
         {},
       )
 

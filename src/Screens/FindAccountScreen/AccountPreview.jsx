@@ -385,12 +385,15 @@ const AccountPreview = ({ navigation, route }) => {
     }
   }
 
+  console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", secAmtType)
+
   const handleSave = () => {
     getTotalDepositAmount()
     // console.log("##$$$$###$$$", maximumAmount, money, totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", money + totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", typeof money, typeof totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", parseFloat(money) + totalDepositedAmount)
+    console.log("SEC AMT TYPE===============>>>>>>>>>>>>>", secAmtType)
 
     if (secAmtType == "M") {
       console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM")
