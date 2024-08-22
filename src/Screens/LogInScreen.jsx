@@ -121,13 +121,14 @@ const LogInScreen = ({ navigation }) => {
     console.log(
       "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
       ezetapStorage.contains("ezetap-initialization-json"),
+      ezetapStorage.getString("ezetap-initialization-json"),
     )
-    if (!ezetapStorage.contains("ezetap-initialization-json")) {
-      await initRazorpay()
+    // if (!ezetapStorage.contains("ezetap-initialization-json")) {
+    await initRazorpay()
 
-      var res = await RNEzetapSdk.prepareDevice()
-      console.log("RAZORPAY===PREPARE DEVICE", res)
-    }
+    var res = await RNEzetapSdk.prepareDevice()
+    console.warn("RAZORPAY===PREPARE DEVICE", res)
+    // }
   }
 
   useEffect(() => {
