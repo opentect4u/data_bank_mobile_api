@@ -48,22 +48,23 @@ export default function LastFiveTnxReport() {
       )
       .then(res => {
         // setLastFiveData(res.data.data.msg)
-        res.data.data.msg.forEach((item, i) => {
+        res?.data?.data?.msg?.forEach((item, i) => {
           let row = [
-            new Date(item.transaction_date).toLocaleDateString("en-GB", {
+            new Date(item?.transaction_date).toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "2-digit",
               year: "2-digit",
             }),
-            item.account_number,
-            item.account_holder_name,
-            item.deposit_amount,
+            item?.account_number,
+            item?.account_holder_name,
+            item?.deposit_amount,
           ]
           console.log("dfasjhgfisgyaf", row)
 
           tableData.push(...[row])
-          setIsLoading(false)
-          setIsDisabled(false)
+
+          // setIsLoading(false)
+          // setIsDisabled(false)
         })
         if (tableData.length == 0) {
           ToastAndroid.showWithGravityAndOffset(
@@ -77,6 +78,8 @@ export default function LastFiveTnxReport() {
 
         setLastFiveData(tableData)
       })
+    setIsLoading(false)
+    setIsDisabled(false)
   }
 
   const handleSubmit = () => {
