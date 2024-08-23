@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+import ThermalPrinterModule from "react-native-thermal-printer"
 import { AppStore } from "../../Context/AppContext"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS, colors } from "../../Resources/colors"
@@ -134,102 +135,196 @@ const DayTotalReportScreen = () => {
       })
   }
 
+  // async function printReceipt() {
+  //   try {
+  //     await BluetoothEscposPrinter.printerAlign(
+  //       BluetoothEscposPrinter.ALIGN.CENTER,
+  //     )
+  //     await BluetoothEscposPrinter.printText(bankName, { align: "center" })
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printText(branchName, { align: "center" })
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printColumn(
+  //       [10, 2, 18],
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       [
+  //         "Date",
+  //         ":",
+  //         new Date()
+  //           .toLocaleDateString("en-GB", {
+  //             day: "2-digit",
+  //             month: "2-digit",
+  //             year: "2-digit",
+  //           })
+  //           .toString(),
+  //       ],
+  //       {},
+  //     )
+  //     await BluetoothEscposPrinter.printColumn(
+  //       [10, 2, 18],
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["Agent", ":", agentName],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------\n",
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printText("DAY TOTAL REPORT\r\n", {
+  //       align: "center",
+  //     })
+
+  //     await BluetoothEscposPrinter.printText(
+  //       `FROM: ${new Date(startDate).toLocaleDateString("en-GB", {
+  //         day: "2-digit",
+  //         month: "2-digit",
+  //         year: "2-digit",
+  //       })}  TO: ${new Date(endDate).toLocaleDateString("en-GB", {
+  //         day: "2-digit",
+  //         month: "2-digit",
+  //         year: "2-digit",
+  //       })}`,
+  //       {
+  //         align: "center",
+  //       },
+  //     )
+
+  //     await BluetoothEscposPrinter.printText("\r", {})
+
+  //     // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
+
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------",
+  //       {},
+  //     )
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+
+  //     let columnWidthsHeader = [10, 10, 10]
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidthsHeader,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       // ["Date", "A/c No", "Amt"],
+  //       ["Date", "Tnxs.", "Amt"],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------\n",
+  //       {},
+  //     )
+
+  //     const copiedTableData = [...tableData]
+  //     console.log("TABLLLELEEEEE DDDAAATAAAA  CPPPYYY ", copiedTableData)
+
+  //     let columnWidthsBody = [13, 12, 7]
+  //     copiedTableData.forEach(async item => {
+  //       let newItems = [...item]
+  //       console.log("new itemsssssss", newItems)
+  //       // const updatedItems = removeIndexes(newItems, [0, 2, 4])
+  //       // const updatedItems = removeIndexes(newItems, [0, 1, 2])
+
+  //       // updatedItems[2] = updatedItems[2].slice(0, 8)
+  //       // let items = updatedItems.join(" ")
+  //       // console.log("++==++ PRINTED ITEM", items)
+  //       // console.log("++==++ PRINTED ITEM", updatedItems)
+  //       await BluetoothEscposPrinter.printColumn(
+  //         columnWidthsBody,
+  //         [
+  //           BluetoothEscposPrinter.ALIGN.LEFT,
+  //           BluetoothEscposPrinter.ALIGN.CENTER,
+  //           BluetoothEscposPrinter.ALIGN.RIGHT,
+  //         ],
+  //         [
+  //           newItems[0].toString(),
+  //           newItems[1].toString(),
+  //           newItems[2].toString(),
+  //         ],
+  //         {},
+  //       )
+  //     })
+
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------\n",
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printText(
+  //       `TOTAL AMOUNT: ${totalAmount}\r\n`,
+  //       {
+  //         align: "center",
+  //       },
+  //     )
+  //     // await BluetoothEscposPrinter.printText("Total Receipts: " + totalReceipts + "\n", { align: "center" })
+  //     // await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", { align: "center" })
+  //     await BluetoothEscposPrinter.printText(
+  //       "---------------X---------------",
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
+  //   } catch (e) {
+  //     console.log(e.message || "ERROR")
+  //     ToastAndroid.showWithGravityAndOffset(
+  //       "Printer not connected.",
+  //       ToastAndroid.SHORT,
+  //       ToastAndroid.CENTER,
+  //       25,
+  //       50,
+  //     )
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   tableData = []
+  //   getReportsDayScroll()
+  // }, [selectedEndDate])
+
   async function printReceipt() {
     try {
-      await BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      )
-      await BluetoothEscposPrinter.printText(bankName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printText(branchName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printColumn(
-        [10, 2, 18],
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "Date",
-          ":",
-          new Date()
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            })
-            .toString(),
-        ],
-        {},
-      )
-      await BluetoothEscposPrinter.printColumn(
-        [10, 2, 18],
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["Agent", ":", agentName],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------\n",
-        {},
-      )
-
-      await BluetoothEscposPrinter.printText("DAY TOTAL REPORT\r\n", {
-        align: "center",
-      })
-
-      await BluetoothEscposPrinter.printText(
-        `FROM: ${new Date(startDate).toLocaleDateString("en-GB", {
+      let payload = `[C]<font size='normal'>${bankName}</font>\n`
+      payload += `[C]<font size='normal'>${branchName}</font>\n`
+      // payload += `[C]<font size='normal'>RECEIPT</font>\n`
+      // payload += `[C]<font size='big'><B>--------------</font>\n`
+      payload += `[L]<b>DATE    : [R]${new Date()
+        .toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "2-digit",
           year: "2-digit",
-        })}  TO: ${new Date(endDate).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "2-digit",
-        })}`,
-        {
-          align: "center",
-        },
-      )
+        })
+        .toString()}\n`
 
-      await BluetoothEscposPrinter.printText("\r", {})
-
-      // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
-
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------",
-        {},
-      )
-      await BluetoothEscposPrinter.printText("\r\n", {})
-
-      let columnWidthsHeader = [10, 10, 10]
-      await BluetoothEscposPrinter.printColumn(
-        columnWidthsHeader,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        // ["Date", "A/c No", "Amt"],
-        ["Date", "Tnxs.", "Amt"],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------\n",
-        {},
-      )
+      payload += `[L]<b>AGENT   : [R]${agentName}\n`
+      payload += `[C]<font size='big'><B>--------------</font>\n`
+      payload += `[C]<b>DAY TOTAL REPORT\n`
+      payload += `[L]FROM: ${new Date(startDate).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      })} [R]TO: ${new Date(endDate).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+      })}\n`
+      payload += `[C]<font size='big'><B>--------------</font>\n`
+      payload += `[L]DATE [C]TNXs [R]AMT\n`
 
       const copiedTableData = [...tableData]
       console.log("TABLLLELEEEEE DDDAAATAAAA  CPPPYYY ", copiedTableData)
 
-      let columnWidthsBody = [13, 12, 7]
       copiedTableData.forEach(async item => {
         let newItems = [...item]
         console.log("new itemsssssss", newItems)
@@ -240,57 +335,25 @@ const DayTotalReportScreen = () => {
         // let items = updatedItems.join(" ")
         // console.log("++==++ PRINTED ITEM", items)
         // console.log("++==++ PRINTED ITEM", updatedItems)
-        await BluetoothEscposPrinter.printColumn(
-          columnWidthsBody,
-          [
-            BluetoothEscposPrinter.ALIGN.LEFT,
-            BluetoothEscposPrinter.ALIGN.CENTER,
-            BluetoothEscposPrinter.ALIGN.RIGHT,
-          ],
-          [
-            newItems[0].toString(),
-            newItems[1].toString(),
-            newItems[2].toString(),
-          ],
-          {},
-        )
+
+        payload += `[L]${newItems[0].toString()} [C]${newItems[1].toString()} [R]${newItems[2].toString()}\n`
       })
 
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------\n",
-        {},
-      )
+      payload += `[C]<font size='big'><B>--------------</font>\n`
+      payload += `[C]TOTAL AMT : ${totalAmount}\n`
+      payload += `[C]<font size='big'><B>--------------</font>\n\n\n`
 
-      await BluetoothEscposPrinter.printText(
-        `TOTAL AMOUNT: ${totalAmount}\r\n`,
-        {
-          align: "center",
-        },
-      )
-      // await BluetoothEscposPrinter.printText("Total Receipts: " + totalReceipts + "\n", { align: "center" })
-      // await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", { align: "center" })
-      await BluetoothEscposPrinter.printText(
-        "---------------X---------------",
-        {},
-      )
-
-      await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
+      await ThermalPrinterModule.printBluetooth({
+        payload: payload,
+        printerNbrCharactersPerLine: 32,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      })
     } catch (e) {
       console.log(e.message || "ERROR")
-      ToastAndroid.showWithGravityAndOffset(
-        "Printer not connected.",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
-        25,
-        50,
-      )
     }
   }
-
-  // useEffect(() => {
-  //   tableData = []
-  //   getReportsDayScroll()
-  // }, [selectedEndDate])
 
   const handleSubmit = () => {
     tableData = []

@@ -1,5 +1,6 @@
 import {
   PixelRatio,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,99 +15,101 @@ export default function ReportChoose({ navigation }) {
   return (
     <>
       <CustomHeader />
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(mainNavigationRoutes.reportDayScreen)
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.profile(COLORS.lightScheme.primary, 45)}
+      <ScrollView>
+        <View style={styles.container}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(mainNavigationRoutes.reportDayScreen)
+            }
+            style={styles.cardContainer}>
+            {/* Icon */}
+            {icon.profile(COLORS.lightScheme.primary, 45)}
 
-          {/* label */}
-          <Text style={styles.label}> Day Scroll Report </Text>
-        </TouchableOpacity>
+            {/* label */}
+            <Text style={styles.label}> Day Scroll Report </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(mainNavigationRoutes.reportTypeScreen)
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.password(COLORS.lightScheme.primary, 45)}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(mainNavigationRoutes.reportTypeScreen)
+            }
+            style={styles.cardContainer}>
+            {/* Icon */}
+            {icon.password(COLORS.lightScheme.primary, 45)}
 
-          {/* label */}
-          <Text style={styles.label}> A/c Type Wise Report </Text>
-        </TouchableOpacity>
+            {/* label */}
+            <Text style={styles.label}> A/c Type Wise Report </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(mainNavigationRoutes.nonCollectionReport)
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.password(COLORS.lightScheme.primary, 45)}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(mainNavigationRoutes.nonCollectionReport)
+            }
+            style={styles.cardContainer}>
+            {/* Icon */}
+            {icon.password(COLORS.lightScheme.primary, 45)}
 
-          {/* label */}
-          <Text style={styles.label}> Non Collection Report </Text>
-        </TouchableOpacity>
+            {/* label */}
+            <Text style={styles.label}> Non Collection Report </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(mainNavigationRoutes.miniStatement)
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.profile(COLORS.lightScheme.primary, 45)}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(mainNavigationRoutes.miniStatement)
+            }
+            style={styles.cardContainer}>
+            {/* Icon */}
+            {icon.profile(COLORS.lightScheme.primary, 45)}
 
-          {/* label */}
-          <Text style={styles.label}> Mini Statement </Text>
-        </TouchableOpacity>
+            {/* label */}
+            <Text style={styles.label}> Mini Statement </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(mainNavigationRoutes.dateWiseCollSummary)
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.profile(COLORS.lightScheme.primary, 45)}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(mainNavigationRoutes.dateWiseCollSummary)
+            }
+            style={styles.cardContainer}>
+            {/* Icon */}
+            {icon.profile(COLORS.lightScheme.primary, 45)}
 
-          {/* label */}
-          <Text style={styles.label}> Date Wise Coll Summary </Text>
-        </TouchableOpacity>
+            {/* label */}
+            <Text style={styles.label}> Date Wise Coll Summary </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(mainNavigationRoutes.lastFiveTnxScreen)
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.profile(COLORS.lightScheme.primary, 45)}
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(mainNavigationRoutes.lastFiveTnxScreen)
+            }
+            style={styles.cardContainer}>
+            {/* Icon */}
+            {icon.profile(COLORS.lightScheme.primary, 45)}
 
-          {/* label */}
-          <Text style={styles.label}> Last Five Tnx </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(mainNavigationRoutes.dayTotalReportScreen)
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.profile(COLORS.lightScheme.primary, 45)}
+            {/* label */}
+            <Text style={styles.label}> Last Five Tnx </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(mainNavigationRoutes.dayTotalReportScreen)
+            }
+            style={styles.cardContainer}>
+            {/* Icon */}
+            {icon.profile(COLORS.lightScheme.primary, 45)}
 
-          {/* label */}
-          <Text style={styles.label}> Day Total Report </Text>
-        </TouchableOpacity>
+            {/* label */}
+            <Text style={styles.label}> Day Total Report </Text>
+          </TouchableOpacity>
 
-        <View
-          style={{
-            ...styles.cardContainer,
-            backgroundColor: COLORS.lightScheme.background,
-            elevation: 0,
-          }}>
-          {/* Blank Card */}
+          <View
+            style={{
+              ...styles.cardContainer,
+              backgroundColor: COLORS.lightScheme.background,
+              elevation: 0,
+            }}>
+            {/* Blank Card */}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </>
   )
 }

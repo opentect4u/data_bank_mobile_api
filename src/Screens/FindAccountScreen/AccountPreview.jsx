@@ -242,9 +242,9 @@ const AccountPreview = ({ navigation, route }) => {
       // payload += `[C]<font size='big'><B>--------------</font>\n`
 
       payload +=
-        `[C]<font size='big'><B>--------------</font>\n` +
-        `[L]<b>AGENT NAME [L]: ${agentName.toString()}\n` +
-        `[L]<b>RCPT DATE [L]: ${(
+        `[C]<font size='big'>--------------</font>\n` +
+        `[L]<b>AGENT NAME : [R]${agentName.toString()}\n` +
+        `[L]<b>RCPT DATE  : [R]${(
           new Date(todayDT).toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
@@ -256,27 +256,25 @@ const AccountPreview = ({ navigation, route }) => {
             minute: "2-digit",
           })
         ).toString()}\n` +
-        `[L]<b>RCPT NO [L]: ${rcptNo.toString().substring(0, 6)}\n` +
-        `[L]<b>A/C NO [L]: ${(item?.account_number).toString()}\n` +
-        `[L]<b>NAME [L]: ${item?.customer_name.toString()}\n` +
-        `[L]<b>OPEN BAL [L]: ${(item?.current_balance).toString()}\n` +
-        `[L]<b>COLL AMT [L]: ${money.toString()}\n` +
-        `[L]<b>CLOSE BAL [L]: ${parseFloat(
+        `[L]<b>RCPT NO    : [R]${rcptNo
+          .toString()
+          .substring(rcptNo.toString().length - 6)}\n` +
+        `[L]<b>A/C NO     : [R]${(item?.account_number).toString()}\n` +
+        `[L]<b>NAME       : [R]${item?.customer_name.toString()}\n` +
+        `[L]<b>OPEN BAL   : [R]${(item?.current_balance).toString()}\n` +
+        `[L]<b>COLL AMT   : [R]${money.toString()}\n` +
+        `[L]<b>CLOSE BAL  : [R]${parseFloat(
           item?.current_balance + parseFloat(money),
         ).toString()}\n` +
-        `[L]<b>PRV TNX DT [L]: ${
-          new Date(lastTnxDate).toLocaleDateString("en-GB", {
+        `[L]<b>PRV TNX DT : [R]${new Date(lastTnxDate).toLocaleDateString(
+          "en-GB",
+          {
             day: "2-digit",
             month: "2-digit",
             year: "2-digit",
-          }) +
-          "," +
-          new Date(lastTnxDate).toLocaleTimeString("en-GB", {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        }\n\n` +
-        `[L]<b>A/C OPN DT [L]: ${new Date(item?.opening_date)
+          },
+        )}\n` +
+        `[L]<b>A/C OPN DT : [R]${new Date(item?.opening_date)
           .toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
@@ -284,7 +282,7 @@ const AccountPreview = ({ navigation, route }) => {
           })
           .toString()}\n`
 
-      payload += `[C]<font size='big'><B>--------------</font>\n\n\n\n`
+      payload += `[C]<font size='big'>--------------</font>\n\n\n\n`
 
       await ThermalPrinterModule.printBluetooth({
         payload: payload,
@@ -292,7 +290,6 @@ const AccountPreview = ({ navigation, route }) => {
         printerDpi: 120,
         printerWidthMM: 58,
         mmFeedPaper: 25,
-        autoCut: true,
       })
     } catch (e) {
       console.log(e.message || "ERROR")

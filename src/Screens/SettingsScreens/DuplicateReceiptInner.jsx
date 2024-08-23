@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
 } from "react-native"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+import ThermalPrinterModule from "react-native-thermal-printer"
 import { AppStore } from "../../Context/AppContext"
 import CustomHeader from "../../Components/CustomHeader"
 import { COLORS } from "../../Resources/colors"
@@ -57,15 +58,15 @@ const DuplicateReceiptInner = ({ route }) => {
         },
       })
       .then(res => {
-        res.data.success.msg.forEach((item, i) => {
+        res?.data?.success?.msg?.forEach((item, i) => {
           let rowArr = [
-            new Date(item.date).toLocaleDateString("en-GB", {
+            new Date(item?.collected_at)?.toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "2-digit",
               year: "2-digit",
             }),
-            item.receipt_no,
-            item.deposit_amount,
+            item?.receipt_no,
+            item?.deposit_amount,
             <TouchableOpacity
               onPress={() => {
                 Alert.alert(
@@ -78,7 +79,8 @@ const DuplicateReceiptInner = ({ route }) => {
                     },
                     {
                       text: "Print",
-                      onPress: () =>
+                      onPress: async () => {
+                        await getLastTnxDate(item?.receipt_no)
                         printReceipt(
                           // item.receipt_no,
                           // item.date,
@@ -87,7 +89,10 @@ const DuplicateReceiptInner = ({ route }) => {
                           // item.account_type,
                           // item.deposit_amount,
                           item,
-                        ),
+                        ).then(() => {
+                          prevTnxDate = ""
+                        })
+                      },
                     },
                   ],
                 )
@@ -124,183 +129,55 @@ const DuplicateReceiptInner = ({ route }) => {
         console.log(err)
       })
   }
-  async function printReceipt(item) {
-    console.log(item)
-    try {
-      await BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      )
-      await BluetoothEscposPrinter.printText(bankName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printText(branchName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
 
-      await BluetoothEscposPrinter.printText("DUPLICATE RECEIPT", {
-        align: "center",
-      })
+  let prevTnxDate = ""
 
-      await BluetoothEscposPrinter.printText("\r", {})
-
-      // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
-
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------",
-        {},
-      )
-      await BluetoothEscposPrinter.printText("\r\n", {})
-
-      let columnWidths = [11, 1, 18]
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["AGENT NAME", ":", agentName.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "RCPT DATE",
-          ":",
-          (
-            new Date(todayDateFromServer).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            }) +
-            ", " +
-            new Date(todayDateFromServer).toLocaleTimeString("en-GB", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          ).toString(),
-        ],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["RCPT NO", ":", item?.receipt_no.toString().substring(0, 6)],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["ACC NO", ":", item?.account_number],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["NAME", ":", item?.account_holder_name],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["OPEN BAL", ":", item?.opening_bal.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["COLL AMT", ":", item?.deposit_amount.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["CLOSE BAL", ":", item?.closing_bal.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "ACC OPN DT",
-          ":",
-          new Date(item?.opening_date)
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            })
-            .toString(),
-        ],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printText(
-        "---------------X---------------",
-        {},
-      )
-
-      await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
-    } catch (e) {
-      console.log(e.message || "ERROR")
-      // console.log( "ERROR")
-      // ToastAndroid.showWithGravityAndOffset(
-      //   "Printer not connected.",
-      //   ToastAndroid.SHORT,
-      //   ToastAndroid.CENTER,
-      //   25,
-      //   50,
-      // )
+  const getLastTnxDate = async rcptNo => {
+    const obj = {
+      bank_id: bankId,
+      branch_code: branchCode,
+      agent_code: userId,
+      account_number: item?.account_number,
+      receipt_no: rcptNo,
+      flag: item?.acc_type,
     }
+
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
+
+    await axios
+      .post(address.LAST_TNX_DATE, obj, {
+        headers: {
+          Accept: "application/json",
+        },
+      })
+      .then(res => {
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", res?.data)
+        console.log(
+          ">>>>>>>>>>>>>jhgff>>>>>>>>>>>>>>>>>>",
+          res?.data?.success?.msg[0]?.last_trns_dt,
+        )
+
+        // setLastTnxDate(
+        //   res?.data?.success?.length !== 0
+        //     ? res?.data?.success?.msg[0]?.last_trns_dt?.toString()
+        //     : "",
+        // )
+
+        prevTnxDate = res?.data?.success?.msg[0]?.last_trns_dt
+
+        // {"status": true, "success": []}
+        // console.log(
+        //   ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+        //   res?.data?.success?.msg[0]?.last_trns_dt,
+        // )
+      })
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", err)
+      })
   }
-  // async function printReceipt(
-  //   rcptNo,
-  //   date,
-  //   accHolderName,
-  //   accNumber,
-  //   accType,
-  //   depAmt,
-  // ) {
+
+  // async function printReceipt(item) {
+  //   console.log(item)
   //   try {
   //     await BluetoothEscposPrinter.printerAlign(
   //       BluetoothEscposPrinter.ALIGN.CENTER,
@@ -348,7 +225,7 @@ const DuplicateReceiptInner = ({ route }) => {
   //         "RCPT DATE",
   //         ":",
   //         (
-  //           new Date(date).toLocaleDateString("en-GB", {
+  //           new Date(todayDateFromServer).toLocaleDateString("en-GB", {
   //             day: "2-digit",
   //             month: "2-digit",
   //             year: "2-digit",
@@ -370,7 +247,7 @@ const DuplicateReceiptInner = ({ route }) => {
   //         BluetoothEscposPrinter.ALIGN.CENTER,
   //         BluetoothEscposPrinter.ALIGN.RIGHT,
   //       ],
-  //       ["RCPT NO", ":", rcptNo.toString()],
+  //       ["RCPT NO", ":", item?.receipt_no.toString().substring(0, 6)],
   //       {},
   //     )
 
@@ -381,7 +258,7 @@ const DuplicateReceiptInner = ({ route }) => {
   //         BluetoothEscposPrinter.ALIGN.CENTER,
   //         BluetoothEscposPrinter.ALIGN.RIGHT,
   //       ],
-  //       ["ACC NO", ":", accNumber.toString()],
+  //       ["ACC NO", ":", item?.account_number],
   //       {},
   //     )
 
@@ -392,7 +269,7 @@ const DuplicateReceiptInner = ({ route }) => {
   //         BluetoothEscposPrinter.ALIGN.CENTER,
   //         BluetoothEscposPrinter.ALIGN.RIGHT,
   //       ],
-  //       ["NAME", ":", accHolderName.toString()],
+  //       ["NAME", ":", item?.account_holder_name],
   //       {},
   //     )
 
@@ -403,7 +280,29 @@ const DuplicateReceiptInner = ({ route }) => {
   //         BluetoothEscposPrinter.ALIGN.CENTER,
   //         BluetoothEscposPrinter.ALIGN.RIGHT,
   //       ],
-  //       ["COLL AMT", ":", depAmt.toString()],
+  //       ["OPEN BAL", ":", item?.opening_bal.toString()],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["COLL AMT", ":", item?.deposit_amount.toString()],
+  //       {},
+  //     )
+
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidths,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["CLOSE BAL", ":", item?.closing_bal.toString()],
   //       {},
   //     )
 
@@ -415,18 +314,19 @@ const DuplicateReceiptInner = ({ route }) => {
   //         BluetoothEscposPrinter.ALIGN.RIGHT,
   //       ],
   //       [
-  //         "ACC TYPE",
+  //         "ACC OPN DT",
   //         ":",
-  //         accType == "D"
-  //           ? "Daily"
-  //           : accType == "R"
-  //           ? "RD"
-  //           : accType == "L"
-  //           ? "Loan"
-  //           : "",
+  //         new Date(item?.opening_date)
+  //           .toLocaleDateString("en-GB", {
+  //             day: "2-digit",
+  //             month: "2-digit",
+  //             year: "2-digit",
+  //           })
+  //           .toString(),
   //       ],
   //       {},
   //     )
+
   //     await BluetoothEscposPrinter.printText(
   //       "---------------X---------------",
   //       {},
@@ -435,15 +335,80 @@ const DuplicateReceiptInner = ({ route }) => {
   //     await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
   //   } catch (e) {
   //     console.log(e.message || "ERROR")
-  //     ToastAndroid.showWithGravityAndOffset(
-  //       "Printer not connected.",
-  //       ToastAndroid.SHORT,
-  //       ToastAndroid.CENTER,
-  //       25,
-  //       50,
-  //     )
+  //     // console.log( "ERROR")
+  //     // ToastAndroid.showWithGravityAndOffset(
+  //     //   "Printer not connected.",
+  //     //   ToastAndroid.SHORT,
+  //     //   ToastAndroid.CENTER,
+  //     //   25,
+  //     //   50,
+  //     // )
   //   }
   // }
+
+  async function printReceipt(item) {
+    try {
+      let payload = `[C]<font size='normal'>${bankName}</font>\n`
+      payload += `[C]<font size='normal'>${branchName}</font>\n`
+      payload += `[C]<font size='normal'>RECEIPT</font>\n`
+      // payload += `[C]<font size='big'><B>--------------</font>\n`
+
+      payload +=
+        `[C]<font size='big'>--------------</font>\n` +
+        `[L]<b>AGENT NAME : [R]${agentName.toString()}\n` +
+        `[L]<b>RCPT DATE  : [R]${(
+          new Date(item?.collected_at).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          }) +
+          "," +
+          new Date(item?.collected_at).toLocaleTimeString("en-GB", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        ).toString()}\n` +
+        `[L]<b>RCPT NO    : [R]${item?.receipt_no
+          ?.toString()
+          ?.substring(item?.receipt_no?.toString()?.length - 6)}\n` +
+        `[L]<b>A/C NO     : [R]${item?.account_number?.toString()}\n` +
+        `[L]<b>NAME       : [R]${item?.account_holder_name?.toString()}\n` +
+        `[L]<b>${
+          item?.account_type == "L" ? "PREV BAL" : "OPEN BAL"
+        }   : [R]${item?.opening_bal?.toString()}\n` +
+        `[L]<b>COLL AMT   : [R]${item?.deposit_amount?.toString()}\n` +
+        `[L]<b>${
+          item?.account_type == "L" ? "CURR BAL" : "CLOSE BAL"
+        }   : [R]${parseFloat(item?.closing_bal?.toString())?.toString()}\n` +
+        `[L]<b>PRV TNX DT : [R]${new Date(prevTnxDate)?.toLocaleDateString(
+          "en-GB",
+          {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          },
+        )}\n` +
+        `[L]<b>A/C OPN DT : [R]${new Date(item?.opening_date)
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "2-digit",
+          })
+          .toString()}\n`
+
+      payload += `[C]<font size='big'>--------------</font>\n\n\n\n`
+
+      await ThermalPrinterModule.printBluetooth({
+        payload: payload,
+        printerNbrCharactersPerLine: 32,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      })
+    } catch (e) {
+      console.log(e.message || "ERROR")
+    }
+  }
 
   // const handleSubmit = () => {
   //   tableData = []
@@ -475,7 +440,7 @@ const DuplicateReceiptInner = ({ route }) => {
                 borderWidth: 2,
                 borderColor: COLORS.lightScheme.secondary,
                 borderRadius: 10,
-                fontSize: 16,
+                // fontSize: 16,
               }}
               style={{ backgroundColor: COLORS.lightScheme.background }}>
               <Row data={tableHead} textStyle={styles.head} />
@@ -504,7 +469,7 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   dateButton: {
-    width: "40%",
+    width: "50%",
     height: 40,
     borderWidth: 2,
     borderColor: "white",

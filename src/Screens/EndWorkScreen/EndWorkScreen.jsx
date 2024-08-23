@@ -181,24 +181,25 @@ const EndWorkScreen = ({ navigation }) => {
       <CustomHeader />
 
       <View style={styles.container}>
-        <View
-          style={{
-            padding: 10,
-            backgroundColor: COLORS.lightScheme.onPrimary,
-            margin: 20,
-            borderRadius: 10,
-            justifyContent: "center",
-            alignContent: "center",
-          }}>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                color={COLORS.lightScheme.primary}
-                onRefresh={onRefresh}
-              />
-            }>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              color={COLORS.lightScheme.primary}
+              onRefresh={onRefresh}
+            />
+          }>
+          <View
+            style={{
+              padding: 10,
+              backgroundColor: COLORS.lightScheme.onPrimary,
+              margin: 20,
+              borderRadius: 10,
+              justifyContent: "center",
+              alignContent: "center",
+              paddingBottom: 40,
+            }}>
             <Text style={styles.todayCollection}>Today's Collections</Text>
             <Table
               borderStyle={{
@@ -224,8 +225,8 @@ const EndWorkScreen = ({ navigation }) => {
               handleOnpress={handleEndWorkButton}
               disabled={isLoading}
             />
-          </ScrollView>
-        </View>
+          </View>
+        </ScrollView>
       </View>
     </View>
   )
