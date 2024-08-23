@@ -203,7 +203,7 @@ const AppContext = ({ children }) => {
           25,
           50,
         )
-        console.error("Error: ==========", err.response.data)
+        console.error("Error: ==========", err?.response?.data)
       })
   }
 
