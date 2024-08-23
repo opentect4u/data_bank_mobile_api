@@ -207,7 +207,7 @@ const LoanAccountDetailsScreen = ({ navigation, route }) => {
               label={"Collection Amount"}
               value={collectionMoney}
               handleChange={money => {
-                if (/^\d*$/.test(money)) {
+                if (/^\d*\.?\d*$/.test(money)) {
                   setCollectionMoney(money)
                 }
               }}
