@@ -206,7 +206,11 @@ const LoanAccountDetailsScreen = ({ navigation, route }) => {
               placeholder={"Enter Valid Amount"}
               label={"Collection Amount"}
               value={collectionMoney}
-              handleChange={setCollectionMoney}
+              handleChange={money => {
+                if (/^\d*\.?\d*$/.test(money)) {
+                  setCollectionMoney(money)
+                }
+              }}
               autoFocus={true}
             />
             <View style={styles.buttonContainer}>
