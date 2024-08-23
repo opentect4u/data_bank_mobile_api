@@ -407,7 +407,8 @@ const AccountPreview = ({ navigation, route }) => {
       )
       console.log("##$$$$+++++###$$$ totalCollection", totalCollection)
 
-      if (maximumAmount >= parseFloat(money) + totalDepositedAmount) {
+      // if (maximumAmount >= parseFloat(money) + totalDepositedAmount) {
+      if (maximumAmount >= parseFloat(money) + totalCollection) {
         console.log("MMMMMMMMMMMMMMMM")
         setIsSaveEnabled(true)
         sendCollectedMoney()
