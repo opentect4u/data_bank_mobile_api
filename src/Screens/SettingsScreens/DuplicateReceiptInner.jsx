@@ -38,6 +38,7 @@ const DuplicateReceiptInner = ({ route }) => {
   const [duplicateReceipts, setDuplicateReceipts] = useState(() => [])
 
   const [loading, setLoading] = useState(() => true)
+  const [isPrinting, setIsPrinting] = useState(() => false)
 
   const tableHead = ["Date", "Rcpt No", "Dep Amt", "Print"]
   let tableData = duplicateReceipts
@@ -98,7 +99,11 @@ const DuplicateReceiptInner = ({ route }) => {
                 )
               }}
               style={styles.dateButton}>
-              {icon.printer(COLORS.lightScheme.primary, 30)}
+              {!isPrinting ? (
+                icon.printer(COLORS.lightScheme.primary, 30)
+              ) : (
+                <ActivityIndicator animating={true} size={"large"} />
+              )}
             </TouchableOpacity>,
           ]
           console.log("ITEMMM TABLEEE=====", rowArr)
@@ -347,6 +352,7 @@ const DuplicateReceiptInner = ({ route }) => {
   // }
 
   async function printReceipt(item) {
+    setIsPrinting(true)
     try {
       let payload = `[C]<font size='normal'>${bankName}</font>\n`
       payload += `[C]<font size='normal'>${branchName}</font>\n`
@@ -378,8 +384,8 @@ const DuplicateReceiptInner = ({ route }) => {
         }   : [R]${item?.opening_bal?.toString()}\n` +
         `[L]<b>COLL AMT   : [R]${item?.deposit_amount?.toString()}\n` +
         `[L]<b>${
-          item?.account_type == "L" ? "CURR BAL" : "CLOSE BAL"
-        }   : [R]${parseFloat(item?.closing_bal?.toString())?.toString()}\n` +
+          item?.account_type == "L" ? "CURR BAL " : "CLOSE BAL"
+        }  : [R]${parseFloat(item?.closing_bal?.toString())?.toString()}\n` +
         `[L]<b>PRV TNX DT : [R]${
           prevTnxDate
             ? new Date(prevTnxDate)?.toLocaleDateString("en-GB", {
@@ -406,6 +412,7 @@ const DuplicateReceiptInner = ({ route }) => {
         printerWidthMM: 58,
         mmFeedPaper: 25,
       })
+      setIsPrinting(false)
     } catch (e) {
       console.log(e.message || "ERROR")
     }
