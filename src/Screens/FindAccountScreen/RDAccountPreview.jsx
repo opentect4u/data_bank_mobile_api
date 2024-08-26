@@ -188,20 +188,20 @@ const RDAccountPreview = ({ navigation, route }) => {
         },
       })
       .then(res => {
-        if (res.data.status) {
+        if (res?.data?.status) {
           setLoading(false)
 
-          console.log("###### Preview: ", res.data)
+          console.log("###### Preview: ", res?.data)
           // alert(`Receipt No is ${res.data.receipt_no}`)
-          Alert.alert("Receipt No.", `Receipt No is ${res.data.receipt_no}`, [
+          Alert.alert("Receipt No.", `Receipt No is ${res?.data?.receipt_no}`, [
             {
               text: "Okay",
               onPress: () => console.log("Receipt generated."),
             },
           ])
-          setReceiptNumber(res.data.receipt_no)
+          setReceiptNumber(res?.data?.receipt_no)
           setIsSaveEnabled(false)
-          printReceipt(res.data.receipt_no)
+          printReceipt(res?.data?.receipt_no)
           navigation.dispatch(resetAction)
         } else {
           setLoading(false)
