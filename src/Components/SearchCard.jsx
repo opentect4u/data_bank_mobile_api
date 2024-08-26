@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import React from "react"
+import { CommonActions } from "@react-navigation/native"
 import { COLORS, colors } from "../Resources/colors"
 import mainNavigationRoutes from "../Routes/NavigationRoutes"
 import { icon } from "../Resources/Icons"
@@ -9,13 +10,20 @@ const SearchCard = ({ item, index, navigation, flag }) => {
   return (
     <TouchableOpacity
       onPress={() =>
-        navigation.navigate(
-          flag == "D"
-            ? mainNavigationRoutes.accountDetails
-            : flag == "R"
-            ? mainNavigationRoutes.RDAccountDetails
-            : mainNavigationRoutes.loanAccountDetails,
-          { item: item },
+        // navigation.navigate(
+        //   flag == "D"
+        //     ? mainNavigationRoutes.accountDetails
+        //     : flag == "R"
+        //     ? mainNavigationRoutes.RDAccountDetails
+        //     : mainNavigationRoutes.loanAccountDetails,
+        //   { item: item },
+        // )
+
+        navigation.dispatch(
+          CommonActions.navigate({
+            name: mainNavigationRoutes.accountDetails,
+            params: { item: item, type: flag },
+          }),
         )
       }
       style={styles.container}

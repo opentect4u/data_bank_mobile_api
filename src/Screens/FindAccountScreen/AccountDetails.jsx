@@ -95,13 +95,18 @@ const AccountDetails = ({ navigation, route }) => {
     ["Current Balance", item?.current_balance],
   ]
 
+  // console.log(
+  //   "IIIIIIIIIIIITTTTTTTTTTTTTTEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMM",
+  //   item,
+  // )
+
   const getLastTnxDate = async () => {
     const obj = {
       bank_id: bankId,
       branch_code: branchCode,
       agent_code: userId,
       account_number: item?.account_number,
-      flag: "D",
+      flag: item?.acc_type,
     }
 
     console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)

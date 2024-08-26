@@ -100,7 +100,12 @@ const AccountPreview = ({ navigation, route }) => {
   const netTotalSectionTableData = [
     ["Tnx. Date", new Date(todayDateFromServer).toLocaleDateString("en-GB")],
     ["Deposit Amt.", money],
-    ["Current Balance", item?.current_balance + parseFloat(money)],
+    [
+      "Current Balance",
+      item?.acc_type == "L"
+        ? item?.current_balance - parseFloat(money)
+        : item?.current_balance + parseFloat(money),
+    ],
   ]
 
   const radioButtons = useMemo(
@@ -131,7 +136,7 @@ const AccountPreview = ({ navigation, route }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: item?.account_number,
-      flag: "D",
+      flag: item?.acc_type,
     }
 
     console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
@@ -184,6 +189,7 @@ const AccountPreview = ({ navigation, route }) => {
       total_collection_amount: totalCollection,
       // flag:'D'
     }
+
     console.log("===========", obj)
     await axios
       .post(address.TRANSACTION, obj, {
@@ -192,26 +198,26 @@ const AccountPreview = ({ navigation, route }) => {
         },
       })
       .then(res => {
-        console.log("result " + res.data.status)
-        if (res.data.status) {
+        console.log("result " + res?.data?.status)
+        if (res?.data?.status) {
           setLoading(false)
-          Alert.alert("Receipt No.", `Receipt No is ${res.data.receipt_no}`, [
+          Alert.alert("Receipt No.", `Receipt No is ${res?.data?.receipt_no}`, [
             {
               text: "Okay",
               onPress: () => console.log("Receipt generated."),
             },
           ])
-          setReceiptNumber(res.data.receipt_no)
+          setReceiptNumber(res?.data?.receipt_no)
           setIsSaveEnabled(false)
-          printReceipt(res.data.receipt_no)
+          printReceipt(res?.data?.receipt_no)
           navigation.dispatch(resetAction)
         } else {
           setLoading(false)
-          console.log("result else gggggggggggggggggg", res.data)
+          console.log("result else gggggggggggggggggg", res?.data)
 
           alert("Data already submitted. Please upload new dataset.")
           ToastAndroid.showWithGravityAndOffset(
-            res.data,
+            res?.data,
             ToastAndroid.SHORT,
             ToastAndroid.CENTER,
             25,
@@ -261,11 +267,15 @@ const AccountPreview = ({ navigation, route }) => {
           .substring(rcptNo.toString().length - 6)}\n` +
         `[L]<b>A/C NO     : [R]${(item?.account_number).toString()}\n` +
         `[L]<b>NAME       : [R]${item?.customer_name.toString()}\n` +
-        `[L]<b>OPEN BAL   : [R]${(item?.current_balance).toString()}\n` +
+        `[L]<b>${
+          item?.acc_type == "L" ? "PREV BAL" : "OPEN BAL"
+        }   : [R]${(item?.current_balance).toString()}\n` +
         `[L]<b>COLL AMT   : [R]${money.toString()}\n` +
-        `[L]<b>CLOSE BAL  : [R]${parseFloat(
-          item?.current_balance + parseFloat(money),
-        ).toString()}\n` +
+        `[L]<b>${item?.acc_type == "L" ? "CURR BAL " : "CLOSE BAL"}  : [R]${
+          item?.acc_type == "L"
+            ? parseFloat(item?.current_balance - parseFloat(money)).toString()
+            : parseFloat(item?.current_balance + parseFloat(money)).toString()
+        }\n` +
         `[L]<b>PRV TNX DT : [R]${new Date(lastTnxDate).toLocaleDateString(
           "en-GB",
           {
@@ -571,6 +581,26 @@ const AccountPreview = ({ navigation, route }) => {
     }
   }
 
+  const handleSaveForLoan = () => {
+    getTotalDepositAmount()
+    console.log("##$$$$###$$$", maximumAmount, money, totalDepositedAmount)
+    console.log("##$$$$+++++###$$$", money + totalDepositedAmount)
+    console.log("##$$$$+++++###$$$", typeof money, typeof totalDepositedAmount)
+    console.log("##$$$$+++++###$$$", parseFloat(money) + totalDepositedAmount)
+    if (!(maximumAmount < parseFloat(money) + totalDepositedAmount)) {
+      setIsSaveEnabled(true)
+      sendCollectedMoney()
+    } else {
+      ToastAndroid.showWithGravityAndOffset(
+        "Your collection quota has been exceeded.",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+        25,
+        50,
+      )
+    }
+  }
+
   // useEffect(() => {
   //   getTotalDepositAmount()
   // }, [])
@@ -738,7 +768,7 @@ const AccountPreview = ({ navigation, route }) => {
                   }
                   customStyle={{ marginTop: 10, width: "40%" }}
                   handleOnpress={() => {
-                    handleSave()
+                    item?.acc_type != "L" ? handleSave() : handleSaveForLoan()
                   }}
                   // disabled={isSaveEnabled}
                 />
@@ -764,7 +794,9 @@ const AccountPreview = ({ navigation, route }) => {
                         tnxResponse,
                       )
                       if (JSON.parse(tnxResponse)?.status === "success") {
-                        handleSave()
+                        item?.acc_type != "L"
+                          ? handleSave()
+                          : handleSaveForLoan()
                         // Alert.alert(
                         //   `Transaction ID`,
                         //   `${tnxResponse?.result?.txn?.txnId}`,

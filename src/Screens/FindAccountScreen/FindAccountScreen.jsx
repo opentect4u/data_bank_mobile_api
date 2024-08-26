@@ -15,7 +15,7 @@ import axios from "axios"
 import { REACT_APP_BASE_URL } from "../../Config/config"
 import { address } from "../../Routes/addresses"
 import { AppStore } from "../../Context/AppContext"
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect, useRoute } from "@react-navigation/native"
 
 const FindAccountScreen = ({ navigation }) => {
   const [searchValue, changeSearchValue] = useState(() => "")
@@ -23,6 +23,9 @@ const FindAccountScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const { userId, bankId, branchCode } = useContext(AppStore)
+
+  // const { type } = route.params
+  const { params } = useRoute()
 
   function handleAccountSearch() {
     if (!searchValue) {
@@ -60,10 +63,12 @@ const FindAccountScreen = ({ navigation }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: searchValue,
-      flag: "D",
+      flag: params?.type,
     }
     console.log(bankId, branchCode, userId, searchValue)
     console.log(userBankDetails)
+
+    console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHH", obj)
 
     await axios
       .post(address.SEARCH_ACCOUNT, obj, {
@@ -81,7 +86,7 @@ const FindAccountScreen = ({ navigation }) => {
         setIsLoading(false)
 
         setUserBankDetails([])
-        console.log("error: " + err.response.data)
+        console.log("error: " + err?.response?.data)
       })
   }
 
@@ -124,7 +129,7 @@ const FindAccountScreen = ({ navigation }) => {
                   index={index}
                   navigation={navigation}
                   key={index}
-                  flag={"D"}
+                  flag={params?.type}
                 />
               )
             })}

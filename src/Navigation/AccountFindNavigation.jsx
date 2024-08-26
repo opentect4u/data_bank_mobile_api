@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet } from "react-native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import mainNavigationRoutes from "../Routes/NavigationRoutes"
 import FindAccountScreen from "../Screens/FindAccountScreen/FindAccountScreen"
