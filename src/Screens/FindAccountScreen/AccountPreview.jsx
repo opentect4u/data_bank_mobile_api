@@ -276,14 +276,15 @@ const AccountPreview = ({ navigation, route }) => {
             ? parseFloat(item?.current_balance - parseFloat(money)).toString()
             : parseFloat(item?.current_balance + parseFloat(money)).toString()
         }\n` +
-        `[L]<b>PRV TNX DT : [R]${new Date(lastTnxDate).toLocaleDateString(
-          "en-GB",
-          {
-            day: "2-digit",
-            month: "2-digit",
-            year: "2-digit",
-          },
-        )}\n` +
+        `[L]<b>PRV TNX DT : [R]${
+          lastTnxDate
+            ? new Date(lastTnxDate).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+              })
+            : "No Date"
+        }\n` +
         `[L]<b>A/C OPN DT : [R]${new Date(item?.opening_date)
           .toLocaleDateString("en-GB", {
             day: "2-digit",
@@ -292,7 +293,7 @@ const AccountPreview = ({ navigation, route }) => {
           })
           .toString()}\n`
 
-      payload += `[C]<font size='big'>--------------</font>\n\n\n\n`
+      payload += `[C]<font size='big'>--------------</font>\n\n`
 
       await ThermalPrinterModule.printBluetooth({
         payload: payload,

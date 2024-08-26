@@ -350,7 +350,7 @@ const DuplicateReceiptInner = ({ route }) => {
     try {
       let payload = `[C]<font size='normal'>${bankName}</font>\n`
       payload += `[C]<font size='normal'>${branchName}</font>\n`
-      payload += `[C]<font size='normal'>RECEIPT</font>\n`
+      payload += `[C]<font size='normal'>DUPLICATE RECEIPT</font>\n`
       // payload += `[C]<font size='big'><B>--------------</font>\n`
 
       payload +=
@@ -380,14 +380,15 @@ const DuplicateReceiptInner = ({ route }) => {
         `[L]<b>${
           item?.account_type == "L" ? "CURR BAL" : "CLOSE BAL"
         }   : [R]${parseFloat(item?.closing_bal?.toString())?.toString()}\n` +
-        `[L]<b>PRV TNX DT : [R]${new Date(prevTnxDate)?.toLocaleDateString(
-          "en-GB",
-          {
-            day: "2-digit",
-            month: "2-digit",
-            year: "2-digit",
-          },
-        )}\n` +
+        `[L]<b>PRV TNX DT : [R]${
+          prevTnxDate
+            ? new Date(prevTnxDate)?.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+              })
+            : "No Date"
+        }\n` +
         `[L]<b>A/C OPN DT : [R]${new Date(item?.opening_date)
           .toLocaleDateString("en-GB", {
             day: "2-digit",
