@@ -614,17 +614,17 @@ const AccountPreview = ({ navigation, route }) => {
 
   const handleRazorpayClient = async () => {
     let json = {
-      appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
+      // appKey: "a40c761a-b664-4bc6-ab5a-bf073aa797d5",
       username: "9903044748",
       amount: +money,
-      customerMobileNumber: "",
+      // customerMobileNumber: "",
       externalRefNumber: "",
-      externalRefNumber2: "",
-      externalRefNumber3: "",
-      accountLabel: "AC1",
-      customerEmail: "",
-      pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
-      mode: "ALL",
+      // externalRefNumber2: "",
+      // externalRefNumber3: "",
+      // accountLabel: "AC1",
+      // customerEmail: "",
+      // pushTo: { deviceId: "1492621778|razorpay_pos_soundbox" },
+      // mode: "ALL",
     }
 
     // Convert json object to string
