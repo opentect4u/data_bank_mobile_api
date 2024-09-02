@@ -109,14 +109,14 @@
   <script>
     $('#submitBtn').click(function() {
       var bank = $('#bank').val();
-      console.log({bank_id: bank});
+      // console.log({bank_id: bank});
 
       $.ajax({
         type: "POST",
         url: "/super-admin/sms_url",
         data: { bank_id: bank},
         success: function(response) {
-          console.log(response);
+          // console.log(response);
           if(response.suc > 0 && response.msg.length > 0){
             $('#sms_temp').text(response.msg[0].template)
           }else{
@@ -124,7 +124,7 @@
           }        
         },
       error: function (error) {
-        console.log(error);
+        // console.log(error);
       },
     });
     });

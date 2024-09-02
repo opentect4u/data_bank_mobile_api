@@ -39,7 +39,7 @@ const check_sync_data = async (req, res) => {
 
         var unsync_data = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null)
 
-        console.log("========================///////",unsync_data.msg)
+        // console.log("========================///////",unsync_data.msg)
 
         if (unsync_data.msg[0].COUNT == 0 ) {
             res.json(true);

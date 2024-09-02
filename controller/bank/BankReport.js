@@ -9,7 +9,7 @@ const day_scroll_report=async(req,res)=>{
     var whrDAta = `bank_id='${user_data.bank_id}'  AND active_flag='Y'`,
         selectData = "branch_code,branch_name,branch_id ";
     let dbuser_data = await db_Select(selectData, "md_branch", whrDAta, null);
-    console.log(dbuser_data)
+    // console.log(dbuser_data)
     const datetimee = dateFormat(new Date(), "yyyy-mm-dd")
     var viewData = {
         title: "Day Scroll Report",

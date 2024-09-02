@@ -120,7 +120,7 @@
         data: JSON.stringify({ agent_code: agent_code }),
         contentType: "application/json",
         success: function (response) {
-          console.log(response);
+          // console.log(response);
           if (response == 1) {
             //alert("Not terminating in collection, an agent");
             Swal.fire({
@@ -139,8 +139,12 @@
                 const content = event.target.result;
                 const rows = content.split("@");
                 const firstRow = rows.shift(); // Remove and store the first row
-                // console.log('HERE');
-                sendBatches(rows, firstRow);
+                // // console.log('HERE');
+                var newDataSet = rows.filter(function (el) {
+                  return el != '' || el != '\r\n';
+                });
+                // // console.log(newDataSet);
+                sendBatches(newDataSet, firstRow);
               };
               reader.readAsText(file);
             } else {
@@ -149,7 +153,7 @@
           }
         },
         error: function (error) {
-          console.log(error);
+          // console.log(error);
         },
       });
     });
@@ -157,6 +161,7 @@
     function sendBatches(rows, firstRow) {
       const batchSize = 50;
       const totalBatches = Math.ceil(rows.length / batchSize);
+      // console.log(rows.length, rows.length / batchSize, totalBatches, 'TOT');
       let batchCount = 0;
       delete_agent_oldData();
       function processNextBatch() {
@@ -178,40 +183,40 @@
       processNextBatch();
     }
     function sendAjaxRequest(batch, firstRow, callback) {
-      $(".progressbar_viw").show();
-      var agent_id = $("#agent").val();
-      $.ajax({
-        type: "POST",
-        contentType: "application/json",
-        url: "/admin/upload_pctx_file_data",
-        data: JSON.stringify({
-          batch: batch,
-          firstRow: firstRow,
-          agent_id: agent_id,
-        }),
-        success: function (response) {
-          console.log("HERE IS AJAX Success:", response);
-          if(response.status){
-            $("#uploadButton").attr("disabled", true);
-            callback(); // Call the callback function to process the next batch
-          }else{
+        $(".progressbar_viw").show();
+        var agent_id = $("#agent").val();
+        $.ajax({
+          type: "POST",
+          contentType: "application/json",
+          url: "/admin/upload_pctx_file_data",
+          data: JSON.stringify({
+            batch: batch,
+            firstRow: firstRow,
+            agent_id: agent_id,
+          }),
+          success: function (response) {
+            // // console.log("HERE IS AJAX Success:", response);
+            if(response.status){
+              $("#uploadButton").attr("disabled", true);
+              callback(); // Call the callback function to process the next batch
+            }else{
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: response.ERROR,
+              });
+              // console.error("AJAX Error:", error);
+            }
+          },
+          error: function (error) {
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text: response.ERROR,
+              text: "This File Data Not Uploaded !",
             });
-            // console.error("AJAX Error:", error);
-          }
-        },
-        error: function (error) {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "This File Data Not Uploaded !",
-          });
-          console.error("AJAX Error:", error);
-        },
-      });
+            console.error("AJAX Error:", error);
+          },
+        });
     }
     function insert_agent_trans() {
       var agent_id = $("#agent").val();
@@ -220,10 +225,10 @@
         url: "/admin/create_agent_trans",
         data: { agent_code: agent_id },
         success: function (response) {
-          console.log(response);
+          // console.log(response);
         },
         error: function (error) {
-          console.log(error);
+          // console.log(error);
         },
       });
     }
@@ -242,7 +247,7 @@
         url: "/admin/agent_info",
         data: { agent_code: agent_id },
         success: function (response) {
-          console.log(response);
+          // console.log(response);
           $("#agent_info").show();
           $("#showAgentname").text(response.SUCCESS.msg[0].agent_name);
           $("#showBranch").text(response.SUCCESS.msg[0].branch_name);
@@ -250,7 +255,7 @@
           $("#showPhone_no").text(response.SUCCESS.msg[0].phone_no);
         },
         error: function (error) {
-          console.log(error);
+          // console.log(error);
         },
       });
     });
@@ -261,10 +266,10 @@
         url: "/admin/del_all_pctx_file_data",
         data: { agent_code: agent_id },
         success: function (response) {
-          console.log(response);
+          // console.log(response);
         },
         error: function (error) {
-          console.log(error);
+          // console.log(error);
         },
       });
     }

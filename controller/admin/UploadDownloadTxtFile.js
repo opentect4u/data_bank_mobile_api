@@ -15,12 +15,12 @@ const dtFmtInUpld = (inputDate) => {
     var parsedDate = parse(inputDate, 'dd.MM.yy', new Date());
     return format(parsedDate, 'yyyy-MM-dd');
     var inpDt = '29.08.23'
-    console.log(Date.parse(inpDt.replace('.', '-')));
+    // console.log(Date.parse(inpDt.replace('.', '-')));
     return dateFormat(Date.parse(inpDt.replace('.', '-')), 'yyyy-mm-dd');
 }
 
 const strDAta = (inputStr) => {
-    // console.log(inputStr)
+    // // console.log(inputStr)
     try {
         return inputStr.replace(/^\s*/, '').trim()
     } catch (error) {
@@ -106,7 +106,7 @@ const update_agent_amount = async (req, res) => {
 
         //     let whr = `bank_id=${user_data.bank_id} and branch_code='${user_data.branch_code}' agent_code='${value.agent_code}'`;   
         //    var resdata= await db_Select('*', 'md_agent', whr, null);
-        //    console.log("**********************", resdata)
+        //    // console.log("**********************", resdata)
 
         //db connection
         let fields = "clr_bal",
@@ -116,18 +116,18 @@ const update_agent_amount = async (req, res) => {
             flag = 1;
         let tableDate = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null);
 
-        //console.log("**********************", tableDate)
+        //// console.log("**********************", tableDate)
 
 
         if (tableDate.msg[0].CLR_BAL) {
-            console.log("**********************", tableDate.msg[0].CLR_BAL)
+            // console.log("**********************", tableDate.msg[0].CLR_BAL)
 
             let whr = `bank_id=${user_data.bank_id} and branch_code='${user_data.branch_code}' and agent_code='${value.agent_id}'`,
                 fields = `max_amt='${tableDate.msg[0].CLR_BAL}'`;
 
 
             var resdata = await db_Insert('md_agent', fields, null, whr, 1);
-            console.log("**********************", resdata)
+            // console.log("**********************", resdata)
 
 
         }
@@ -154,18 +154,18 @@ const upload_pctx_file_data = async (req, res) => {
         const file_AGENT_CODE = firstRow[6]
         var er
         const chk_arr = req.body.batch[0].split(',');
-        // console.log("========FIRST ROW==========", req.body.agent_id)
+        // // console.log("========FIRST ROW==========", req.body.agent_id)
         // for (let i = 0; i < req.body.batch.length; i++) {
-        // console.log(req.body.batch.length);
+        // // console.log(req.body.batch.length);
         if(user_data.branch_code == chk_arr[0].replace(/^\s*/, '').trim()){
             if(parseInt(selectAgentId) == parseInt(file_AGENT_CODE)){
                 for (let dt of req.body.batch) {
                     // var input = req.body.batch[i];
                     var input = dt;
                     const valuesArray = input.split(',');
-                    // console.log("************************",valuesArray.length)
+                    // // console.log("************************",valuesArray.length)
                     if (valuesArray.length == 9) {
-                        // console.log(JSON.stringify(valuesArray));
+                        // // console.log(JSON.stringify(valuesArray));
                         // for (let i = 0; i < valuesArray.length; i++) {
                         //     valuesArray[i].replace(/^\s*/, '').trim();
                         // }
@@ -241,7 +241,7 @@ const download_pcrx_file = async (req, res) => {
         const format = req.query.format;
         const transitionNumber = req.query.transaction_number;
         const user_data = req.session.user.user_data.msg[0];
-        // console.log(user_data);
+        // // console.log(user_data);
         const currTimeStamp = new Date().getTime();
         var text = '';
         switch (user_data.data_version) { // S-> Coching; C-> Dhanbad; N-> Normal;
@@ -253,7 +253,7 @@ const download_pcrx_file = async (req, res) => {
                     );
                     break;
             case "C":
-                // console.log(user_data.data_version, 'dataversion');
+                // // console.log(user_data.data_version, 'dataversion');
                 text = await dhanbad_version_download(
                 user_data,
                 agent_code,
@@ -272,7 +272,21 @@ const download_pcrx_file = async (req, res) => {
                 break;
         }
 
-        // console.log(text, 'TEXT IS HERE');
+        try {
+            var dateTime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+            var fld = `(agent_trans_no, bank_id, branch_code, agent_code, send_date, send_by, send_type, created_by, created_dt)`,
+            ival = `('${transitionNumber}', '${user_data.bank_id}', '${user_data.branch_code}', '${agent_code}', '${dateTime}', '${user_data.user_id}', 'M', '${user_data.user_id}', '${dateTime}')`;
+            var rr = await db_Insert("md_trans_log", fld, ival, null, 0)
+            // console.log(rr);
+            
+            var whr3 = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}' AND download_flag='N' AND agent_trans_no IS NOT NULL`,
+            fields = `download_flag='Y'`;
+            await db_Insert("td_collection", fields, null, whr3, 1)
+        } catch (error) {
+            console.log(error);
+        }
+
+        // // console.log(text, 'TEXT IS HERE');
         // res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + transitionNumber + '.txt"');
         if(format != 'C'){
             res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.txt"');
@@ -297,7 +311,7 @@ const coching_version_download = (user_data, agent_code, transitionNumber) => {
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
         
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
-        // console.log("=====================", res_dt)
+        // // console.log("=====================", res_dt)
         
         const formattedDate = dateFormat(new Date(), "dd.mm.yy"),
         currTime = dateFormat(new Date(), "HH.MM.ss")
@@ -342,7 +356,7 @@ const dhanbad_version_download = (user_data, agent_code, transitionNumber) => {
             var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
             
             let res_dt = await db_Select(select_q, "td_collection", whr, null);
-            // console.log("=====================", res_dt)
+            // // console.log("=====================", res_dt)
             
             const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
             currTime = dateFormat(new Date(), "HH.MM.ss")
@@ -379,10 +393,10 @@ const dhanbad_version_download = (user_data, agent_code, transitionNumber) => {
             formattedData = col_header + '\n' + formattedData
     
             const text = formattedData + "";
-            // console.log(text, 'LAALALLALALALALAL');
+            // // console.log(text, 'LAALALLALALALALAL');
             resolve(text)
         }catch(err){
-            console.log(err);
+            // console.log(err);
             reject(err)
         }
     })
@@ -394,7 +408,7 @@ const normal_version_download = (user_data, agent_code, transitionNumber) => {
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
         
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
-        // console.log("=====================", res_dt)
+        // // console.log("=====================", res_dt)
         
         const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
         currTime = dateFormat(new Date(), "HH.MM.ss")
@@ -480,12 +494,14 @@ const fetch_pcrx_file = async (req, res) => {
         const transitionNumber = req.query.transaction_number;
         const user_data = req.session.user.user_data.msg[0];
 
+        var dateTime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+
         let whereordb = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}'`;
         // const delst=await F_Delete(user_data.bank_id, 'TD_COLLECTION', whereordb);
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL AND download_flag = 'N'`;
         let res_dt = await db_Select('*', "td_collection", whr, null);
 
-        console.log('-=-=-=-=-=', res_dt)
+        // console.log('-=-=-=-=-=', res_dt)
 
         const dbdataarrayOfArrays = res_dt.msg.map((lData) => {
             return {
@@ -508,6 +524,13 @@ const fetch_pcrx_file = async (req, res) => {
         try {
             var uploaddb = await F_insert_bulk_data(user_data.bank_id, dbdataarrayOfArrays);
             if (uploaddb.suc == 1) {
+                try {
+                    var fld = `agent_trans_no, bank_id, branch_code, agent_code, send_date, send_by, created_by, created_dt`,
+                    ival = `'${transitionNumber}', '${user_data.bank_id}', '${user_data.branch_code}', '${agent_code}', '${dateTime}', '${user_data.user_id}', '${user_data.user_id}', '${dateTime}'`;
+                    await db_Insert("md_trans_log", fld, ival, null, 0)
+                } catch (error) {
+                    console.log(error);
+                }
                 var whr3 = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}' AND download_flag='N' AND agent_trans_no IS NOT NULL`,
                     fields = `download_flag='Y'`;
                 await db_Insert("td_collection", fields, null, whr3, 1)
@@ -518,7 +541,7 @@ const fetch_pcrx_file = async (req, res) => {
             
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
 
             return res.json(false);
         }
@@ -628,7 +651,7 @@ const del_all_pctx_file_data = async (req, res) => {
         let delwhr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND agent_code='${value.agent_code}'`;
 
         var res_del = await db_Delete("td_account_dtls", delwhr)
-        console.log("**********************", res_del)
+        // console.log("**********************", res_del)
         res.json({
             "SUCCESS": res_del,
             "status": true
@@ -667,7 +690,7 @@ const fetchdata_to_server = async (req, res) => {
             order = null,
             flag = 1;
         let tableDate = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null);
-        console.log("**********************", tableDate)
+        // console.log("**********************", tableDate)
 
         for (let dbdata of tableDate.msg) {
             try {

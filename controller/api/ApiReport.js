@@ -253,7 +253,8 @@ const date_wise_mini_statement = async (req, res) => {
 
         let select = `account_number acc_num, account_type trans_type, transaction_date PAID_DT, deposit_amount PAID_AMT, balance_amount BALANCE_AMT`,
             where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number=${acc_num} AND account_type='${value.account_type}'`,
-            order = `ORDER BY collected_at desc`;
+            // order = `ORDER BY collected_at desc`;
+            order = `ORDER BY transaction_date desc, collected_at desc`;
         var resDt = await db_Select(select, 'td_collection', where, order);
         /*  var pax_id = value.bank_id,
               fields = "acc_num, trans_type, paid_dt, paid_amt, balance_amt",
@@ -263,7 +264,7 @@ const date_wise_mini_statement = async (req, res) => {
               flag = 1;
           var resDt = await F_Select(pax_id, fields, table_name, where, order, flag)*/
 
-        console.log(resDt)
+        // console.log(resDt)
 
         res.json({
             "success": resDt,
@@ -273,7 +274,7 @@ const date_wise_mini_statement = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.json({
             "error": error,
             "status": false
@@ -311,20 +312,26 @@ const account_wise_scroll_report = async (req, res) => {
         // var orderdata = `ORDER BY transaction_date DESC`
         // let resData = await db_Select(select, "td_collection", where, orderdata);
 
-        let select = "DISTINCT DATE_FORMAT(a.transaction_date, '%Y-%m-%d') as date,a.account_type,a.account_number,a.account_holder_name,a.deposit_amount,a.receipt_no,a.collected_at, b.opening_date, b.current_balance",
-            where = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.agent_code AND a.account_type=b.acc_type AND a.account_number=b.account_number AND a.bank_id=${value.bank_id} AND a.branch_code='${value.branch_code}' AND a.agent_code='${value.agent_code}' AND a.account_number=${value.account_number} AND a.account_type='${value.account_type}' AND a.transaction_date BETWEEN '${from_date}' AND '${to_date}'`;
+        let select = "DISTINCT DATE_FORMAT(a.transaction_date, '%Y-%m-%d') as date,a.account_type,a.account_number,a.account_holder_name,a.deposit_amount,a.receipt_no,a.collected_at, b.opening_date, b.current_balance, a.collected_at",
+        where = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.agent_code AND a.account_type=b.acc_type AND a.account_number=b.account_number AND a.bank_id=${value.bank_id} AND a.branch_code='${value.branch_code}' AND a.agent_code='${value.agent_code}' AND a.account_number=${value.account_number} AND a.account_type='${value.account_type}' AND a.transaction_date BETWEEN '${from_date}' AND '${to_date}'`;
         var orderdata = `ORDER BY a.transaction_date DESC`
         let resData = await db_Select(select, "td_collection a, td_account_dtls b", where, orderdata);
+        // console.log(resData);
+        
 
         if(resData.suc > 0){
             var tot_col = 0
             for(let dt of resData.msg){
-                dt['closing_bal'] = dt.current_balance - tot_col
+                dt['closing_bal'] = (dt.current_balance - tot_col) > 0 ? dt.current_balance - tot_col : dt.current_balance
                 tot_col += dt.deposit_amount
-                dt['opening_bal'] = dt.current_balance - tot_col
+                if(value.account_type != 'L'){
+                    dt['opening_bal'] = (dt.current_balance - tot_col) > 0 ? dt.current_balance - tot_col : 0
+                }else{
+                    dt['opening_bal'] = dt.current_balance + tot_col
+                }
             }
         }
-        // console.log(resData);
+        // // console.log(resData);
         delete resData.sql
 
         res.json({
@@ -407,7 +414,7 @@ const day_tot_report = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
         res.json({
             "error": error,
             "status": false

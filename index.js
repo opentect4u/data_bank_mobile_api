@@ -1,5 +1,6 @@
 const express=require('express');
-const { UserRouter } = require('./routes/UserRouter');
+// const { UserRouter } = require('./routes/UserRouter');
+const { UserRouter } = require('./routes/userRouter');
 const { AdminRoutes } = require('./routes/adminRoutes');
 // const { F_Select } = require('./model/OrcModel');
 const dateFormat = require('dateformat');
@@ -83,7 +84,7 @@ app.get('/test', async (req, res) => {
   const { createStrWithZero } = require('./model/MasterModule');  
   var tot_col = '1300.00'
   var data = await createStrWithZero(10, tot_col.toString(), '0', 'P')
-  console.log(data);
+  // console.log(data);
   res.send(data.toString())
 })
 
@@ -105,10 +106,10 @@ setInterval(() => {
   // const datetime = dateFormat(new Date(), "HH:MM")
   // if (datetime == "01:00") {
     if (datetime == "23") {
-    console.log("Schedule time "+datetime);
+    // console.log("Schedule time "+datetime);
     update_endcollection()
   }
-  console.log("update_endcollection");
+  // console.log("update_endcollection");
 }, 1000*60*60);
 
 

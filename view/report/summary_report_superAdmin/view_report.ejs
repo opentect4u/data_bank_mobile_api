@@ -81,8 +81,8 @@
             url: "/super-admin/report_branch_name",
             data: { bank_id: bankId },
             success: function(response) {
-              console.log(response);
-              console.log(response.SUCCESS.branchData.msg)
+              // console.log(response);
+              // console.log(response.SUCCESS.branchData.msg)
              $('#branch').empty();
              $('#branch').append(`<option value="">Select Branch Name</option>`)
   
@@ -92,7 +92,7 @@
              
             },
           error: function (error) {
-            console.log(error);
+            // console.log(error);
           //   tbody.empty();
           },
         });
@@ -109,19 +109,19 @@
             url: "/super-admin/agent_data_report",
             data: { bank_id: bank, branch_id: branch},
             success: function(response) {
-              // console.log(response)
-              console.log(response.msg);
+              // // console.log(response)
+              // console.log(response.msg);
              $('#agent_code').empty();
              $('#agent_code').append(`<option value="">Select Agent</option>`)
             
               response.msg.forEach(function(resData) {
-                console.log(resData);
+                // console.log(resData);
                   $('#agent_code').append('<option value="' + resData.agent_code + '">' + resData.agent_name + '</option>');
               });
              
             },
           error: function (error) {
-            console.log(error);
+            // console.log(error);
           //   tbody.empty();
           },
         });
@@ -133,13 +133,13 @@
     var branch = $('#branch').val();
     var bank = $('#bank').val();
     var agent = $('#agent_code').val();
-    // console.log({ bank_id: bank, branch_id: branch, agent_code: agent });
+    // // console.log({ bank_id: bank, branch_id: branch, agent_code: agent });
     $.ajax({
       type: "POST",
       url: "/super-admin/summary_report_post_admin",
       data: { bank_id: bank, branch_id: branch, agent_code: agent },
       success: function(response) {
-        // console.log(response);
+        // // console.log(response);
         $('#showAgentDtls tbody').empty()
                 function formatDate(inputDate) {
                     const date = new Date(inputDate);
@@ -157,7 +157,7 @@
         if(response.suc > 0 && response.msg.length > 0){
          
           response.msg.forEach(function(resData) {
-        // console.log(resData);
+        // // console.log(resData);
         total_amount+=resData.deposit_amount
         
               $('#showAgentDtls tbody').append(`
@@ -197,7 +197,7 @@
        
       },
     error: function (error) {
-      console.log(error);
+      // console.log(error);
     //   tbody.empty();
     },
   });

@@ -1,19 +1,19 @@
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const dateFormat = require('dateformat');
-const { db_Insert, db_Select } = require('../../model/MasterModule');
+const { db_Insert, db_Select, db_Delete } = require('../../model/MasterModule');
 const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
 //login View
 const agent = async (req, res) => {
     try {
         const user_data = req.session.user.user_data.msg[0];
         if (req.params.branch_id) {
-            let select = 'c.branch_name,a.id, a.user_id,a.active_flag,a.device_id,a.device_sl_no,b.agent_name,b.agent_address,b.phone_no,b.email_id,b.max_amt',
+            let select = 'c.branch_name,a.id, a.user_id,a.active_flag,a.device_id,a.device_sl_no,b.agent_name,b.agent_address,b.phone_no,b.email_id,b.max_amt, a.branch_code',
                 table_name = 'md_user as a, md_agent as b,md_branch AS c',
                 whr = `a.user_id=b.agent_code AND a.branch_code=c.branch_code AND a.bank_id=c.bank_id AND a.bank_id='${user_data.bank_id}' AND b.bank_id='${user_data.bank_id}' AND b.branch_code='${req.params.branch_id}' AND a.user_type='O'`;
             var resData = await db_Select(select, table_name, whr, null)
         } else {
-            let select = 'c.branch_name,a.id, a.user_id,a.active_flag,a.device_id,a.device_sl_no,b.agent_name,b.agent_address,b.phone_no,b.email_id,b.max_amt',
+            let select = 'c.branch_name,a.id, a.user_id,a.active_flag,a.device_id,a.device_sl_no,b.agent_name,b.agent_address,b.phone_no,b.email_id,b.max_amt, a.branch_code',
                 table_name = 'md_user as a, md_agent as b,md_branch AS c',
                 whr = `a.user_id=b.agent_code AND a.branch_code=c.branch_code AND a.bank_id=c.bank_id AND a.bank_id='${user_data.bank_id}' AND b.bank_id='${user_data.bank_id}' AND a.user_type='O'`;
             var resData = await db_Select(select, table_name, whr, null)
@@ -90,7 +90,7 @@ const editAgent = async (req, res) => {
             table_name = 'md_user as a, md_agent as b,md_branch as c',
             whr = `a.user_id=b.agent_code AND c.bank_id=a.bank_id AND c.branch_code=a.branch_code AND a.bank_id='${user_data.bank_id}' AND b.bank_id='${user_data.bank_id}' AND a.user_type='O' AND a.id=${req.params['agent_id']}`;
         const resData = await db_Select(select, table_name, whr, null)
-        console.log("===///=======",resData)
+        // console.log("===///=======",resData)
         delete resData.sql
         var viewData = {
             title: "Agent",
@@ -133,16 +133,16 @@ const edit_save_agent = async (req, res) => {
         const user_data = req.session.user.user_data.msg[0];
 
         let active_flag = (value.agent_active) ? 'Y' : 'N';
-        console.log('===', (value.agent_active) ? 'Y' : 'N')
+        // console.log('===', (value.agent_active) ? 'Y' : 'N')
 
         if (active_flag == 'Y') {
 
             let whcheck = `bank_id='${user_data.bank_id}'`;
             let resdata = await db_Select('IF(SUM(no_of_users)>0, no_of_users, 0) as no_of_users', 'md_subscription', whcheck, null);
-            console.log('==========////========', resdata.msg[0].no_of_users)
+            // console.log('==========////========', resdata.msg[0].no_of_users)
             let whcheck_agent = `bank_id='${user_data.bank_id}' AND active_flag='Y' and user_type='O'`;
             let resdata_agent = await db_Select('ifnull(count(*),0) as total_agent', 'md_user', whcheck_agent, null);
-            console.log('********++++++**********', resdata_agent.msg[0].total_agent)
+            // console.log('********++++++**********', resdata_agent.msg[0].total_agent)
             if (resdata_agent.msg[0].total_agent < resdata.msg[0].no_of_users) {
 
 
@@ -221,5 +221,102 @@ const checkedUnicUser = async (req, res) => {
     }
 }
 
-module.exports = { agent, editAgent, edit_save_agent,checkedUnicUser }
+const check_user_collection = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            agent_code: Joi.required()
+        });
+        const { error, value } = schema.validate(req.query, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+
+        var res_msg = '', allow_flag = 0;
+        //db connection
+        var fields = "count(*) tot_row",
+            table_name = "md_agent_trans",
+            where = `agent_code = '${value.agent_code}' AND coll_flag = 'Y'`,
+            order = null;
+        let tableDate = await db_Select(fields, table_name, where, order);
+
+        if(tableDate.suc > 0){
+            if(tableDate.msg[0].tot_row > 0){
+                res_msg = 'Active collection'
+                allow_flag = 0
+            }else{
+                var fields = "count(*) tot_row",
+                    table_name = "td_collection",
+                    where = `agent_code = '${value.agent_code}' AND agent_trans_no is null`,
+                    order = null;
+                let chk_dt = await db_Select(fields, table_name, where, order);
+                if(chk_dt.suc > 0){
+                    if(chk_dt.msg[0].tot_row > 0){
+                        res_msg = 'All data not downloaded as PCRX'
+                        allow_flag = 0
+                    }else{
+                        res_msg = 'All data downloaded'
+                        allow_flag = 1
+                    }
+                }else{
+                    res_msg = 'Error occurs, fetching agent collection'
+                    allow_flag = 0
+                }
+            }
+        }else{
+            res_msg = 'Error occurs, fetching agent transaction'
+            allow_flag = 0
+        }
+
+        res.send({suc: 1, msg: allow_flag, comp_msg: res_msg});
+        
+    } catch (error) {
+        res.send({suc: 0, msg: JSON.stringify(error)});
+    }
+}
+
+const delete_agent = async (req, res) => {
+    const schema = Joi.object({
+        agent_code: Joi.required(),
+        branch_code: Joi.required()
+    });
+    const { error, value } = schema.validate(req.query, { abortEarly: false });
+    if (error) {
+        const errors = {};
+        error.details.forEach(detail => {
+            errors[detail.context.key] = detail.message;
+        });
+        return res.json({ error: errors });
+    }
+    var user_data = req.session.user.user_data.msg[0],
+    res_dt = {};
+
+    let agentdelwhr = `bank_id='${user_data.bank_id}' AND branch_code='${value.branch_code}'  AND user_id='${value.agent_code}'`;
+
+    var agentResDt = await db_Delete("md_user", agentdelwhr)
+
+    if(agentResDt.suc > 0){
+        let agentdelwhr = `bank_id='${user_data.bank_id}' AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}'`;
+    
+        var agentDel = await db_Delete("md_agent", agentdelwhr)
+
+        let trnsdelwhr = `bank_id='${user_data.bank_id}' AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}'`;
+    
+        var trnsDel = await db_Delete("md_agent_trans", trnsdelwhr)
+
+        let coldelwhr = `bank_id='${user_data.bank_id}' AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}'`;
+    
+        var colDel = await db_Delete("td_collection", coldelwhr)
+        res_dt = colDel
+        res.redirect('/bank/agent')
+    }else{
+        res_dt = agentResDt
+        res.redirect('/bank/agent')
+    }
+}
+
+module.exports = { agent, editAgent, edit_save_agent,checkedUnicUser, check_user_collection, delete_agent }
 // module.exports = { agent, addAgent, editAgent, edit_save_agent,checkedUnicUser }

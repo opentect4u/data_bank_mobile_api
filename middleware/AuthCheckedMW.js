@@ -12,7 +12,7 @@ const AuthCheckedMW=(req, res,next)=>{
 
 
 const logout = async (req, res,next) => {
-    // console.log(req.session);
+    // // console.log(req.session);
     // req.session.user = '';
     
     req.session.destroy()

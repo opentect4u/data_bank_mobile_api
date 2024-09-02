@@ -4,11 +4,11 @@ const db_Select = (select, table_name, whr, order, full_query='', full_query_fla
     var tb_whr = whr ? `WHERE ${whr}` : "";
     var tb_order = order ? order : "";
     let sql = !full_query_flag ? `SELECT ${select} FROM ${table_name} ${tb_whr} ${tb_order}` : full_query;
-    // console.log(sql);
+    // // console.log(sql);
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
             if (err) {
-                console.log(err);
+                // console.log(err);
                 data = { suc: 0, msg: JSON.stringify(err), sql };
             } else {
                 data = { suc: 1, msg: result, sql };
@@ -33,9 +33,9 @@ const db_Insert = (table_name, fields, values, whr, flag) => {
     }
     // console.log(sql);
     return new Promise((resolve, reject) => {
-        db.query(sql, (err, lastId) => {
+        db.query(sql, (err, lastId) => { 
             if (err) {
-                console.log(err);
+                // console.log(err);
                 data = { suc: 0, msg: JSON.stringify(err), lastId:0 };
             } else {
                 data = { suc: 1, msg: msg, lastId };
@@ -51,7 +51,7 @@ const db_Delete = (table_name, whr) => {
     return new Promise((resolve, reject) => {
         db.query(sql, (err, lastId) => {
             if (err) {
-                console.log(err);
+                // console.log(err);
                 data = { suc: 0, msg: JSON.stringify(err) };
             } else {
                 data = { suc: 1, msg: "Deleted Successfully !!" };
@@ -63,11 +63,11 @@ const db_Delete = (table_name, whr) => {
 
 const db_Check = async (fields, table_name, whr) => {
     var sql = `SELECT ${fields} FROM ${table_name} WHERE ${whr}`;
-    // console.log(sql);
+    // // console.log(sql);
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
             if (err) {
-                console.log(err);
+                // console.log(err);
                 data = { suc: 0, msg: JSON.stringify(err) };
             } else {
                 data = { suc: 1, msg: result.length };
@@ -82,7 +82,7 @@ const db_db_Select_Sqery = (sql) => {
     return new Promise((resolve, reject) => {
         db.query(sql, (err, result) => {
             if (err) {
-                console.log(err);
+                // console.log(err);
                 data = { suc: 0, msg: JSON.stringify(err), sql };
             } else {
                 data = { suc: 1, msg: result, sql };
@@ -94,15 +94,15 @@ const db_db_Select_Sqery = (sql) => {
 
 const createStrWithZero = (tot_row, str, chr_pad_with, flag) => { // S -> Suffix; P-> Prefix
     return new Promise((resolve, reject) => {
-        // console.log(str);
+        // // console.log(str);
         let tot_char_len = str.split('').length,
         finalStr = '';
-        // console.log(tot_char_len, 'len', (tot_row-tot_char_len), 'minus', str.length);
+        // // console.log(tot_char_len, 'len', (tot_row-tot_char_len), 'minus', str.length);
         if (tot_row > tot_char_len){
             for (let i = tot_char_len; i < tot_row; i++) {
               finalStr = finalStr.toString() + chr_pad_with.toString();
             }
-            // console.log(finalStr);
+            // // console.log(finalStr);
             if(flag != 'S'){
                 finalStr = finalStr + str
             }else{

@@ -43,7 +43,7 @@ const day_scroll_report_post = async(req,res)=>{
 
         let resData2 = await db_Select('*', "md_agent", `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}'`, null);
 
-        console.log("resData============",resData2);
+        // console.log("resData============",resData2);
         delete resData.sql
         var viewData = {
             title: "Day Scroll Report",
@@ -262,7 +262,7 @@ const summary_report_post = async(req,res)=>{
 
         let resData2 = await db_Select('*', "md_agent", `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}'`, null);
 
-        console.log("resData============",resData2);
+        // console.log("resData============",resData2);
         delete resData.sql
         var viewData = {
             title: "Day Scroll Report",
@@ -274,7 +274,7 @@ const summary_report_post = async(req,res)=>{
             agent_info:resData2.msg[0]
         };
 
-        console.log("Starting Date",viewData);
+        // console.log("Starting Date",viewData);
         res.render('common/layouts/main', viewData)
 
 

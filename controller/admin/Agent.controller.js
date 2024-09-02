@@ -203,7 +203,7 @@ const col_days_save = async (req, res) => {
         }
         res.redirect('/admin/col_days')
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         req.flash('danger', 'Something went wrong while updating please try again later.')
         res.redirect('/admin/col_days')
     }

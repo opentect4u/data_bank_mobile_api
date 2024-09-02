@@ -34,7 +34,7 @@
               <th>Agent Code</th>
               <th>Agent Name</th>
               <th>Mobile</th>
-              <!-- <th>Status</th> -->
+              <th>Status</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -47,27 +47,21 @@
               <td><%=item.user_id%></td>
               <td><%=item.agent_name%></td>
               <td><%=item.phone_no%></td>
-              <!-- <td>
-                <div class="custom-control custom-switch">
-                  <input
-                    type="checkbox"
-                    class="custom-control-input"
-                    id="customSwitch1"
-                    <%=(item.active_flag=='Y')?"checked":""%>
-                  />
-                  <label class="custom-control-label" for="customSwitch1"
-                    ></label
-                  >
-                </div>
-              </td> -->
+              <td>
+                <span class="badge badge-<%=(item.active_flag=='Y')?"success":"danger"%>"><%=(item.active_flag=='Y')?"Active":"Deactive"%></span>
+              </td>
 
               <td>
                 <a href="/bank/edit_agent/<%=item.id%>" class="btn btn-info"
                   >Edit</a
                 >
+                <% if(item.active_flag!='Y'){ %>
+                  <a href="/bank/delete_agent?agent_code=<%=item.user_id%>&branch_code=<%=item.branch_code%>" onclick="return chkUser('<%=item.user_id%>');" class="btn btn-danger"
+                    >Delete</a
+                  >
+                <% } %>
               </td>
             </tr>
-
             <% }); %>
           </tbody>
         </table>
@@ -85,6 +79,31 @@
         alert('Please select a branch before submitting.');
     }
 });
+
+function chkUser(id){
+  if(confirm('Are you sure you want to delete the agent permantly? Once an agent deleted then there is no provition to rollback.')){
+    $.ajax({
+      type: "GET",
+      url: "/bank/check_user_collection",
+      data: { agent_code: id },
+      success: function(response) {
+        // console.log(response);
+        if(response.suc > 0 && response.msg > 0){
+          return true
+        }else{
+          alert(response.suc > 0 ? response.comp_msg : response.msg)
+          return false
+        }
+      },
+      error: function (error) {
+        // console.log(error);
+        return false
+      },
+    });
+  }else{
+    return false;
+  }
+}
 </script>
 
 

@@ -7,7 +7,7 @@ const fileExtLimiter = (allowedExtArray) => {
         const fileExtensions = []
            Object.keys(files).forEach(key => {
             fileExtensions.push(path.extname(files[key].name))
-            console.log(path.extname(files[key].name));           
+            // console.log(path.extname(files[key].name));           
            })
 
            const allowed = fileExtensions.every(ext => allowedExtArray.includes(ext))

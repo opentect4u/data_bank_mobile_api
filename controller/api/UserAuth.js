@@ -105,7 +105,7 @@ const login = async (req, res) => {
             delete setting.sql;
 
             let trans = await db_Select(`sl_no, agent_code, coll_flag, DATE_FORMAT(send_date, '%Y-%m-%d') trans_dt`, 'md_agent_trans', `agent_code='${value.user_id}' AND coll_flag = 'Y'`, null)
-            console.log(trans);
+            // console.log(trans);
             delete trans.sql
 
             res.json({
@@ -144,7 +144,7 @@ const my_agent = async (req, res) => {
         var whrDAta = `device_id='${value.device_id}' AND active_flag='Y'AND user_type='O'`,
             selectData = "user_id";
         let res_data = await db_Select(selectData, "md_user", whrDAta, null);
-        // console.log("===length===",res_data.msg.length)
+        // // console.log("===length===",res_data.msg.length)
         delete res_data.sql;
         if (res_data.msg.length > 0) {
             res.json({
@@ -239,7 +239,7 @@ const app_version = async (req, res) => {
 
 
         let res_dt = await db_Select('*', "md_app_version", null, null);
-        console.log("===res_dt===",res_dt.msg[0].app_version)
+        // console.log("===res_dt===",res_dt.msg[0].app_version)
 
 
         let update_status=(res_dt.msg[0].app_version==value.app_version) ?'N':'Y';

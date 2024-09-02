@@ -24,7 +24,7 @@ const F_Select = (db_id, fields, table_name, where, order, flag, full_query = nu
     return new Promise(async (resolve, reject) => {
         where = where ? `WHERE ${where}` : '';
         order = order ? order : '';
-        // console.log(dbString);
+        // // console.log(dbString);
 
         // CREATE DB CONNECTION
         const pool = await oracledb.createPool(db_details[db_id]);
@@ -32,7 +32,7 @@ const F_Select = (db_id, fields, table_name, where, order, flag, full_query = nu
         // END
         // SQL QUERY
         let sql = `SELECT ${fields} FROM ${table_name} ${where} ${order}`
-        // console.log(sql);
+        // // console.log(sql);
 
        try {
              // EXICUTE QUERY
@@ -43,11 +43,11 @@ const F_Select = (db_id, fields, table_name, where, order, flag, full_query = nu
             // END
             // STORE RESULT SET IN A VARIABLE
             let rs = result.resultSet
-            // console.log(rs);
+            // // console.log(rs);
 
             // RETURN RESULT SET AS USER'S REQUIREMENT
             var data = flag > 0 ? await rs.getRows() : await rs.getRow(); // 0-> Single DataSet; 1-> Multiple DataSet
-            // console.log(await rs.getRows());
+            // // console.log(await rs.getRows());
             // CLOSE CONNECTION
             await con.close();
             await pool.close();
@@ -56,7 +56,7 @@ const F_Select = (db_id, fields, table_name, where, order, flag, full_query = nu
             resolve(data);
             // END
        }catch (err){
-            console.log(err);
+            // console.log(err);
             await con.close();
             await pool.close();
             resolve({suc:0, msg:err});
@@ -76,8 +76,8 @@ const F_Insert = (db_id,table_name, fields, val, values, where, flag) => {
         // SQL QUERY
         const sql = flag > 0 ? `UPDATE "${table_name}" SET ${fields} WHERE ${where}` :
             `INSERT INTO "${table_name}" (${fields}) VALUES (${val})`; // 0-> INSERT NEW DATA; 1-> UPDATE TABLE DATA
-        console.log(sql);
-        console.log(values);
+        // console.log(sql);
+        // console.log(values);
 
         try {
             // EXICUTE QUERY AND RETURN RESULT
@@ -91,7 +91,7 @@ const F_Insert = (db_id,table_name, fields, val, values, where, flag) => {
             // const res = await con.execute(`SELECT * FROM "${table_name}"`);
             resolve(res_data)
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             await con.close();
             await pool.close();
             resolve({ suc: 0, msg: err })
@@ -110,7 +110,7 @@ const F_Insert_Puri = (db_id, table_name, fields, val, values, where, flag) => {
       // SQL QUERY
       const sql = flag > 0 ? `UPDATE "${table_name}" SET ${fields} WHERE ${where}` :
           `INSERT INTO "${table_name}" ${fields} VALUES (:0, :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30)`; // 0-> INSERT NEW DATA; 1-> UPDATE TABLE DATA
-      // console.log(sql);
+      // // console.log(sql);
 
       try {
           // EXICUTE QUERY AND RETURN RESULT
@@ -122,12 +122,12 @@ const F_Insert_Puri = (db_id, table_name, fields, val, values, where, flag) => {
           // const res = await con.execute(`SELECT * FROM "${table_name}"`);
           resolve(res_data)
       } catch (err) {
-          console.log(err);
+          // console.log(err);
           resolve({ suc: 0, msg: err })
       }
       // await con.execute(sql, async (err, result) => {
       //     if (err) {
-      //         console.log(err);
+      //         // console.log(err);
       //         res_data = { suc: 0, msg: err }
       //     } else {
       //         res_data = { suc: 1, msg: result }
@@ -155,9 +155,9 @@ const RunProcedure = (db_id, pro_query, table_name, fields, where, order) => {
       });
 
       let rs = r.resultSet
-    //   console.log({rs});
+    //   // console.log({rs});
       var data = await rs.getRows();
-    //   console.log({data});
+    //   // console.log({data});
       await con.close();
       await pool.close();
       resolve(data);
@@ -174,7 +174,7 @@ return new Promise(async (resolve, reject) => {
       // SQL QUERY
       const sql = flag > 0 ? `UPDATE "${table_name}" SET ${fields} WHERE ${where}` :
           `INSERT INTO "${table_name}" (${fields}) VALUES ${fieldIndex}`; // 0-> INSERT NEW DATA; 1-> UPDATE TABLE DATA
-      console.log(sql, values);
+      // console.log(sql, values);
 
       try {
           // EXICUTE QUERY AND RETURN RESULT
@@ -188,7 +188,7 @@ return new Promise(async (resolve, reject) => {
           // const res = await con.execute(`SELECT * FROM "${table_name}"`);
           resolve(res_data)
       } catch (err) {
-          console.log(err);
+          // console.log(err);
     await con.close();
         await pool.close();
           resolve({ suc: 0, msg: err })
@@ -208,7 +208,7 @@ const SendNotification = () => {
         // END
         // SQL QUERY
         let sql = `SELECT SL_NO, NARRATION, SEND_USER_ID, VIEW_FLAG, CREATED_DT FROM td_notification order by sl_no desc`
-        console.log(sql);
+        // console.log(sql);
   
         // EXICUTE QUERY
         const result = await con.execute(sql, [], {
@@ -219,11 +219,11 @@ const SendNotification = () => {
   
         // STORE RESULT SET IN A VARIABLE
         let rs = result.resultSet
-        // console.log(rs);
+        // // console.log(rs);
   
         // RETURN RESULT SET AS USER'S REQUIREMENT
         var data = await rs.getRows(); // 0-> Single DataSet; 1-> Multiple DataSet
-        // console.log(await rs.getRows());
+        // // console.log(await rs.getRows());
         // END
   
         // CLOSE CONNECTION
@@ -245,17 +245,17 @@ const F_Delete = (db_id, table_name, where) => {
 
         // SQL QUERY
         const sql = `DELETE FROM ${table_name} WHERE ${where}`;
-        console.log(sql);
+        // console.log(sql);
 
         const result = await con.execute(sql, [], {
             resultSet: true,
             outFormat: oracledb.OUT_FORMAT_OBJECT
         });
         // END
-        console.log(result);
+        // console.log(result);
         // STORE RESULT SET IN A VARIABLE
         let rs = result.rowsAffected
-        // console.log(rs);
+        // // console.log(rs);
   
         // CLOSE CONNECTION
         // await con.release();
@@ -309,7 +309,7 @@ const F_insert_bulk_data=(db_id,binds)=>{
             await pool.close();
             resolve(res_data)
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             await con.close();
             await pool.close();
             resolve({ suc: 0, msg: err })

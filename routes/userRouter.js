@@ -1,6 +1,6 @@
 const express=require("express");
 const { register, login, my_agent, change_pin, app_version } = require("../controller/api/UserAuth");
-const { search_account, account_info } = require("../controller/api/AccountInfo");
+const { search_account, account_info, get_acc_prev_col } = require("../controller/api/AccountInfo");
 const { transaction, end_collection, now_date, collection_checked, total_collection } = require("../controller/api/Transaction");
 const { endcollectionMW } = require("../middleware/EndcollectionMW");
 const { day_scroll_report, type_wise_report, non_collection_report, mini_statement, date_wise_summary, date_wise_mini_statement, account_wise_scroll_report, last_five_transaction, day_tot_report } = require("../controller/api/ApiReport");
@@ -15,6 +15,7 @@ UserRouter.post('/login',login)
 UserRouter.post('/change_pin',change_pin)
 //Search account
 UserRouter.post('/search_account',search_account)
+UserRouter.post('/get_acc_prev_col',get_acc_prev_col)
 //Search account
 UserRouter.post('/account_info',account_info)
 

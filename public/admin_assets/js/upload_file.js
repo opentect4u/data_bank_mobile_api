@@ -52,7 +52,7 @@ document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
       const file = inputElement.files[0];
       if ((file.type === 'text/plain' && file.name.endsWith('.txt')) || (file.type === 'text/csv' && file.name.endsWith('.csv'))) {
         
-        console.log($("#agent").val())
+        // console.log($("#agent").val())
         if ($("#agent").val() == null || $("#agent").val() == "") {
           alert("Please select Agent")
           $("#uploadButton").attr("disabled", true);

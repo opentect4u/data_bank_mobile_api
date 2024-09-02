@@ -12,7 +12,7 @@ const todaydate = dateFormat(new Date(), "yyyy-mm-dd")
 
 const transaction = async (req, res) => {
     try {
-        console.log(req.body, 'Body');
+        // console.log(req.body, 'Body');
         const schema = Joi.object({
             // receipt_no: Joi.number().required(),
             bank_id: Joi.number().required(),
@@ -47,7 +47,7 @@ const transaction = async (req, res) => {
             whr = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND coll_flag='Y' AND end_flag='N'`;
 
         let checkedData = await db_Check(fields, "md_agent_trans", whr);
-        console.log("======checkedData===========", checkedData)
+        // console.log("======checkedData===========", checkedData)
 
         // =================================================================
         // =================================================================
@@ -60,15 +60,15 @@ const transaction = async (req, res) => {
         var totalallowamt = total_collectlimite.msg[0].tot_amt;
 
         var totalallowamt2 = total_collectlimite.msg[0].max_amt;
-        console.log("======totalallowamt===========", totalallowamt2)
+        // console.log("======totalallowamt===========", totalallowamt2)
         var cbalcheck5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND agent_trans_no IS NULL`
 
         let total_collectamttt = await db_Select("ifnull(SUM(deposit_amount),0) as deposit_amount", "td_collection", cbalcheck5, null);
 
-        // console.log(value.sec_amt_type, totalallowamt, (total_collectamttt.msg[0].deposit_amount + value.deposit_amount), (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))), 'LALALALALAAAAAAAAAAAAAA');
+        // // console.log(value.sec_amt_type, totalallowamt, (total_collectamttt.msg[0].deposit_amount + value.deposit_amount), (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))), 'LALALALALAAAAAAAAAAAAAA');
 
         if (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
-            console.log("tttttttttttttttttttttttttttttttt")
+            // console.log("tttttttttttttttttttttttttttttttt")
             if (checkedData.msg > 0) {
                 // let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
                 //     where = `bank_id=${value.bank_id} AND transaction_date = '${dateFormat(value.transaction_date, "yyyy-mm-dd")}'`;
@@ -99,7 +99,7 @@ const transaction = async (req, res) => {
                         let mobile = resData5.msg[0].mobile_no
                         await transactionSms(mobile, value.deposit_amount, value.account_holder_name, value.total_amount, recpt_no, datetimef, transtype, value.account_number, value.bank_id)
                             .then((result) => {
-                                console.log("==========---------========", result.data);
+                                // console.log("==========---------========", result.data);
                                 sms_status = true;
                             })
                             .catch((error) => {
@@ -154,11 +154,11 @@ const transaction = async (req, res) => {
                 // orderB = `ORDER BY receipt_no DESC `;
                 let resData = await db_Select(select, "td_collection", where, null);
 
-                console.log("===========rc no ===============", resData)
+                // console.log("===========rc no ===============", resData)
 
                 const recpt_no = resData.msg[0].rc_no;*/
                 let recpt_no = timestamp;
-                console.log("===========rc no ===============", recpt_no)
+                // console.log("===========rc no ===============", recpt_no)
                 let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
                     transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
                     values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}')`;
@@ -174,7 +174,7 @@ const transaction = async (req, res) => {
                     let select5 = "mobile_no",
                         where5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' `;
                     let resData5 = await db_Select(select5, "td_account_dtls", where5, null);
-                    console.log("===========mobile==============", resData5);
+                    // console.log("===========mobile==============", resData5);
                     var transtype = (value.account_type == 'D') ? "daily deposit" : (value.account_type == 'L') ? "loan" : "";
 
                     var sms_status = false;
@@ -186,7 +186,7 @@ const transaction = async (req, res) => {
 
                         await transactionSms(mobile, value.deposit_amount, value.account_holder_name, value.total_amount, recpt_no, datetimef, transtype, value.account_number, value.bank_id)
                             .then((result) => {
-                                console.log("==========---------========", result.data);
+                                // console.log("==========---------========", result.data);
                                 sms_status = true;
                             })
                             .catch((error) => {

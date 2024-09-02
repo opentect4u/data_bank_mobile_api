@@ -61,7 +61,7 @@
             url: "/super-admin/get_branch_name",
             data: { bank_id: bankId },
             success: function(response) {
-              // console.log(response.SUCCESS.branchData.msg)
+              // // console.log(response.SUCCESS.branchData.msg)
              $('#branch').empty();
              $('#branch').append(`<option value="">Select Branch Name</option>`)
              
@@ -71,7 +71,7 @@
              
             },
           error: function (error) {
-            console.log(error);
+            // console.log(error);
           //   tbody.empty();
           },
         });
@@ -84,18 +84,18 @@
     $('#submitBtn').click(function () {
       var branch = $('#branch').val();
       var bank = $('#bank').val();
-      console.log({ bank_id: bank, branch_id: branch });
+      // console.log({ bank_id: bank, branch_id: branch });
       $.ajax({
         type: "POST",
         url: "/super-admin/total_user",
         data: { bank_id: bank},
         success: function(response) {
-          console.log(response);
+          // console.log(response);
           $('#act_dt').text(response.msg.act_dt)
           $('#inact_dt').text(response.msg.deact_dt)
         },
       error: function (error) {
-        console.log(error);
+        // console.log(error);
       },
     });
   });

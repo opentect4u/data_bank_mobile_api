@@ -12,7 +12,7 @@ const transactionSms = async (phone_no, amount, account_holder_name, total_depos
 
         let where = `bank_id=${bank_id}`
         let resData = await db_Select('*', "md_sms", where, null);
-        console.log('*************',resData);
+        // console.log('*************',resData);
         // if (resData5.msg[0]) {
             const smstemp = resData.msg[0].template;
             const replacedUrl = smstemp.replace('${phone_no}', phone_no)

@@ -12,7 +12,7 @@ const AdminRoutes = express.Router()
 
 // AdminRoutes.use((req, res, next) => {
 //     req.session['user'] = {id: 1, name: 'Amit', ShortCode: 'Laora'}
-//     console.log(req.session);
+//     // console.log(req.session);
 //     // req.session.user = '';
 //     // req.session.distroy()
 //     next()

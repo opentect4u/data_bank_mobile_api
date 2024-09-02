@@ -121,9 +121,9 @@
       url: "/admin/fetch_trans_number",
       data: {fDate: fDate, tDate: tDate },
       success: function (response) {
-        console.log(response.SUCCESS);
+        // console.log(response.SUCCESS);
 
-        console.log(response.SUCCESS);
+        // console.log(response.SUCCESS);
         tbody.empty();
         response.SUCCESS.msg.forEach(function (item, index) {
           var row =
@@ -151,7 +151,7 @@
         });
       },
       error: function (error) {
-        console.log(error);
+        // console.log(error);
         $("#transitionNumber option:not(:first)").remove();
       },
     });

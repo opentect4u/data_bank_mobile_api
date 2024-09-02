@@ -25,16 +25,18 @@ const search_account = async (req, res) => {
         const order = null
         let res_data = await db_Select(selectData, table_name, whrDAta, order);
 
+        // console.log(res_data);
+        
         
         delete res_data.sql;
         if(res_data.msg.length>0){
-            for(let dt of res_data.msg){
-                var trns_dt_row = await db_Select('transaction_date last_trns_dt, deposit_amount last_depo_amt', 'td_collection', `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code = '${value.agent_code}' AND account_number = '${dt.account_number}' AND account_type = '${value.flag}'`, 'ORDER by transaction_date DESC LIMIT 1')
-                if(trns_dt_row.suc > 0){
-                    dt['last_trns_dt'] = trns_dt_row.msg.length > 0 ? trns_dt_row.msg[0].last_trns_dt : ''
-                    dt['last_depo_amt'] = trns_dt_row.msg.length > 0 ? trns_dt_row.msg[0].last_depo_amt : 0
-                }
-            }
+            // for(let dt of res_data.msg){
+            //     var trns_dt_row = await db_Select('transaction_date last_trns_dt, deposit_amount last_depo_amt', 'td_collection', `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code = '${value.agent_code}' AND account_number = '${dt.account_number}' AND account_type = '${value.flag}'`, 'ORDER by transaction_date DESC LIMIT 1')
+            //     if(trns_dt_row.suc > 0){
+            //         dt['last_trns_dt'] = trns_dt_row.msg.length > 0 ? trns_dt_row.msg[0].last_trns_dt : ''
+            //         dt['last_depo_amt'] = trns_dt_row.msg.length > 0 ? trns_dt_row.msg[0].last_depo_amt : 0
+            //     }
+            // }
             res.json({
                 "success": res_data,
                 "status": true
@@ -44,6 +46,48 @@ const search_account = async (req, res) => {
                 "Error": "Search Account Not Found",
                 // "res_data":res_data,
                 "status": false
+            });
+        }
+    } catch (error) {
+        res.json({
+            "error": error,
+            "status": false
+        });
+    }
+}
+
+const get_acc_prev_col = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            bank_id: Joi.number().required(),
+            branch_code: Joi.string().required(),
+            agent_code: Joi.string().required(),
+            account_number: Joi.string().min(3).required(),
+            flag: Joi.string().max(1).required(),
+            receipt_no: Joi.optional().default(0)
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors,status:false });
+        }
+
+        var res_data = await db_Select('transaction_date last_trns_dt, deposit_amount last_depo_amt', 'td_collection', `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code = '${value.agent_code}' AND account_number = '${value.account_number}' AND account_type = '${value.flag}' ${value.receipt_no > 0 ? `AND receipt_no < ${value.receipt_no}` : ''}`, 'ORDER by transaction_date DESC LIMIT 1')
+        
+        
+        delete res_data.sql;
+        if(res_data.msg.length>0){
+            res.json({
+                "success": res_data,
+                "status": true
+            });
+        }else{
+            res.json({
+                "success": [{last_trns_dt: '', last_depo_amt: 0}],
+                "status": true
             });
         }
     } catch (error) {
@@ -97,4 +141,4 @@ const account_info = async (req, res) => {
     }
 }
 
-module.exports = { search_account,account_info }
+module.exports = { search_account,account_info,get_acc_prev_col }
