@@ -169,7 +169,7 @@ const AccountPreview = ({ navigation, route }) => {
     getLastTnxDate()
   }, [])
 
-  const sendCollectedMoney = async () => {
+  const sendCollectedMoney = async txnRes => {
     setLoading(true)
     setLoadingOverlay(true)
     todayDT = new Date().toISOString()
@@ -188,6 +188,15 @@ const AccountPreview = ({ navigation, route }) => {
       sec_amt_type: secAmtType,
       total_collection_amount: totalCollection,
       // flag:'D'
+
+      pay_mode: "O",
+      pay_txn_id: JSON.parse(txnRes)?.result?.txn?.txnId,
+      pay_amount: JSON.parse(txnRes)?.result?.txn?.amount,
+      pay_amount_original: JSON.parse(txnRes)?.result?.txn?.amountOriginal,
+      currency_code: JSON.parse(txnRes)?.result?.txn?.currencyCode,
+      payment_mode: JSON.parse(txnRes)?.result?.txn?.paymentMode,
+      pay_status: JSON.parse(txnRes)?.result?.txn?.status,
+      receipt_url: JSON.parse(txnRes)?.result?.receipt?.receiptUrl,
     }
 
     console.log("===========", obj)
@@ -215,14 +224,15 @@ const AccountPreview = ({ navigation, route }) => {
           setLoading(false)
           console.log("result else gggggggggggggggggg", res?.data)
 
-          alert("Data already submitted. Please upload new dataset.")
-          ToastAndroid.showWithGravityAndOffset(
-            res?.data,
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
-            25,
-            50,
-          )
+          // alert("Data already submitted. Please upload new dataset.")
+          // ToastAndroid.showWithGravityAndOffset(
+          //   res?.data,
+          //   ToastAndroid.SHORT,
+          //   ToastAndroid.CENTER,
+          //   25,
+          //   50,
+          // )
+          Alert.alert("Status", `${res?.data}`)
         }
       })
       .catch(err => {
@@ -505,7 +515,7 @@ const AccountPreview = ({ navigation, route }) => {
   //   }
   // }
 
-  const handleSave = () => {
+  const handleSave = txnRes => {
     getTotalDepositAmount()
     // console.log("##$$$$###$$$", maximumAmount, money, totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", money + totalDepositedAmount)
@@ -528,7 +538,7 @@ const AccountPreview = ({ navigation, route }) => {
       if (maximumAmount >= parseFloat(money) + totalCollection) {
         console.log("MMMMMMMMMMMMMMMM")
         setIsSaveEnabled(true)
-        sendCollectedMoney()
+        sendCollectedMoney(txnRes)
         // maximumAmount -= money
         login()
       } // M
@@ -699,7 +709,6 @@ const AccountPreview = ({ navigation, route }) => {
             padding: 10,
           }}>
           <Text style={styles.info}>Preview</Text>
-
           <View style={styles.tableConatiner}>
             <Table
               borderStyle={{
@@ -710,10 +719,9 @@ const AccountPreview = ({ navigation, route }) => {
               <Rows data={tableData} textStyle={styles.text} />
             </Table>
           </View>
-
+          {/* 
           <View
             style={{
-              // alignSelf: "center",
               marginVertical: 15,
             }}>
             <RadioGroup
@@ -727,38 +735,38 @@ const AccountPreview = ({ navigation, route }) => {
               }}
             />
           </View>
-
-          {selectedId === "1" ? (
-            <View style={styles.inputContainer}>
-              <View style={styles.netTotalTableContainer}>
-                <Table
-                  borderStyle={{
-                    borderWidth: 1,
-                    borderColor: COLORS.lightScheme.primary,
-                  }}
-                  style={{
-                    backgroundColor: COLORS.lightScheme.secondaryContainer,
-                  }}>
-                  <Rows
-                    data={netTotalSectionTableData}
-                    textStyle={styles.netTotalText}
-                  />
-                </Table>
-              </View>
-              <View style={styles.buttonContainer}>
-                <CancelButtonComponent
-                  title={"Back"}
-                  customStyle={{
-                    marginTop: 10,
-                    backgroundColor: "white",
-                    colors: "red",
-                    width: "40%",
-                  }}
-                  handleOnpress={() => {
-                    navigation.goBack()
-                  }}
+          */}
+          {/* {selectedId === "1" ? ( */}
+          <View style={styles.inputContainer}>
+            <View style={styles.netTotalTableContainer}>
+              <Table
+                borderStyle={{
+                  borderWidth: 1,
+                  borderColor: COLORS.lightScheme.primary,
+                }}
+                style={{
+                  backgroundColor: COLORS.lightScheme.secondaryContainer,
+                }}>
+                <Rows
+                  data={netTotalSectionTableData}
+                  textStyle={styles.netTotalText}
                 />
-                <ButtonComponent
+              </Table>
+            </View>
+            <View style={styles.buttonContainer}>
+              <CancelButtonComponent
+                title={"Back"}
+                customStyle={{
+                  marginTop: 10,
+                  backgroundColor: "white",
+                  colors: "red",
+                  width: "40%",
+                }}
+                handleOnpress={() => {
+                  navigation.goBack()
+                }}
+              />
+              {/* <ButtonComponent
                   disabled={isLoading}
                   title={
                     !isLoading ? (
@@ -771,21 +779,7 @@ const AccountPreview = ({ navigation, route }) => {
                   handleOnpress={() => {
                     item?.acc_type != "L" ? handleSave() : handleSaveForLoan()
                   }}
-                  // disabled={isSaveEnabled}
-                />
-              </View>
-            </View>
-          ) : (
-            <View
-              style={{
-                flexDirection: "row",
-                // padding: 10,
-                marginBottom: 20,
-                // borderWidth: 2,
-                // borderColor: COLORS.lightScheme.primary,
-                justifyContent: "space-evenly",
-                alignItems: "center",
-              }}>
+                /> */}
               <TouchableOpacity
                 onPress={async () =>
                   await init()
@@ -796,7 +790,7 @@ const AccountPreview = ({ navigation, route }) => {
                       )
                       if (JSON.parse(tnxResponse)?.status === "success") {
                         item?.acc_type != "L"
-                          ? handleSave()
+                          ? handleSave(tnxResponse)
                           : handleSaveForLoan()
                         // Alert.alert(
                         //   `Transaction ID`,
@@ -804,6 +798,12 @@ const AccountPreview = ({ navigation, route }) => {
                         // )
                       } else {
                         console.log("tnxResponse value error...")
+                        // Alert.alert(
+                        //   "Error",
+                        //   `Some problem occurred while transaction. Error Status: ${
+                        //     JSON.parse(tnxResponse)?.status
+                        //   }`,
+                        // )
                       }
                     })
                     .catch(err => {
@@ -818,15 +818,69 @@ const AccountPreview = ({ navigation, route }) => {
                   padding: 10,
                   borderRadius: 50,
                 }}>
-                <Image
-                  source={razor}
-                  style={styles.image}
-                  resizeMode="cover"
-                  // onError={err => setIsImageLoad(false)}
-                />
+                {!isLoading ? (
+                  <Image
+                    source={razor}
+                    style={styles.image}
+                    resizeMode="cover"
+                    // onError={err => setIsImageLoad(false)}
+                  />
+                ) : (
+                  <ActivityIndicator color={COLORS.lightScheme.primary} />
+                )}
               </TouchableOpacity>
             </View>
-          )}
+          </View>
+          {/* ) : ( */}
+          {/* <View
+            style={{
+              flexDirection: "row",
+              // padding: 10,
+              marginBottom: 20,
+              // borderWidth: 2,
+              // borderColor: COLORS.lightScheme.primary,
+              justifyContent: "space-evenly",
+              alignItems: "center",
+            }}>
+            <TouchableOpacity
+              onPress={async () =>
+                await init()
+                  .then(() => {
+                    console.log(
+                      "TRANSACTION RES DATA================",
+                      tnxResponse,
+                    )
+                    if (JSON.parse(tnxResponse)?.status === "success") {
+                      item?.acc_type != "L" ? handleSave() : handleSaveForLoan()
+                      // Alert.alert(
+                      //   `Transaction ID`,
+                      //   `${tnxResponse?.result?.txn?.txnId}`,
+                      // )
+                    } else {
+                      console.log("tnxResponse value error...")
+                    }
+                  })
+                  .catch(err => {
+                    console.error("TNX Response Error!")
+                  })
+              }
+              style={{
+                // marginVertical: 20,
+                marginTop: 10,
+                borderWidth: 1,
+                borderColor: "black",
+                padding: 10,
+                borderRadius: 50,
+              }}>
+              <Image
+                source={razor}
+                style={styles.image}
+                resizeMode="cover"
+                // onError={err => setIsImageLoad(false)}
+              />
+            </TouchableOpacity>
+          </View> */}
+          {/* )} */}
         </ScrollView>
       ) : (
         <OverlayLoader />
