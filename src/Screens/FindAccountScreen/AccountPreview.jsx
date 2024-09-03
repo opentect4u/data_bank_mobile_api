@@ -21,20 +21,20 @@ import {
   Rows,
   Col,
 } from "react-native-table-component"
-import RazorpayCheckout from "react-native-razorpay"
-import RadioGroup from "react-native-radio-buttons-group"
-import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
-import InputComponent from "../../Components/InputComponent"
-import ButtonComponent from "../../Components/ButtonComponent"
+// import RazorpayCheckout from "react-native-razorpay"
+// import RadioGroup from "react-native-radio-buttons-group"
+// import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+// import InputComponent from "../../Components/InputComponent"
+// import ButtonComponent from "../../Components/ButtonComponent"
 import axios from "axios"
 import { AppStore } from "../../Context/AppContext"
-import { REACT_APP_BASE_URL } from "../../Config/config"
-import mainNavigationRoutes from "../../Routes/NavigationRoutes"
+// import { REACT_APP_BASE_URL } from "../../Config/config"
+// import mainNavigationRoutes from "../../Routes/NavigationRoutes"
 import { StackActions } from "@react-navigation/native"
 import { address } from "../../Routes/addresses"
-import { logo } from "../../Resources/ImageStrings/logo"
-import { gle } from "../../Resources/ImageStrings/gle"
-import { glej } from "../../Resources/ImageStrings/glej"
+// import { logo } from "../../Resources/ImageStrings/logo"
+// import { gle } from "../../Resources/ImageStrings/gle"
+// import { glej } from "../../Resources/ImageStrings/glej"
 import { Alert } from "react-native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import logoCut from "../../Resources/Images/logo_cut.png"
@@ -108,23 +108,23 @@ const AccountPreview = ({ navigation, route }) => {
     ],
   ]
 
-  const radioButtons = useMemo(
-    () => [
-      {
-        id: "1", // acts as primary key, should be unique and non-empty string
-        label: "Receive Cash",
-        value: "C",
-      },
-      {
-        id: "2",
-        label: "Pay Online",
-        value: "O",
-      },
-    ],
-    [],
-  )
+  // const radioButtons = useMemo(
+  //   () => [
+  //     {
+  //       id: "1", // acts as primary key, should be unique and non-empty string
+  //       label: "Receive Cash",
+  //       value: "C",
+  //     },
+  //     {
+  //       id: "2",
+  //       label: "Pay Online",
+  //       value: "O",
+  //     },
+  //   ],
+  //   [],
+  // )
 
-  const [selectedId, setSelectedId] = useState(() => "1")
+  // const [selectedId, setSelectedId] = useState(() => "1")
   // const [tnxResponse, setTnxResponse] = useState()
   var tnxResponse
 

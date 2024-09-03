@@ -17,6 +17,9 @@ const About = () => {
         <Text
           style={styles.containerText}>{`Current Version: ${version}`}</Text>
       </View>
+      <View style={styles.posContainer}>
+        <Text style={styles.containerText}>{`POS Version`}</Text>
+      </View>
 
       {update && (
         <View style={styles.nameContainerUpdate}>
@@ -45,6 +48,15 @@ const styles = StyleSheet.create({
     margin: 20,
     padding: 10,
     backgroundColor: "teal",
+    height: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 30,
+  },
+  posContainer: {
+    margin: 20,
+    padding: 10,
+    backgroundColor: "grey",
     height: 100,
     justifyContent: "center",
     alignItems: "center",
