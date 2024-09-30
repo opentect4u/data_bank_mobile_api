@@ -252,6 +252,8 @@ const AccountPreview = ({ navigation, route }) => {
 
   async function printReceipt(rcptNo) {
     try {
+      // let payload = `[C]<img>https://synergicportal.in/claim/Slogo2.png</img>\n`
+      // let payload = `[C]<img>file:///android_asset/Slogo2.png</img>\n`
       let payload = `[C]<font size='normal'>${bankName}</font>\n`
       payload += `[C]<font size='normal'>${branchName}</font>\n`
       payload += `[C]<font size='normal'>RECEIPT</font>\n`

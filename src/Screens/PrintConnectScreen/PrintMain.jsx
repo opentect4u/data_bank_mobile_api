@@ -18,6 +18,7 @@ import { PERMISSIONS, requestMultiple, RESULTS } from "react-native-permissions"
 import ItemList from "./ItemList"
 import SamplePrint from "./SamplePrint"
 import ThermalPrinterModule from "react-native-thermal-printer"
+import pic from "../../Resources/Images/headerlogo.png"
 
 const PrintMain = () => {
   const [pairedDevices, setPairedDevices] = useState([])
@@ -338,6 +339,8 @@ const PrintMain = () => {
       payload += `[C]8567y45rytryhfdhfgj\n`
 
       payload +=
+        // `[C]<img>https://fastly.picsum.photos/id/27/200/300.jpg?hmac=cxfyms4Ce9ExYqZqSCKEppGQpmi8rRNNaf46Lwr5iqA</img>\n` +
+        `[C]<img>file:///android_asset/Slogo2.png</img>\n` +
         `[C]<B><font size='big'>---------------</font>\n` +
         `[L]<b>RECEIPT NO : ${3242424}\n` +
         `[L]<b>VEHICLE TYPE : ${"sad"}\n` +

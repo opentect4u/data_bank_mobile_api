@@ -107,7 +107,13 @@ const FindAccountScreen = ({ navigation }) => {
       <CustomHeader />
       <View style={styles.container}>
         {/* Account Cards */}
-        <Text style={styles.title}>Daily</Text>
+        <Text style={styles.title}>
+          {params?.type === "D"
+            ? "Daily"
+            : params?.type === "L"
+            ? "Loan"
+            : "RD"}
+        </Text>
         {/* {isLoading} */}
         {isLoading && (
           <ActivityIndicator
