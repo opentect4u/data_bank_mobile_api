@@ -29,10 +29,20 @@ const transaction = async (req, res) => {
             total_collection_amount: Joi.number().precision(2).max(999999999999999.99).required(),
             collection_by: Joi.number().required(),
             sec_amt_type: Joi.string().valid('A', 'M').required(),
+            pay_mode: Joi.string().valid('O','F').default('F'),
+            pay_txn_id: Joi.string().optional().default(null),
+            pay_amount: Joi.string().optional().default(null),
+            pay_amount_original: Joi.string().optional().default(null),
+            currency_code: Joi.string().optional().default(null),
+            payment_mode: Joi.string().optional().default(null),
+            pay_status: Joi.string().optional().default(null),
+            receipt_url: Joi.string().optional().default(null)
             // collected_at: Joi.required(),
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
         if (error) {
+            console.log(error);
+            
             const errors = {};
             error.details.forEach(detail => {
                 errors[detail.context.key] = detail.message;
@@ -76,14 +86,24 @@ const transaction = async (req, res) => {
                 // const recpt_no = resData.msg[0].rc_no;
 
                 let recpt_no = timestamp;
+                let res_dt = {};
+                if(value.pay_mode != 'F'){
+                    let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at, pay_mode, pay_txn_id, pay_amount, pay_amount_original, currency_code, payment_mode, pay_status, receipt_url)',
+                        transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
+                        values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}', '${value.pay_mode}', '${value.pay_txn_id}', '${value.pay_amount}', '${value.pay_amount_original}', '${value.currency_code}', '${value.payment_mode}', '${value.pay_status}', '${value.receipt_url}')`;
+                    res_dt = await db_Insert("td_collection", fields, values, null, 0);
+                }else{
+                    let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
+                        transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
+                        values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}')`;
+                    res_dt = await db_Insert("td_collection", fields, values, null, 0);
+                }
 
+                // let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
+                //     transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
+                //     values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}')`;
+                // let res_dt = await db_Insert("td_collection", fields, values, null, 0);
 
-                let fields = '(receipt_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number,account_holder_name, deposit_amount,balance_amount, collection_by, collected_at)',
-                    transData = dateFormat(value.transaction_date, "yyyy-mm-dd HH:MM:ss"),
-                    values = `('${recpt_no}','${value.bank_id}','${value.branch_code}','${value.agent_code}','${transData}','${value.account_type}','${value.product_code}','${value.account_number}','${value.account_holder_name}','${value.deposit_amount}','${value.total_amount}','${value.collection_by}','${datetime}')`;
-                let res_dt = await db_Insert("td_collection", fields, values, null, 0);
-
-              
 
                 if (res_dt.suc == 1) {
                     let setdata = `current_balance=${value.total_amount}`,
@@ -228,6 +248,8 @@ const transaction = async (req, res) => {
 
 
     } catch (error) {
+        console.log(error);
+        
         res.json({
             "error": error,
             "status": false

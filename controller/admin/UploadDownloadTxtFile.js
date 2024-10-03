@@ -684,6 +684,7 @@ const fetchdata_to_server = async (req, res) => {
 
         //db connection
 		//AND a.MAT_DT>sysdate 
+        // DAILY DEPOSIT AUTO FETCHING DATA //
         let fields = "a.brn_cd,a.acc_num,b.cust_name,to_char(a.opening_dt,'yyyy-mm-dd') opening_dt,a.prn_amt,b.phone ",
             table_name = "TM_DEPOSIT a, MM_CUSTOMER b",
             where = `a.CUST_CD = b.CUST_CD AND a.ACC_TYPE_CD = 11 AND nvl(a.acc_status,'O') = 'O' AND a.constitution_cd !=1 AND a.brn_cd = ${user_data.branch_code} AND a.agent_cd = ${value.agent_code} ${user_data.after_maturity_coll != 'Y' ? 'AND a.MAT_DT>sysdate' : ''}`,

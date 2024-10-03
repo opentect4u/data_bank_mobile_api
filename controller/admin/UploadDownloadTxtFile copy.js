@@ -15,12 +15,12 @@ const dtFmtInUpld = (inputDate) => {
     var parsedDate = parse(inputDate, 'dd.MM.yy', new Date());
     return format(parsedDate, 'yyyy-MM-dd');
     var inpDt = '29.08.23'
-    console.log(Date.parse(inpDt.replace('.', '-')));
+    // console.log(Date.parse(inpDt.replace('.', '-')));
     return dateFormat(Date.parse(inpDt.replace('.', '-')), 'yyyy-mm-dd');
 }
 
 const strDAta = (inputStr) => {
-    // console.log(inputStr)
+    // // console.log(inputStr)
     try {
         return inputStr.replace(/^\s*/, '').trim()
     } catch (error) {
@@ -90,16 +90,16 @@ const upload_pctx_file_data = async (req, res) => {
         const firstRow = req.body.firstRow.split(',');
         const file_AGENT_CODE = firstRow[6]
         var er
-        // console.log("========FIRST ROW==========", req.body.agent_id)
+        // // console.log("========FIRST ROW==========", req.body.agent_id)
         // for (let i = 0; i < req.body.batch.length; i++) {
-        // console.log(req.body.batch.length);
+        // // console.log(req.body.batch.length);
         for (let dt of req.body.batch) {
             // var input = req.body.batch[i];
             var input = dt;
             const valuesArray = input.split(',');
-            // console.log("************************",valuesArray.length)
+            // // console.log("************************",valuesArray.length)
             if (valuesArray.length == 9) {
-                // console.log(JSON.stringify(valuesArray));
+                // // console.log(JSON.stringify(valuesArray));
                 // for (let i = 0; i < valuesArray.length; i++) {
                 //     valuesArray[i].replace(/^\s*/, '').trim();
                 // }
@@ -165,7 +165,7 @@ const download_pcrx_file = async (req, res) => {
         //AND download_flag='N'// onetime download
         // var whr = null;
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
-        console.log("=====================", res_dt)
+        // console.log("=====================", res_dt)
         // Format the date as "dd.mm.yy"
         const formattedDate = dateFormat(new Date(), "dd.MM.yy");
         let formattedData = `000,12345,0000000000106100.00,00000000000000000402,${String(agent_code).padStart(10, '0')},${formattedDate},12345\n`;
@@ -307,7 +307,7 @@ const del_all_pctx_file_data = async (req, res) => {
         let delwhr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND agent_code='${value.agent_code}'`;
 
         var res_del = await db_Delete("td_account_dtls", delwhr)
-        console.log("**********************", res_del)
+        // console.log("**********************", res_del)
         res.json({
             "SUCCESS": res_del,
             "status": true

@@ -15,12 +15,12 @@ const dtFmtInUpld = (inputDate) => {
     var parsedDate = parse(inputDate, 'dd.MM.yy', new Date());
     return format(parsedDate, 'yyyy-MM-dd');
     var inpDt = '29.08.23'
-    console.log(Date.parse(inpDt.replace('.', '-')));
+    // console.log(Date.parse(inpDt.replace('.', '-')));
     return dateFormat(Date.parse(inpDt.replace('.', '-')), 'yyyy-mm-dd');
 }
 
 const strDAta = (inputStr) => {
-    // console.log(inputStr)
+    // // console.log(inputStr)
     try {
         return inputStr.replace(/^\s*/, '').trim()
     } catch (error) {
@@ -106,7 +106,7 @@ const update_agent_amount = async (req, res) => {
 
         //     let whr = `bank_id=${user_data.bank_id} and branch_code='${user_data.branch_code}' agent_code='${value.agent_code}'`;   
         //    var resdata= await db_Select('*', 'md_agent', whr, null);
-        //    console.log("**********************", resdata)
+        //    // console.log("**********************", resdata)
 
         //db connection
         let fields = "clr_bal",
@@ -116,18 +116,18 @@ const update_agent_amount = async (req, res) => {
             flag = 1;
         let tableDate = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null);
 
-        //console.log("**********************", tableDate)
+        //// console.log("**********************", tableDate)
 
 
         if (tableDate.msg[0].CLR_BAL) {
-            console.log("**********************", tableDate.msg[0].CLR_BAL)
+            // console.log("**********************", tableDate.msg[0].CLR_BAL)
 
             let whr = `bank_id=${user_data.bank_id} and branch_code='${user_data.branch_code}' and agent_code='${value.agent_id}'`,
                 fields = `max_amt='${tableDate.msg[0].CLR_BAL}'`;
 
 
             var resdata = await db_Insert('md_agent', fields, null, whr, 1);
-            console.log("**********************", resdata)
+            // console.log("**********************", resdata)
 
 
         }
@@ -153,16 +153,16 @@ const upload_pctx_file_data = async (req, res) => {
         const firstRow = req.body.firstRow.split(',');
         const file_AGENT_CODE = firstRow[6]
         var er
-        // console.log("========FIRST ROW==========", req.body.agent_id)
+        // // console.log("========FIRST ROW==========", req.body.agent_id)
         // for (let i = 0; i < req.body.batch.length; i++) {
-        // console.log(req.body.batch.length);
+        // // console.log(req.body.batch.length);
         for (let dt of req.body.batch) {
             // var input = req.body.batch[i];
             var input = dt;
             const valuesArray = input.split(',');
-            // console.log("************************",valuesArray.length)
+            // // console.log("************************",valuesArray.length)
             if (valuesArray.length == 9) {
-                // console.log(JSON.stringify(valuesArray));
+                // // console.log(JSON.stringify(valuesArray));
                 // for (let i = 0; i < valuesArray.length; i++) {
                 //     valuesArray[i].replace(/^\s*/, '').trim();
                 // }
@@ -228,7 +228,7 @@ const download_pcrx_file = async (req, res) => {
         //AND download_flag='N'// onetime download
         // var whr = null;
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
-        console.log("=====================", res_dt)
+        // console.log("=====================", res_dt)
         // Format the date as "dd.mm.yy"
         const formattedDate = dateFormat(new Date(), "dd.MM.yy");
         let formattedData = `000,12345,0000000000106100.00,00000000000000000402,${String(agent_code).padStart(10, '0')},${formattedDate},12345\n`;
@@ -318,7 +318,7 @@ const fetch_pcrx_file = async (req, res) => {
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL AND download_flag = 'N'`;
         let res_dt = await db_Select('*', "td_collection", whr, null);
 
-        console.log('-=-=-=-=-=', res_dt)
+        // console.log('-=-=-=-=-=', res_dt)
 
         const dbdataarrayOfArrays = res_dt.msg.map((lData) => {
             return {
@@ -351,7 +351,7 @@ const fetch_pcrx_file = async (req, res) => {
             
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
 
             return res.json(false);
         }
@@ -462,7 +462,7 @@ const del_all_pctx_file_data = async (req, res) => {
         let delwhr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND agent_code='${value.agent_code}'`;
 
         var res_del = await db_Delete("td_account_dtls", delwhr)
-        console.log("**********************", res_del)
+        // console.log("**********************", res_del)
         res.json({
             "SUCCESS": res_del,
             "status": true

@@ -24,7 +24,7 @@ const update_endcollection = async () => {
 
             const nowdate = dateFormat(new Date(), "yyyy-mm-dd")
             const thisdata = dateFormat(calDate(ldata.send_date, ldata.allow_collection_days), "yyyy-mm-dd")
-            console.log(thisdata)
+            // console.log(thisdata)
             if (nowdate > thisdata) {
                 let transDate = ((ldata.agent_code).toString() + (ldata.sl_no).toString()).toString()
 
@@ -42,7 +42,7 @@ const update_endcollection = async () => {
         }
 
     } catch (error) {
-        console.log(error)
+        // console.log(error)
     }
 }
 
