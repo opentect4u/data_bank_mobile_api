@@ -8,7 +8,7 @@ const nowdate = dateFormat(new Date() - 1, "yyyy-mm-dd")
 
 const { parse, format } = require('date-fns');
 const Joi = require("joi");
-const { F_Select, F_Insert, F_Delete, F_insert_bulk_data } = require("../../model/OrcModel");
+const { F_Select, F_Insert, F_Delete, F_insert_bulk_data, RunProcedure } = require("../../model/OrcModel");
 const { CLIENT_RENEG_LIMIT } = require("tls");
 
 const dtFmtInUpld = (inputDate) => {
@@ -35,7 +35,7 @@ const upload_pctx = async (req, res) => {
         selectData = "a.user_id,b.agent_name";
     let dbuser_data = await db_Select(selectData, "md_user a, md_agent b", whrDAta, null);
 
-    var template = (user_data.data_trf == 'A') ? "/upload_file/upload_data_api" : "/upload_file/upload_pctx";
+    var template = (user_data.data_trf != 'M') ? "/upload_file/upload_data_api" : "/upload_file/upload_pctx";
 
     // var template="/upload_file/upload_pctx";
     // var template="/upload_file/upload_data_api";
@@ -679,38 +679,103 @@ const fetchdata_to_server = async (req, res) => {
             return res.json({ error: errors });
         }
         const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
-        const user_data = req.session.user.user_data.msg[0];
-
-
-        //db connection
-		//AND a.MAT_DT>sysdate 
-        // DAILY DEPOSIT AUTO FETCHING DATA //
-        let fields = "a.brn_cd,a.acc_num,b.cust_name,to_char(a.opening_dt,'yyyy-mm-dd') opening_dt,a.prn_amt,b.phone ",
-            table_name = "TM_DEPOSIT a, MM_CUSTOMER b",
-            where = `a.CUST_CD = b.CUST_CD AND a.ACC_TYPE_CD = 11 AND nvl(a.acc_status,'O') = 'O' AND a.constitution_cd !=1 AND a.brn_cd = ${user_data.branch_code} AND a.agent_cd = ${value.agent_code} ${user_data.after_maturity_coll != 'Y' ? 'AND a.MAT_DT>sysdate' : ''}`,
-            order = null,
-            flag = 1;
-        let tableDate = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null);
-        // console.log("**********************", tableDate)
-
-        for (let dbdata of tableDate.msg) {
-            try {
-                var fields2 = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number,mobile_no, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
-                    values = `('${user_data.bank_id}','${user_data.branch_code}','${value.agent_code}','${datetime}','D','D','DDSD',${dbdata.ACC_NUM},${dbdata.PHONE},'${dbdata.CUST_NAME}', '${dbdata.OPENING_DT}','${dbdata.PRN_AMT}','${user_data.id}','${datetime}')`;
-
-                var res_dt = await db_Insert("td_account_dtls", fields2, values, null, 0);
-                er = true
-            } catch (error) {
-                er = error
-            }
-
+        const user_data = req.session.user.user_data.msg[0], res_dt = {};
+        
+        switch (user_data.data_trf) {
+            case 'A':
+                res_dt = await fetchDataToServerWithAPI(user_data, value)
+                break;
+            case 'P':
+                res_dt = await fetchDataToServerWithProcedure(user_data, value)
+                break;
+        
+            default:
+                res_dt = {"ERROR": 'No User Data transfer flag match', "status": false}
+                break;
         }
-        (er == true) ? res.json(er) : res.json(er)
+        res.json(res_dt)
     } catch (error) {
         res.json({
             "ERROR": error,
             "status": false
         });
     }
+}
+
+const fetchDataToServerWithAPI = (userData, value) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+            const user_data = userData;     
+    
+            //db connection
+            //AND a.MAT_DT>sysdate 
+            // DAILY DEPOSIT AUTO FETCHING DATA //
+            let fields = "a.brn_cd,a.acc_num,b.cust_name,to_char(a.opening_dt,'yyyy-mm-dd') opening_dt,a.prn_amt,b.phone ",
+                table_name = "TM_DEPOSIT a, MM_CUSTOMER b",
+                where = `a.CUST_CD = b.CUST_CD AND a.ACC_TYPE_CD = 11 AND nvl(a.acc_status,'O') = 'O' AND a.constitution_cd !=1 AND a.brn_cd = ${user_data.branch_code} AND a.agent_cd = ${value.agent_code} ${user_data.after_maturity_coll != 'Y' ? 'AND a.MAT_DT>sysdate' : ''}`,
+                order = null,
+                flag = 1;
+            let tableDate = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null);
+            // console.log("**********************", tableDate)
+    
+            for (let dbdata of tableDate.msg) {
+                try {
+                    var fields2 = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number,mobile_no, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
+                        values = `('${user_data.bank_id}','${user_data.branch_code}','${value.agent_code}','${datetime}','D','D','DDSD',${dbdata.ACC_NUM},${dbdata.PHONE},'${dbdata.CUST_NAME}', '${dbdata.OPENING_DT}','${dbdata.PRN_AMT}','${user_data.id}','${datetime}')`;
+    
+                    var res_dt = await db_Insert("td_account_dtls", fields2, values, null, 0);
+                    er = true
+                } catch (error) {
+                    er = error
+                }
+    
+            }
+            (er == true) ? resolve(er) : resolve(er)
+        } catch (error) {
+            resolve({
+                "ERROR": error,
+                "status": false
+            });
+        }
+    })
+}
+
+const fetchDataToServerWithProcedure = (userData, value) => {
+    return new Promise(async (resolve, reject) => {
+        try{
+            const currDate = dateFormat(new Date(), "dd/mm/yyyy"),
+            datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
+            user_data = userData
+            var pro_query = `DECLARE AS_AGENT_CD VARCHAR2(200); ADT_DT DATE; AS_BRN_CD VARCHAR2(200); BEGIN AS_AGENT_CD := '${value.agent_code}'; ADT_DT := to_date('${currDate}','dd/mm/yyyy'); AS_BRN_CD := '${user_data.branch_code}'; P_GENERATE_EXPFILE_ANDROID( AS_AGENT_CD => AS_AGENT_CD, ADT_DT => ADT_DT, AS_BRN_CD => AS_BRN_CD ); END;`,
+            table_name = 'tt_app_export',
+            fields = '*',
+            where = null,
+            order = null;
+            // console.log(pro_query);
+            var tableDate = await RunProcedure(user_data.bank_id, pro_query, table_name, fields, where, order)
+            if(tableDate.length > 0){
+                for (let dbdata of tableDate) {
+                    try {
+                        var fields2 = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number,mobile_no, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
+                            values = `('${user_data.bank_id}','${user_data.branch_code}','${value.agent_code}','${datetime}','${dbdata.DEPOSIT_LOAN_FLAG}','${dbdata.ACC_TYPE}','${dbdata.PRODUCT_CODE}',${dbdata.ACCOUNT_NUMBER},${dbdata.MOBILE_NO},'${dbdata.CUSTOMER_NAME}', '${dateFormat(dbdata.OPENING_DATE, 'yyyy-mm-dd')}','${dbdata.CURRENT_BALANCE}','${user_data.id}','${datetime}')`;
+        
+                        var res_dt = await db_Insert("td_account_dtls", fields2, values, null, 0);
+                        er = true
+                    } catch (error) {
+                        er = error
+                    }
+                }
+            }else{
+                err = false
+            }
+            (er == true) ? resolve(er) : resolve(er)
+        }catch(error){
+            resolve({
+                "ERROR": error,
+                "status": false
+            })
+        }
+    })
 }
 module.exports = { fetch_pcrx_file, upload_pctx, upload_pctx_file_data, download_pcrx, download_pcrx_file, create_agent_trans, show_upload_account, fetch_show_account, del_all_pctx_file_data, fetchdata_to_server, update_agent_amount }

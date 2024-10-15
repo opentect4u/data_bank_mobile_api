@@ -146,21 +146,27 @@ const RunProcedure = (db_id, pro_query, table_name, fields, where, order) => {
 
       const pool = await oracledb.createPool(db_details[db_id]);
       const con = await pool.getConnection();
-  //pro_query = "";
-      let query = pro_query;//`DECLARE AD_ACC_TYPE_CD NUMBER; AS_ACC_NUM VARCHAR2(200); ADT_FROM_DT DATE; ADT_TO_DT DATE; BEGIN AD_ACC_TYPE_CD := 6; AS_ACC_NUM := '1044100002338'; ADT_FROM_DT := to_date(to_char('20-Oct-2021')); ADT_TO_DT := to_date(to_char('20-Oct-2022')); P_ACC_STMT( AD_ACC_TYPE_CD => AD_ACC_TYPE_CD, AS_ACC_NUM => AS_ACC_NUM, ADT_FROM_DT => ADT_FROM_DT, ADT_TO_DT => ADT_TO_DT ); END;`;
-      await con.execute(query);
-      const r = await con.execute(`SELECT ${fields} FROM ${table_name} ${where} ${order}`, [], {
-          resultSet: true,
-          outFormat: oracledb.OUT_FORMAT_OBJECT
-      });
-
-      let rs = r.resultSet
-    //   // console.log({rs});
-      var data = await rs.getRows();
-    //   // console.log({data});
-      await con.close();
-      await pool.close();
-      resolve(data);
+      try{
+        //pro_query = "";
+        let query = pro_query;//`DECLARE AD_ACC_TYPE_CD NUMBER; AS_ACC_NUM VARCHAR2(200); ADT_FROM_DT DATE; ADT_TO_DT DATE; BEGIN AD_ACC_TYPE_CD := 6; AS_ACC_NUM := '1044100002338'; ADT_FROM_DT := to_date(to_char('20-Oct-2021')); ADT_TO_DT := to_date(to_char('20-Oct-2022')); P_ACC_STMT( AD_ACC_TYPE_CD => AD_ACC_TYPE_CD, AS_ACC_NUM => AS_ACC_NUM, ADT_FROM_DT => ADT_FROM_DT, ADT_TO_DT => ADT_TO_DT ); END;`;
+        await con.execute(query);
+        const r = await con.execute(`SELECT ${fields} FROM ${table_name} ${where} ${order}`, [], {
+            resultSet: true,
+            outFormat: oracledb.OUT_FORMAT_OBJECT
+        });
+    
+        let rs = r.resultSet
+        //   // console.log({rs});
+        var data = await rs.getRows();
+        //   // console.log({data});
+        await con.close();
+        await pool.close();
+        resolve(data);
+      }catch(err){
+        await con.close();
+        await pool.close();
+        resolve({ suc: 0, msg: err })
+      }
   })
 }
 
@@ -278,6 +284,8 @@ const F_insert_bulk_data=(db_id,binds)=>{
 
        // SQL QUERY
         const sql = `INSERT INTO TD_COLLECTION (receipt_no, agent_trans_no, bank_id, branch_code, agent_code, transaction_date, account_type, product_code, account_number, account_holder_name, deposit_amount, download_flag, collection_by, collected_at) VALUES(:a, :b, :c, :d, :e, :f, :g, :h, :i, :j, :k,:l,:m,:n)`;
+        // console.log(sql);
+        
         const options = {
             batchErrors: false,
             // bindDefs: [
@@ -309,7 +317,7 @@ const F_insert_bulk_data=(db_id,binds)=>{
             await pool.close();
             resolve(res_data)
         } catch (err) {
-            // console.log(err);
+            console.log(err);
             await con.close();
             await pool.close();
             resolve({ suc: 0, msg: err })

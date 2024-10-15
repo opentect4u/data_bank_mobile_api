@@ -152,7 +152,7 @@ const edit_bank_list_save = async (req, res) => {
         errors[detail.context.key] = detail.message;
       });
       // console.log(error);
-      res.redirect("/super-admin/test");
+      res.redirect("/super-admin/bank");
     }
 
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
