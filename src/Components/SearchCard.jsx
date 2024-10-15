@@ -41,6 +41,7 @@ const SearchCard = ({ item, index, navigation, flag }) => {
             ? "Loan"
             : ""}
         </Text>
+        <Text style={styles.text}>Product Code : {item?.product_code}</Text>
       </View>
       <View style={styles.arrow}>
         <Text>{icon.right(COLORS.lightScheme.primary, 45)}</Text>

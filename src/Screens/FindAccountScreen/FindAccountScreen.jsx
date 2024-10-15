@@ -63,7 +63,7 @@ const FindAccountScreen = ({ navigation }) => {
       flag: "D",
     }
     console.log(bankId, branchCode, userId, searchValue)
-    console.log(userBankDetails)
+    console.log("XXDXDXDXDXDXDXDXDXDXDXDX", userBankDetails)
 
     await axios
       .post(address.SEARCH_ACCOUNT, obj, {
