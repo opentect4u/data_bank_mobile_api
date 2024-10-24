@@ -223,7 +223,7 @@ const download_pcrx = async (req, res) => {
 
     // upload_data
 
-    var template = (user_data.data_trf == 'A') ? "upload_file/pushserver_pcrx" : "upload_file/download_pcrx";
+    var template = (user_data.data_trf != 'M') ? "upload_file/pushserver_pcrx" : "upload_file/download_pcrx";
 
     var viewData = {
         title: "DOWNLOAD || PCRX",
@@ -752,8 +752,8 @@ const fetchDataToServerWithProcedure = (userData, value) => {
             fields = '*',
             where = null,
             order = null;
-            // console.log(pro_query);
             var tableDate = await RunProcedure(user_data.bank_id, pro_query, table_name, fields, where, order)
+            console.log(tableDate, '======================');
             if(tableDate.length > 0){
                 for (let dbdata of tableDate) {
                     try {
@@ -763,6 +763,8 @@ const fetchDataToServerWithProcedure = (userData, value) => {
                         var res_dt = await db_Insert("td_account_dtls", fields2, values, null, 0);
                         er = true
                     } catch (error) {
+                        console.log(error, '----------------------');
+                        
                         er = error
                     }
                 }

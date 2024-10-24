@@ -57,7 +57,6 @@ const transaction = async (req, res) => {
             whr = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND coll_flag='Y' AND end_flag='N'`;
 
         let checkedData = await db_Check(fields, "md_agent_trans", whr);
-        // console.log("======checkedData===========", checkedData)
 
         // =================================================================
         // =================================================================
@@ -75,9 +74,9 @@ const transaction = async (req, res) => {
 
         let total_collectamttt = await db_Select("ifnull(SUM(deposit_amount),0) as deposit_amount", "td_collection", cbalcheck5, null);
 
-        // // console.log(value.sec_amt_type, totalallowamt, (total_collectamttt.msg[0].deposit_amount + value.deposit_amount), (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))), 'LALALALALAAAAAAAAAAAAAA');
+        // // console.log(value.sec_amt_type, totalallowamt, (total_collectamttt.msg[0].deposit_amount + value.deposit_amount), (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))), 'LALALALALAAAAAAAAAAAAAA');        
 
-        if (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
+        if (value.sec_amt_type == 'M' && (totalallowamt > (parseFloat(total_collectamttt.msg[0].deposit_amount) + value.deposit_amount))) {
             // console.log("tttttttttttttttttttttttttttttttt")
             if (checkedData.msg > 0) {
                 // let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
@@ -107,7 +106,7 @@ const transaction = async (req, res) => {
 
                 if (res_dt.suc == 1) {
                     let setdata = `current_balance=${value.total_amount}`,
-                        upwhere5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' `;
+                        upwhere5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' AND product_code = '${value.product_code}'`;
                     await db_Insert("td_account_dtls", setdata, null, upwhere5, 1);
                     let select5 = "mobile_no",
                         where5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' `;
@@ -149,7 +148,7 @@ const transaction = async (req, res) => {
                     "status": false
                 });
             }
-        } else if (value.sec_amt_type == 'A' && (totalallowamt2 > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
+        } else if (value.sec_amt_type == 'A' && (totalallowamt2 > (parseFloat(total_collectamttt.msg[0].deposit_amount) + value.deposit_amount))) {
             // =================================================================
             // =================================================================
             if (checkedData.msg > 0) {
@@ -188,7 +187,7 @@ const transaction = async (req, res) => {
                 if (res_dt.suc == 1) {
                     //let setdata = `current_balance=${value.total_amount}`,
                     let setdata = `current_balance=current_balance+${value.deposit_amount}`,
-                        upwhere5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' `;
+                        upwhere5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${value.account_number}' AND product_code = '${value.product_code}'`;
                     let upresData5 = await db_Insert("td_account_dtls", setdata, null, upwhere5, 1);
 
                     let select5 = "mobile_no",
@@ -283,7 +282,8 @@ const end_collection = async (req, res) => {
         // let transDate = dateFormat(value.transaction_date, "yyyymmdd")
 
         if(lastagent_trans.suc > 0 && lastagent_trans.msg.length > 0){
-            let transDate = ((value.agent_code).toString() + (lastagent_trans.msg[0].sl_no).toString()).toString()
+            // let transDate = ((value.agent_code).toString() + (lastagent_trans.msg[0].sl_no).toString()).toString()
+            let transDate = `'${value.agent_code}${lastagent_trans.msg[0].sl_no}'`
             let slnoEndTrans = lastagent_trans.msg[0].sl_no;
     
             let select = "count(*) total_collection",
