@@ -257,7 +257,8 @@ const AccountPreview = ({ navigation, route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["RCPT NO", ":", rcptNo.toString().substring(0, 6)],
+        // ["RCPT NO", ":", rcptNo.toString().substring(0, 6)],
+        ["RCPT NO", ":", rcptNo.toString().slice(-6)],
         {},
       )
 

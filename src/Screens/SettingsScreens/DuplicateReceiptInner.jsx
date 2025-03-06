@@ -261,7 +261,8 @@ const DuplicateReceiptInner = ({ route }) => {
           BluetoothEscposPrinter.ALIGN.CENTER,
           BluetoothEscposPrinter.ALIGN.RIGHT,
         ],
-        ["RCPT NO", ":", item?.receipt_no.toString().substring(0, 6)],
+        // ["RCPT NO", ":", item?.receipt_no.toString().substring(0, 6)],
+        ["RCPT NO", ":", item?.receipt_no.toString().slice(-6)],
         {},
       )
 
