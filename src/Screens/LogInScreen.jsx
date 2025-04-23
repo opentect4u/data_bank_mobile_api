@@ -26,7 +26,7 @@ import axios from "axios"
 import { address } from "../Routes/addresses"
 import CancelButtonComponent from "../Components/CancelButtonComponent"
 import RNEzetapSdk from "react-native-ezetap-sdk"
-import { ezetapStorage } from "../storage/appStorage"
+import { ezetapStorage, printerFlagStorage } from "../storage/appStorage"
 import { printingSDKType } from "../PrintingAgents/config"
 
 const LogInScreen = ({ navigation }) => {
@@ -103,6 +103,32 @@ const LogInScreen = ({ navigation }) => {
       })
   }
 
+  const printerFlagCheck = async () => {
+    const creds = {
+      device_id: deviceId,
+      user_id: userId,
+    }
+
+    console.log("PAYLOAD PRINT FLAGGG", creds)
+
+    await axios
+      .post(address.PRINTER_FLAG, creds)
+      .then(res => {
+        console.log("PRINTER FLAG RESSSSSS =======>>>>", res?.data)
+        console.log(
+          "PRINTER FLAG RESSSSSS =======>>>> RES?.DATA?.MSG",
+          res?.data?.success?.msg,
+        )
+        printerFlagStorage.set(
+          "printer-flag-json",
+          JSON.stringify(res?.data?.success?.msg),
+        )
+      })
+      .catch(err => {
+        console.log("Some error occurred while fetching flag.", err)
+      })
+  }
+
   const initRazorpay = async () => {
     // Debug Device
     var withAppKey =
@@ -139,16 +165,19 @@ const LogInScreen = ({ navigation }) => {
     // }
   }
 
-  useEffect(() => {
+  const masterCallingFuncSequence = async () => {
+    await getUserId()
+    await getVersionFromWeb()
+    await printerFlagCheck()
+
     if (printingSDKType.paxA910) {
       init()
     }
-  }, [])
+  }
 
   useEffect(() => {
-    getUserId()
-    getVersionFromWeb()
-  }, [])
+    masterCallingFuncSequence()
+  }, [userId, deviceId])
 
   console.log("skahlrcnsfytkuwhnf ", version)
   console.log("skahlrcnsfytkuwhnf ", latestAppVersion)

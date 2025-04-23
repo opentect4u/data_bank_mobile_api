@@ -4,6 +4,7 @@ import DeviceInfo from "react-native-device-info"
 import { ToastAndroid } from "react-native"
 import { REACT_APP_BASE_URL } from "../Config/config"
 import { address } from "../Routes/addresses"
+import { ezetapStorage, printerFlagStorage } from "../storage/appStorage"
 
 export const AppStore = createContext()
 
@@ -245,6 +246,8 @@ const AppContext = ({ children }) => {
     setAgentEmail("")
     setAgentPhoneNumber("")
     setPasscode("")
+    ezetapStorage.clearAll()
+    printerFlagStorage.clearAll()
   }
 
   return (

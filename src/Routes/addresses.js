@@ -1,6 +1,7 @@
 import { REACT_APP_BASE_URL } from "../Config/config"
 
 export const address = {
+  PRINTER_FLAG: `${REACT_APP_BASE_URL}/user/get_agent_printer_type`,
   LOGIN: `${REACT_APP_BASE_URL}/user/login`,
   NOW_DATE: `${REACT_APP_BASE_URL}/user/now_date`,
   MY_AGENT: `${REACT_APP_BASE_URL}/user/my_agent`,
