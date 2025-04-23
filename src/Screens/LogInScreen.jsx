@@ -131,16 +131,16 @@ const LogInScreen = ({ navigation }) => {
 
   const initRazorpay = async () => {
     // Debug Device
-    var withAppKey =
-      '{"userName":' +
-      "9903044748" +
-      ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
-
-    // Release Device
     // var withAppKey =
     //   '{"userName":' +
-    //   "5551713830" +
-    //   ',"demoAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","prodAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","merchantName":"NILACHAKRA_MULTIPURPOSE_C","appMode":"PROD","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+    //   "9903044748" +
+    //   ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+
+    // Release Device
+    var withAppKey =
+      '{"userName":' +
+      "5551713830" +
+      ',"demoAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","prodAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","merchantName":"NILACHAKRA_MULTIPURPOSE_C","appMode":"PROD","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
     var response = await RNEzetapSdk.initialize(withAppKey)
     console.log(response)
     // var jsonData = JSON.parse(response)
