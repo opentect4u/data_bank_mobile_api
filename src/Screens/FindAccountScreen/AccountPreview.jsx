@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
 import { Table, Rows } from "react-native-table-component"
-import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
+// import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import ButtonComponent from "../../Components/ButtonComponent"
 import axios from "axios"
 import { AppStore } from "../../Context/AppContext"
@@ -19,7 +19,12 @@ import { address } from "../../Routes/addresses"
 import { Alert } from "react-native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import logoCut from "../../Resources/Images/logo_cut.png"
-import razor from "../../Resources/Images/razorpay.webp"
+// import razor from "../../Resources/Images/razorpay.webp"
+import ThermalPrinterModule from "react-native-thermal-printer"
+import { ezetapStorage } from "../../storage/appStorage"
+import RNEzetapSdk from "react-native-ezetap-sdk"
+import { printReceiptPaxA910 } from "../../PrintingAgents/globalPrintsPaxA910"
+import { printingSDKType } from "../../PrintingAgents/config"
 
 const AccountPreview = ({ navigation, route }) => {
   const [isLoading, setLoading] = useState(false)
@@ -75,10 +80,17 @@ const AccountPreview = ({ navigation, route }) => {
   const netTotalSectionTableData = [
     ["Tnx. Date", new Date(todayDateFromServer).toLocaleDateString("en-GB")],
     ["Deposit Amt.", money],
-    ["Current Balance", item?.current_balance + parseFloat(money)],
+    [
+      "Current Balance",
+      item?.acc_type == "L"
+        ? item?.current_balance - parseFloat(money)
+        : item?.current_balance + parseFloat(money),
+    ],
   ]
 
   const resetAction = StackActions.popToTop()
+
+  var tnxResponse
 
   const getLastTnxDate = async () => {
     const obj = {
@@ -86,7 +98,7 @@ const AccountPreview = ({ navigation, route }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: item?.account_number,
-      flag: "D",
+      flag: item?.acc_type,
     }
 
     console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
@@ -119,9 +131,26 @@ const AccountPreview = ({ navigation, route }) => {
     getLastTnxDate()
   }, [])
 
-  const sendCollectedMoney = async () => {
+  const sendCollectedMoney = async txnRes => {
     setLoading(true)
     todayDT = new Date().toISOString()
+    // const obj = {
+    //   bank_id: item?.bank_id,
+    //   branch_code: item?.branch_code,
+    //   agent_code: userId,
+    //   account_holder_name: item?.customer_name,
+    //   transaction_date: todayDT,
+    //   account_type: item?.acc_type,
+    //   product_code: item?.product_code,
+    //   account_number: item?.account_number,
+    //   total_amount: item?.current_balance + parseFloat(money),
+    //   deposit_amount: parseFloat(money),
+    //   collection_by: id,
+    //   sec_amt_type: secAmtType,
+    //   total_collection_amount: totalCollection,
+    //   // flag:'D'
+    // }
+
     const obj = {
       bank_id: item?.bank_id,
       branch_code: item?.branch_code,
@@ -137,7 +166,17 @@ const AccountPreview = ({ navigation, route }) => {
       sec_amt_type: secAmtType,
       total_collection_amount: totalCollection,
       // flag:'D'
+
+      // pay_mode: "O",
+      // pay_txn_id: JSON.parse(txnRes)?.result?.txn?.txnId,
+      // pay_amount: JSON.parse(txnRes)?.result?.txn?.amount,
+      // pay_amount_original: JSON.parse(txnRes)?.result?.txn?.amountOriginal,
+      // currency_code: JSON.parse(txnRes)?.result?.txn?.currencyCode,
+      // payment_mode: JSON.parse(txnRes)?.result?.txn?.paymentMode,
+      // pay_status: JSON.parse(txnRes)?.result?.txn?.status,
+      // receipt_url: JSON.parse(txnRes)?.result?.receipt?.receiptUrl,
     }
+
     console.log("===========", obj)
     await axios
       .post(address.TRANSACTION, obj, {
@@ -145,7 +184,7 @@ const AccountPreview = ({ navigation, route }) => {
           Accept: "application/json",
         },
       })
-      .then(res => {
+      .then(async res => {
         console.log("result " + res.data.status)
         if (res.data.status) {
           setLoading(false)
@@ -157,7 +196,30 @@ const AccountPreview = ({ navigation, route }) => {
           ])
           setReceiptNumber(res.data.receipt_no)
           setIsSaveEnabled(false)
-          printReceipt(res.data.receipt_no)
+
+          printingSDKType.paxA910 &&
+            (await printReceiptPaxA910(
+              res.data.receipt_no,
+              item,
+              bankName,
+              branchName,
+              agentName,
+              todayDT,
+              money,
+              lastTnxDate,
+            ))
+          printingSDKType.escpos &&
+            (await printReceiptPaxA910(
+              res.data.receipt_no,
+              item,
+              bankName,
+              branchName,
+              agentName,
+              todayDT,
+              money,
+              lastTnxDate,
+            ))
+
           navigation.dispatch(resetAction)
         } else {
           setLoading(false)
@@ -187,208 +249,9 @@ const AccountPreview = ({ navigation, route }) => {
       })
   }
 
-  async function printReceipt(rcptNo) {
-    try {
-      await BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      )
-      await BluetoothEscposPrinter.printText(bankName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printText(branchName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-
-      await BluetoothEscposPrinter.printText("RECEIPT", {
-        align: "center",
-      })
-
-      await BluetoothEscposPrinter.printText("\r", {})
-
-      // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
-
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------",
-        {},
-      )
-      await BluetoothEscposPrinter.printText("\r\n", {})
-
-      let columnWidths = [11, 1, 18]
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["AGENT NAME", ":", agentName.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "RCPT DATE",
-          ":",
-          (
-            new Date(todayDT).toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            }) +
-            ", " +
-            new Date(todayDT).toLocaleTimeString("en-GB", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          ).toString(),
-        ],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        // ["RCPT NO", ":", rcptNo.toString().substring(0, 6)],
-        ["RCPT NO", ":", rcptNo.toString().slice(-6)],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["ACC NO", ":", (item?.account_number).toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["NAME", ":", item?.customer_name.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["OPEN BAL", ":", (item?.current_balance).toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["COLL AMT", ":", money.toString()],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "CLOSE BAL",
-          ":",
-          parseFloat(item?.current_balance + parseFloat(money)).toString(),
-        ],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "PRV TNX DT",
-          ":",
-          lastTnxDate // this is shit -> to be changed later
-            ? new Date(lastTnxDate) // this is shit -> -> to be changed later
-                .toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "2-digit",
-                })
-                .toString()
-            : "No date.",
-        ],
-        {},
-      )
-
-      await BluetoothEscposPrinter.printColumn(
-        columnWidths,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "ACC OPN DT",
-          ":",
-          new Date(item?.opening_date)
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            })
-            .toString(),
-        ],
-        {},
-      )
-
-      // await BluetoothEscposPrinter.printText("\r\n", {})
-
-      // await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printText(
-        "---------------X---------------",
-        {},
-      )
-
-      await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
-    } catch (e) {
-      console.log(e.message || "ERROR")
-      // ToastAndroid.showWithGravityAndOffset(
-      //   "Printer not connected.",
-      //   ToastAndroid.SHORT,
-      //   ToastAndroid.CENTER,
-      //   25,
-      //   50,
-      // )
-    }
-  }
-
   console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR", secAmtType)
 
-  const handleSave = () => {
+  const handleSave = txnRes => {
     getTotalDepositAmount()
     // console.log("##$$$$###$$$", maximumAmount, money, totalDepositedAmount)
     // console.log("##$$$$+++++###$$$", money + totalDepositedAmount)
@@ -412,7 +275,8 @@ const AccountPreview = ({ navigation, route }) => {
       if (maximumAmount >= parseFloat(money) + totalCollection) {
         console.log("MMMMMMMMMMMMMMMM")
         setIsSaveEnabled(true)
-        sendCollectedMoney()
+        // sendCollectedMoney()
+        sendCollectedMoney(txnRes)
         // maximumAmount -= money
         login()
       } // M
@@ -466,48 +330,93 @@ const AccountPreview = ({ navigation, route }) => {
     }
   }
 
-  // useEffect(() => {
-  //   getTotalDepositAmount()
-  // }, [])
+  const handleSaveForLoan = () => {
+    getTotalDepositAmount()
+    console.log("##$$$$###$$$", maximumAmount, money, totalDepositedAmount)
+    console.log("##$$$$+++++###$$$", money + totalDepositedAmount)
+    console.log("##$$$$+++++###$$$", typeof money, typeof totalDepositedAmount)
+    console.log("##$$$$+++++###$$$", parseFloat(money) + totalDepositedAmount)
+    if (!(maximumAmount < parseFloat(money) + totalDepositedAmount)) {
+      setIsSaveEnabled(true)
+      sendCollectedMoney()
+    } else {
+      ToastAndroid.showWithGravityAndOffset(
+        "Your collection quota has been exceeded.",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+        25,
+        50,
+      )
+    }
+  }
 
-  // const sendFinalCollectedMoney = () => {
-  //   getTotalDepositAmount()
+  const handleRazorpayClient = async () => {
+    let json = {
+      username: "9903044748",
+      amount: +money,
+      externalRefNumber: "",
+    }
 
-  //   console.log("Total Deposited Amount", totalDepositedAmount)
-  // }
+    // Convert json object to string
+    let jsonString = JSON.stringify(json)
 
-  // const handleRazorpayClient = () => {
-  //   // console.log("Razorpay client...")
+    // await RNEzetapSdk.initialize(jsonString)
+    //   .then(res => {
+    //     console.log(">>>>>>>>>>>>>>>>>", res)
+    //   })
+    //   .catch(err => {
+    //     console.log("<<<<<<<<<<<<<<<<<", err)
+    //   })
 
-  //   const options = {
-  //     description: "Deposit Payment",
-  //     image:
-  //       "https://synergicsoftek.in/wp-content/themes/synergicsoftek-child/assets/images/sss-logo.png", // Your logo URL
-  //     currency: "INR",
-  //     key: "YOUR_RAZORPAY_KEY", // Your Razorpay Key
-  //     // key: "rzp_live_6NEMkMwtW0VXWs", // Your Razorpay Key
-  //     amount: money * 100, // amount in paise (INR 1 = 100 paise)
-  //     name: item.customer_name,
-  //     prefill: {
-  //       // email: "customer-email@example.com",
-  //       contact: item.mobile_no,
-  //       name: item.customer_name,
-  //     },
-  //     theme: { color: "#F37254" },
-  //   }
+    // var res = await RNEzetapSdk.prepareDevice()
+    // console.log("RAZORPAY===PREPARE DEVICE", res)
 
-  //   RazorpayCheckout.open(options)
-  //     .then(data => {
-  //       // handle success
-  //       alert(`Success: ${data.razorpay_payment_id}`)
-  //       // Proceed with saving the transaction
-  //       sendCollectedMoney()
-  //     })
-  //     .catch(error => {
-  //       // handle failure
-  //       alert(`Error: ${error.code} | ${error.description}`)
-  //     })
-  // }
+    await RNEzetapSdk.pay(jsonString)
+      .then(res => {
+        console.log(">>>>>>>>>>>>>>>>>", res)
+
+        // if (res?.status == "success") {
+        //   handleSave()
+        //   Alert.alert("Txn ID", res?.txnId)
+        // } else {
+        //   Alert.alert("Error in Tnx", res?.error)
+        // }
+        tnxResponse = res
+        // setTnxResponse(res)
+      })
+      .catch(err => {
+        console.log("<<<<<<<<<<<<<<<<<", err)
+      })
+  }
+
+  const init = async () => {
+    // var withAppKey =
+    //   '{"userName":' +
+    //   "9903044748" +
+    //   ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+    // var response = await RNEzetapSdk.initialize(withAppKey)
+    // console.log(response)
+    // var jsonData = JSON.parse(response)
+
+    let razorpayInitializationJson = JSON.parse(
+      ezetapStorage.getString("ezetap-initialization-json"),
+    )
+
+    if (razorpayInitializationJson.status == "success") {
+      await handleRazorpayClient()
+        .then(async res => {
+          console.log("###################", res)
+          // var res = await RNEzetapSdk.close()
+          // console.log("CLOSEEEEE TNXXXXX", res)
+          // var json = JSON.parse(res)
+        })
+        .catch(err => {
+          console.log("==================", err)
+        })
+    } else {
+      console.log("XXXXXXXXXXXXXXXXXXX", res)
+    }
+  }
 
   return (
     <View>
@@ -569,7 +478,7 @@ const AccountPreview = ({ navigation, route }) => {
                 navigation.goBack()
               }}
             />
-            <ButtonComponent
+            {/* <ButtonComponent
               disabled={isLoading}
               title={
                 !isLoading ? (
@@ -582,8 +491,59 @@ const AccountPreview = ({ navigation, route }) => {
               handleOnpress={() => {
                 handleSave()
               }}
-              // disabled={isSaveEnabled}
+            /> */}
+            <ButtonComponent
+              disabled={isLoading}
+              title={
+                !isLoading ? (
+                  "Save"
+                ) : (
+                  <ActivityIndicator color={COLORS.lightScheme.primary} />
+                )
+              }
+              customStyle={{ marginTop: 10, width: "40%" }}
+              handleOnpress={() => {
+                item?.acc_type != "L" ? handleSave() : handleSaveForLoan()
+              }}
             />
+            {/* <TouchableOpacity
+                onPress={async () =>
+                  await init()
+                    .then(() => {
+                      console.log(
+                        "TRANSACTION RES DATA================",
+                        tnxResponse,
+                      )
+                      if (JSON.parse(tnxResponse)?.status === "success") {
+                        item?.acc_type != "L"
+                          ? handleSave(tnxResponse)
+                          : handleSaveForLoan()
+                      } else {
+                        console.log("tnxResponse value error...")
+                      }
+                    })
+                    .catch(err => {
+                      console.error("TNX Response Error!")
+                    })
+                }
+                style={{
+                  // marginVertical: 20,
+                  marginTop: 10,
+                  borderWidth: 1,
+                  borderColor: "black",
+                  padding: 10,
+                  borderRadius: 50,
+                }}>
+                {!isLoading ? (
+                  <Image
+                    source={razor}
+                    style={styles.image}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <ActivityIndicator color={COLORS.lightScheme.primary} />
+                )}
+              </TouchableOpacity> */}
           </View>
         </View>
 

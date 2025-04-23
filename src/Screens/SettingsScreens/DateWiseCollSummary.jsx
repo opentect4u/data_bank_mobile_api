@@ -19,6 +19,9 @@ import axios from "axios"
 import CalendarPicker from "react-native-calendar-picker"
 import { address } from "../../Routes/addresses"
 import { Dropdown } from "react-native-element-dropdown"
+import { printingSDKType } from "../../PrintingAgents/config"
+import { printDatewiseCollectionSummaryEscPos } from "../../PrintingAgents/globalPrintsEscPos"
+import { printDatewiseCollectionSummaryPaxA910 } from "../../PrintingAgents/globalPrintsPaxA910"
 
 const DateWiseCollSummary = () => {
   const {
@@ -172,110 +175,110 @@ const DateWiseCollSummary = () => {
 
   console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<", tableData)
 
-  async function printReceipt() {
-    try {
-      // await BluetoothEscposPrinter.printerAlign(
-      //   BluetoothEscposPrinter.ALIGN.CENTER,
-      // )
-      await BluetoothEscposPrinter.printText(bankName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printText(branchName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
+  // async function printReceipt() {
+  //   try {
+  //     // await BluetoothEscposPrinter.printerAlign(
+  //     //   BluetoothEscposPrinter.ALIGN.CENTER,
+  //     // )
+  //     await BluetoothEscposPrinter.printText(bankName, { align: "center" })
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printText(branchName, { align: "center" })
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
 
-      await BluetoothEscposPrinter.printColumn(
-        [10, 2, 18],
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "Date",
-          ":",
-          new Date()
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            })
-            .toString(),
-        ],
-        {},
-      )
+  //     await BluetoothEscposPrinter.printColumn(
+  //       [10, 2, 18],
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       [
+  //         "Date",
+  //         ":",
+  //         new Date()
+  //           .toLocaleDateString("en-GB", {
+  //             day: "2-digit",
+  //             month: "2-digit",
+  //             year: "2-digit",
+  //           })
+  //           .toString(),
+  //       ],
+  //       {},
+  //     )
 
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------\n",
-        {},
-      )
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------\n",
+  //       {},
+  //     )
 
-      await BluetoothEscposPrinter.printText("SUMMARY REPORT", {
-        align: "center",
-      })
+  //     await BluetoothEscposPrinter.printText("SUMMARY REPORT", {
+  //       align: "center",
+  //     })
 
-      await BluetoothEscposPrinter.printText("\r", {})
+  //     await BluetoothEscposPrinter.printText("\r", {})
 
-      // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
+  //     // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
 
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------",
-        {},
-      )
-      await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------",
+  //       {},
+  //     )
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
 
-      let columnWidthsHeader = [10, 6, 10]
-      await BluetoothEscposPrinter.printColumn(
-        columnWidthsHeader,
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["Date", "Rcpts", "Coll Amt"],
-        {},
-      )
+  //     let columnWidthsHeader = [10, 6, 10]
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidthsHeader,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["Date", "Rcpts", "Coll Amt"],
+  //       {},
+  //     )
 
-      let columnWidthsBody = [30]
-      dtWiseCollSummaryArray.forEach(async item => {
-        let newItems = [...item]
-        newItems.shift()
-        let items = newItems.join("      ")
-        console.log("++==++ PRINTED ITEM", items)
-        await BluetoothEscposPrinter.printColumn(
-          columnWidthsBody,
-          [BluetoothEscposPrinter.ALIGN.CENTER],
-          [items.toString()],
-          {},
-        )
-      })
+  //     let columnWidthsBody = [30]
+  //     dtWiseCollSummaryArray.forEach(async item => {
+  //       let newItems = [...item]
+  //       newItems.shift()
+  //       let items = newItems.join("      ")
+  //       console.log("++==++ PRINTED ITEM", items)
+  //       await BluetoothEscposPrinter.printColumn(
+  //         columnWidthsBody,
+  //         [BluetoothEscposPrinter.ALIGN.CENTER],
+  //         [items.toString()],
+  //         {},
+  //       )
+  //     })
 
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------\n",
-        {},
-      )
-      await BluetoothEscposPrinter.printText(
-        "Total Receipts: " + totalReceipts + "\n",
-        { align: "center" },
-      )
-      await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", {
-        align: "center",
-      })
-      await BluetoothEscposPrinter.printText(
-        "---------------X---------------",
-        {},
-      )
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------\n",
+  //       {},
+  //     )
+  //     await BluetoothEscposPrinter.printText(
+  //       "Total Receipts: " + totalReceipts + "\n",
+  //       { align: "center" },
+  //     )
+  //     await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", {
+  //       align: "center",
+  //     })
+  //     await BluetoothEscposPrinter.printText(
+  //       "---------------X---------------",
+  //       {},
+  //     )
 
-      await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
-    } catch (e) {
-      console.log(e.message || "ERROR")
-      // ToastAndroid.showWithGravityAndOffset(
-      //   "Printer not connected.",
-      //   ToastAndroid.SHORT,
-      //   ToastAndroid.CENTER,
-      //   25,
-      //   50,
-      // )
-    }
-  }
+  //     await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
+  //   } catch (e) {
+  //     console.log(e.message || "ERROR")
+  //     // ToastAndroid.showWithGravityAndOffset(
+  //     //   "Printer not connected.",
+  //     //   ToastAndroid.SHORT,
+  //     //   ToastAndroid.CENTER,
+  //     //   25,
+  //     //   50,
+  //     // )
+  //   }
+  // }
 
   return (
     <View style={{ flex: 1 }}>
@@ -288,7 +291,7 @@ const DateWiseCollSummary = () => {
           margin: 20,
           borderRadius: 10,
         }}>
-        <Text style={styles.todayCollection}>Date Wise Collection Summary</Text>
+        <Text style={styles.todayCollection}>Datewise Collection Summary</Text>
         <View style={styles.dateWrapper}>
           <TouchableOpacity
             onPress={() => setShowModal(true)}
@@ -417,7 +420,24 @@ const DateWiseCollSummary = () => {
         <View>
           <TouchableOpacity
             disabled={tableData.length == 0}
-            onPress={() => printReceipt()}
+            onPress={async () => {
+              printingSDKType.paxA910 &&
+                printDatewiseCollectionSummaryPaxA910(
+                  bankName,
+                  branchName,
+                  dtWiseCollSummaryArray,
+                  totalReceipts,
+                  total,
+                )
+              printingSDKType.escpos &&
+                printDatewiseCollectionSummaryEscPos(
+                  bankName,
+                  branchName,
+                  dtWiseCollSummaryArray,
+                  totalReceipts,
+                  total,
+                )
+            }}
             style={
               tableData.length != 0
                 ? styles.dateButton

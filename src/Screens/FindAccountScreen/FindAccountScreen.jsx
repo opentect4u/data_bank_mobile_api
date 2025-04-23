@@ -15,7 +15,7 @@ import axios from "axios"
 import { REACT_APP_BASE_URL } from "../../Config/config"
 import { address } from "../../Routes/addresses"
 import { AppStore } from "../../Context/AppContext"
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect, useRoute } from "@react-navigation/native"
 
 const FindAccountScreen = ({ navigation }) => {
   const [searchValue, changeSearchValue] = useState(() => "")
@@ -23,6 +23,7 @@ const FindAccountScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const { userId, bankId, branchCode } = useContext(AppStore)
+  const { params } = useRoute()
 
   function handleAccountSearch() {
     if (!searchValue) {
@@ -60,7 +61,7 @@ const FindAccountScreen = ({ navigation }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: searchValue,
-      flag: "D",
+      flag: params?.type,
     }
     console.log(bankId, branchCode, userId, searchValue)
     console.log("XXDXDXDXDXDXDXDXDXDXDXDX", userBankDetails)
@@ -102,7 +103,13 @@ const FindAccountScreen = ({ navigation }) => {
       <CustomHeader />
       <View style={styles.container}>
         {/* Account Cards */}
-        <Text style={styles.title}>Daily</Text>
+        <Text style={styles.title}>
+          {params?.type === "D"
+            ? "Daily"
+            : params?.type === "L"
+            ? "Loan"
+            : "RD"}
+        </Text>
         {/* {isLoading} */}
         {isLoading && (
           <ActivityIndicator
@@ -124,7 +131,7 @@ const FindAccountScreen = ({ navigation }) => {
                   index={index}
                   navigation={navigation}
                   key={index}
-                  flag={"D"}
+                  flag={params?.type}
                 />
               )
             })}

@@ -25,6 +25,9 @@ import DeviceInfo from "react-native-device-info"
 import axios from "axios"
 import { address } from "../Routes/addresses"
 import CancelButtonComponent from "../Components/CancelButtonComponent"
+import RNEzetapSdk from "react-native-ezetap-sdk"
+import { ezetapStorage } from "../storage/appStorage"
+import { printingSDKType } from "../PrintingAgents/config"
 
 const LogInScreen = ({ navigation }) => {
   const {
@@ -99,6 +102,48 @@ const LogInScreen = ({ navigation }) => {
         }
       })
   }
+
+  const initRazorpay = async () => {
+    // Debug Device
+    var withAppKey =
+      '{"userName":' +
+      "9903044748" +
+      ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+
+    // Release Device
+    // var withAppKey =
+    //   '{"userName":' +
+    //   "5551713830" +
+    //   ',"demoAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","prodAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","merchantName":"NILACHAKRA_MULTIPURPOSE_C","appMode":"PROD","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+    var response = await RNEzetapSdk.initialize(withAppKey)
+    console.log(response)
+    // var jsonData = JSON.parse(response)
+    // setRazorpayInitializationJson(jsonData)
+    ezetapStorage.set("ezetap-initialization-json", response)
+  }
+
+  const init = async () => {
+    getUserId()
+    getVersionFromWeb()
+
+    console.log(
+      "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
+      ezetapStorage.contains("ezetap-initialization-json"),
+      ezetapStorage.getString("ezetap-initialization-json"),
+    )
+    // if (!ezetapStorage.contains("ezetap-initialization-json")) {
+    await initRazorpay()
+
+    var res = await RNEzetapSdk.prepareDevice()
+    console.warn("RAZORPAY===PREPARE DEVICE", res)
+    // }
+  }
+
+  useEffect(() => {
+    if (printingSDKType.paxA910) {
+      init()
+    }
+  }, [])
 
   useEffect(() => {
     getUserId()

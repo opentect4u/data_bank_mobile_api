@@ -104,7 +104,7 @@ const AccountDetails = ({ navigation, route }) => {
       branch_code: branchCode,
       agent_code: userId,
       account_number: item?.account_number,
-      flag: "D",
+      flag: item?.acc_type,
     }
 
     console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOO", obj)
@@ -217,6 +217,7 @@ const AccountDetails = ({ navigation, route }) => {
           backgroundColor: COLORS.lightScheme.background,
           height: "100%",
           padding: 10,
+          paddingBottom: 95,
         }}>
         <ScrollView keyboardShouldPersistTaps={"handled"}>
           <Text style={styles.info}>Daily Account Info</Text>
@@ -296,12 +297,6 @@ const AccountDetails = ({ navigation, route }) => {
 export default AccountDetails
 
 const styles = StyleSheet.create({
-  // text: {
-  //   margin: 6,
-  //   color: COLORS.lightScheme.onBackground,
-  //   fontWeight: '400',
-  //   fontSize: 18,
-  // },
   text: {
     margin: 6,
     color: COLORS.lightScheme.onBackground,

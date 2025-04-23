@@ -26,7 +26,9 @@
     "react-native-device-info": "^10.8.0",
     "react-native-dotenv": "^3.4.9",
     "react-native-element-dropdown": "^2.10.0",
+    "react-native-ezetap-sdk": "^1.2.1",
     "react-native-linear-gradient": "^2.8.2",
+    "react-native-mmkv": "^2.6.0",
     "react-native-normalize": "^1.0.1",
     "react-native-permissions": "^3.9.2",
     "react-native-radio-buttons-group": "^3.1.0",
@@ -35,6 +37,7 @@
     "react-native-screens": "^3.24.0",
     "react-native-smooth-pincode-input": "^1.0.9",
     "react-native-table-component": "^1.2.2",
+    "react-native-thermal-printer": "^2.3.6",
     "react-native-vector-icons": "^10.0.0"
   },
   "devDependencies": {

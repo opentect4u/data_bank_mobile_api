@@ -7,7 +7,11 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native"
-import { StackActions, useFocusEffect } from "@react-navigation/native"
+import {
+  StackActions,
+  useFocusEffect,
+  CommonActions,
+} from "@react-navigation/native"
 import { useState, useEffect, useContext, useCallback } from "react"
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { icon } from "../../Resources/Icons"
@@ -15,12 +19,8 @@ import { Table, Rows, Row } from "react-native-table-component"
 import { COLORS, colors } from "../../Resources/colors"
 import CustomHeader from "../../Components/CustomHeader"
 import { AppStore } from "../../Context/AppContext"
-import { Button } from "react-native"
 import mainNavigationRoutes from "../../Routes/NavigationRoutes"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import FindAccountScreen from "../FindAccountScreen/FindAccountScreen"
-import FindLoanAccountScreen from "../FindAccountScreen/FindLoanAccountScreen"
-import FindRDAccount from "../FindAccountScreen/FindRDAccount"
 mainNavigationRoutes
 // import { useIsFocused } from '@react-navigation/native';
 const Home = ({ navigation }) => {
@@ -236,7 +236,15 @@ const Home = ({ navigation }) => {
               <TouchableOpacity
                 disabled={!isDaily}
                 style={styles.cardContainer}
-                onPress={() => navigation.navigate("Daily_Navigation")}>
+                // onPress={() => navigation.navigate("Daily_Navigation")}
+                onPress={() =>
+                  navigation.dispatch(
+                    CommonActions.navigate({
+                      name: mainNavigationRoutes.findAccount,
+                      params: { type: "D" },
+                    }),
+                  )
+                }>
                 {/* Icon */}
                 {icon.daily(
                   isDaily
@@ -247,13 +255,20 @@ const Home = ({ navigation }) => {
 
                 {/* label */}
                 <Text style={isDaily ? styles.label : styles.disabledContainer}>
-                  {" "}
-                  Daily{" "}
+                  Daily
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={!isLoan}
-                onPress={() => navigation.navigate("Loan_Navigation")}
+                // onPress={() => navigation.navigate("Loan_Navigation")}
+                onPress={() =>
+                  navigation.dispatch(
+                    CommonActions.navigate({
+                      name: mainNavigationRoutes.findAccount,
+                      params: { type: "L" },
+                    }),
+                  )
+                }
                 style={styles.cardContainer}>
                 {/* Icon */}
                 {icon.giver(
@@ -265,13 +280,20 @@ const Home = ({ navigation }) => {
 
                 {/* label */}
                 <Text style={isLoan ? styles.label : styles.disabledContainer}>
-                  {" "}
-                  Loan{" "}
+                  Loan
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 disabled={!isRD}
-                onPress={() => navigation.navigate("RD_Navigation")}
+                // onPress={() => navigation.navigate("RD_Navigation")}
+                onPress={() =>
+                  navigation.dispatch(
+                    CommonActions.navigate({
+                      name: mainNavigationRoutes.findAccount,
+                      params: { type: "R" },
+                    }),
+                  )
+                }
                 style={styles.cardContainer}>
                 {/* Icon */}
                 {icon.loop(
@@ -283,8 +305,7 @@ const Home = ({ navigation }) => {
 
                 {/* label */}
                 <Text style={isRD ? styles.label : styles.disabledContainer}>
-                  {" "}
-                  RD{" "}
+                  RD
                 </Text>
               </TouchableOpacity>
             </View>

@@ -11,6 +11,7 @@ import CustomHeader from "../../Components/CustomHeader"
 import mainNavigationRoutes from "../../Routes/NavigationRoutes"
 import { StackActions, useFocusEffect } from "@react-navigation/native"
 import { useCallback } from "react"
+import { printingSDKType } from "../../PrintingAgents/config"
 
 const SettingScreen = ({ navigation }) => {
   const popAction = StackActions.popToTop()
@@ -67,17 +68,16 @@ const SettingScreen = ({ navigation }) => {
           <Text style={styles.label}> Reports </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate(mainNavigationRoutes.printerConnectScreen)
-          }
-          style={styles.cardContainer}>
-          {/* Icon */}
-          {icon.printer(COLORS.lightScheme.primary, 45)}
-
-          {/* label */}
-          <Text style={styles.label}> Printer Connect </Text>
-        </TouchableOpacity>
+        {printingSDKType.escpos && (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate(mainNavigationRoutes.printerConnectScreen)
+            }
+            style={styles.cardContainer}>
+            {icon.printer(COLORS.lightScheme.primary, 45)}
+            <Text style={styles.label}> Printer Connect </Text>
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity
           onPress={() =>

@@ -19,6 +19,9 @@ import axios from "axios"
 import CalendarPicker from "react-native-calendar-picker"
 import { address } from "../../Routes/addresses"
 import { removeIndexes } from "../../Functions/removeIndexes"
+import { printingSDKType } from "../../PrintingAgents/config"
+import { printMiniStatementPaxA910 } from "../../PrintingAgents/globalPrintsPaxA910"
+import { printMiniStatementEscPos } from "../../PrintingAgents/globalPrintsEscPos"
 
 const MiniStatementInner = ({ route }) => {
   const { item } = route.params
@@ -130,152 +133,152 @@ const MiniStatementInner = ({ route }) => {
       })
   }
 
-  async function printReceipt() {
-    try {
-      await BluetoothEscposPrinter.printerAlign(
-        BluetoothEscposPrinter.ALIGN.CENTER,
-      )
-      await BluetoothEscposPrinter.printText(bankName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printText(branchName, { align: "center" })
-      await BluetoothEscposPrinter.printText("\r\n", {})
-      await BluetoothEscposPrinter.printColumn(
-        [10, 2, 18],
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        [
-          "Date",
-          ":",
-          new Date()
-            .toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            })
-            .toString(),
-        ],
-        {},
-      )
-      await BluetoothEscposPrinter.printColumn(
-        [10, 2, 18],
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["Agent", ":", agentName],
-        {},
-      )
-      await BluetoothEscposPrinter.printColumn(
-        [10, 2, 18],
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["Cus Name", ":", item.customer_name],
-        {},
-      )
+  // async function printReceipt() {
+  //   try {
+  //     await BluetoothEscposPrinter.printerAlign(
+  //       BluetoothEscposPrinter.ALIGN.CENTER,
+  //     )
+  //     await BluetoothEscposPrinter.printText(bankName, { align: "center" })
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printText(branchName, { align: "center" })
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printColumn(
+  //       [10, 2, 18],
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       [
+  //         "Date",
+  //         ":",
+  //         new Date()
+  //           .toLocaleDateString("en-GB", {
+  //             day: "2-digit",
+  //             month: "2-digit",
+  //             year: "2-digit",
+  //           })
+  //           .toString(),
+  //       ],
+  //       {},
+  //     )
+  //     await BluetoothEscposPrinter.printColumn(
+  //       [10, 2, 18],
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["Agent", ":", agentName],
+  //       {},
+  //     )
+  //     await BluetoothEscposPrinter.printColumn(
+  //       [10, 2, 18],
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["Cus Name", ":", item.customer_name],
+  //       {},
+  //     )
 
-      await BluetoothEscposPrinter.printColumn(
-        [10, 2, 18],
-        [
-          BluetoothEscposPrinter.ALIGN.LEFT,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.RIGHT,
-        ],
-        ["Acc No", ":", item.account_number],
-        {},
-      )
+  //     await BluetoothEscposPrinter.printColumn(
+  //       [10, 2, 18],
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.LEFT,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.RIGHT,
+  //       ],
+  //       ["Acc No", ":", item.account_number],
+  //       {},
+  //     )
 
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------\n",
-        {},
-      )
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------\n",
+  //       {},
+  //     )
 
-      await BluetoothEscposPrinter.printText("MINI STATEMENT\n", {
-        align: "center",
-      })
+  //     await BluetoothEscposPrinter.printText("MINI STATEMENT\n", {
+  //       align: "center",
+  //     })
 
-      // await BluetoothEscposPrinter.printText(`FROM: ${new Date(startDate).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"})}  TO: ${new Date(endDate).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"})}`, {
-      //   align: "center",
-      // })
+  //     // await BluetoothEscposPrinter.printText(`FROM: ${new Date(startDate).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"})}  TO: ${new Date(endDate).toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"})}`, {
+  //     //   align: "center",
+  //     // })
 
-      await BluetoothEscposPrinter.printText("\r", {})
+  //     await BluetoothEscposPrinter.printText("\r", {})
 
-      // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
+  //     // await BluetoothEscposPrinter.printPic(logo, { width: 300, align: "center", left: 30 })
 
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------",
-        {},
-      )
-      await BluetoothEscposPrinter.printText("\r\n", {})
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------",
+  //       {},
+  //     )
+  //     await BluetoothEscposPrinter.printText("\r\n", {})
 
-      let columnWidthsHeader = [10, 10, 10]
-      await BluetoothEscposPrinter.printColumn(
-        columnWidthsHeader,
-        [
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-          BluetoothEscposPrinter.ALIGN.CENTER,
-        ],
-        ["Date", "Coll Amt", "Cls Bal"],
-        {},
-      )
+  //     let columnWidthsHeader = [10, 10, 10]
+  //     await BluetoothEscposPrinter.printColumn(
+  //       columnWidthsHeader,
+  //       [
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //         BluetoothEscposPrinter.ALIGN.CENTER,
+  //       ],
+  //       ["Date", "Coll Amt", "Cls Bal"],
+  //       {},
+  //     )
 
-      const copiedTableData = [...tableData]
-      console.log("TABLLLELEEEEE DDDAAATAAAA  CPPPYYY ", copiedTableData)
+  //     const copiedTableData = [...tableData]
+  //     console.log("TABLLLELEEEEE DDDAAATAAAA  CPPPYYY ", copiedTableData)
 
-      let columnWidthsBody = [30]
-      copiedTableData.forEach(async item => {
-        let newItems = [...item]
-        console.log("new itemsssssss", newItems)
-        const updatedItems = removeIndexes(newItems, [0])
+  //     let columnWidthsBody = [30]
+  //     copiedTableData.forEach(async item => {
+  //       let newItems = [...item]
+  //       console.log("new itemsssssss", newItems)
+  //       const updatedItems = removeIndexes(newItems, [0])
 
-        // updatedItems[2] = updatedItems[2].slice(0, 8)
-        let items = updatedItems.join("     ")
-        console.log("++==++ PRINTED ITEM", items)
-        await BluetoothEscposPrinter.printColumn(
-          columnWidthsBody,
-          [BluetoothEscposPrinter.ALIGN.CENTER],
-          [items.toString()],
-          {},
-        )
-      })
+  //       // updatedItems[2] = updatedItems[2].slice(0, 8)
+  //       let items = updatedItems.join("     ")
+  //       console.log("++==++ PRINTED ITEM", items)
+  //       await BluetoothEscposPrinter.printColumn(
+  //         columnWidthsBody,
+  //         [BluetoothEscposPrinter.ALIGN.CENTER],
+  //         [items.toString()],
+  //         {},
+  //       )
+  //     })
 
-      await BluetoothEscposPrinter.printText(
-        "-------------------------------\n",
-        {},
-      )
+  //     await BluetoothEscposPrinter.printText(
+  //       "-------------------------------\n",
+  //       {},
+  //     )
 
-      await BluetoothEscposPrinter.printText(
-        `TOTAL AMOUNT: ${totalAmount}\r\n`,
-        {
-          align: "center",
-        },
-      )
-      // await BluetoothEscposPrinter.printText("Total Receipts: " + totalReceipts + "\n", { align: "center" })
-      // await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", { align: "center" })
-      await BluetoothEscposPrinter.printText(
-        "---------------X---------------",
-        {},
-      )
+  //     await BluetoothEscposPrinter.printText(
+  //       `TOTAL AMOUNT: ${totalAmount}\r\n`,
+  //       {
+  //         align: "center",
+  //       },
+  //     )
+  //     // await BluetoothEscposPrinter.printText("Total Receipts: " + totalReceipts + "\n", { align: "center" })
+  //     // await BluetoothEscposPrinter.printText("Total Amount: " + total + "\n", { align: "center" })
+  //     await BluetoothEscposPrinter.printText(
+  //       "---------------X---------------",
+  //       {},
+  //     )
 
-      await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
-    } catch (e) {
-      console.log(e.message || "ERROR")
-      ToastAndroid.showWithGravityAndOffset(
-        "Printer not connected.",
-        ToastAndroid.SHORT,
-        ToastAndroid.CENTER,
-        25,
-        50,
-      )
-    }
-  }
+  //     await BluetoothEscposPrinter.printText("\r\n\r\n\r\n", {})
+  //   } catch (e) {
+  //     console.log(e.message || "ERROR")
+  //     ToastAndroid.showWithGravityAndOffset(
+  //       "Printer not connected.",
+  //       ToastAndroid.SHORT,
+  //       ToastAndroid.CENTER,
+  //       25,
+  //       50,
+  //     )
+  //   }
+  // }
 
   useEffect(() => {
     getMiniStatement()
@@ -394,7 +397,26 @@ const MiniStatementInner = ({ route }) => {
         <Text style={{ fontWeight: "bold" }}>Total Amount: {totalAmount}</Text>
         <TouchableOpacity
           disabled={tableData.length == 0}
-          onPress={() => printReceipt()}
+          onPress={async () => {
+            printingSDKType.paxA910 &&
+              (await printMiniStatementPaxA910(
+                item,
+                bankName,
+                branchName,
+                agentName,
+                tableData,
+                totalAmount,
+              ))
+            printingSDKType.escpos &&
+              (await printMiniStatementEscPos(
+                item,
+                bankName,
+                branchName,
+                agentName,
+                tableData,
+                totalAmount,
+              ))
+          }}
           style={
             tableData.length != 0 ? styles.dateButton : styles.disabledContainer
           }>
