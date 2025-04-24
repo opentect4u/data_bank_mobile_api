@@ -79,8 +79,8 @@ android {
         applicationId "com.banking"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "3.0"
+        versionCode 1
+        versionName "2.0.5"
     }
     signingConfigs {
         debug {
