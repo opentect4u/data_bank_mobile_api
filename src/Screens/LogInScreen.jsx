@@ -88,8 +88,8 @@ const LogInScreen = ({ navigation }) => {
         },
       )
       .then(res => {
-        setLatestAppVersion(res.data.data.app_version)
-        setAppDownloadLink(res.data.data.app_download_link)
+        setLatestAppVersion(res?.data?.data?.app_version)
+        setAppDownloadLink(res?.data?.data?.app_download_link)
         console.log(
           "fsdadgtreyhgtdhyrfujfyudx",
           res.data.data.app_download_link,
@@ -98,81 +98,81 @@ const LogInScreen = ({ navigation }) => {
         setUpdateStatus(res.data.update_status)
 
         if (res.data.update_status == "Y") {
-          showAlertUpdate(res.data.data.app_download_link)
+          showAlertUpdate(res?.data?.data?.app_download_link)
         }
       })
   }
 
-  const printerFlagCheck = async () => {
-    const creds = {
-      device_id: deviceId,
-      user_id: userId,
-    }
+  // const printerFlagCheck = async () => {
+  //   const creds = {
+  //     device_id: deviceId,
+  //     user_id: userId,
+  //   }
 
-    console.log("PAYLOAD PRINT FLAGGG", creds)
+  //   console.log("PAYLOAD PRINT FLAGGG", creds)
 
-    await axios
-      .post(address.PRINTER_FLAG, creds)
-      .then(res => {
-        console.log("PRINTER FLAG RESSSSSS =======>>>>", res?.data)
-        console.log(
-          "PRINTER FLAG RESSSSSS =======>>>> RES?.DATA?.MSG",
-          res?.data?.success?.msg,
-        )
-        printerFlagStorage.set(
-          "printer-flag-json",
-          JSON.stringify(res?.data?.success?.msg),
-        )
-      })
-      .catch(err => {
-        console.log("Some error occurred while fetching flag.", err)
-      })
-  }
+  //   await axios
+  //     .post(address.PRINTER_FLAG, creds)
+  //     .then(res => {
+  //       console.log("PRINTER FLAG RESSSSSS =======>>>>", res?.data)
+  //       console.log(
+  //         "PRINTER FLAG RESSSSSS =======>>>> RES?.DATA?.MSG",
+  //         res?.data?.success?.msg,
+  //       )
+  //       printerFlagStorage.set(
+  //         "printer-flag-json",
+  //         JSON.stringify(res?.data?.success?.msg),
+  //       )
+  //     })
+  //     .catch(err => {
+  //       console.log("Some error occurred while fetching flag.", err)
+  //     })
+  // }
 
-  const initRazorpay = async () => {
-    // Debug Device
-    // var withAppKey =
-    //   '{"userName":' +
-    //   "9903044748" +
-    //   ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+  // const initRazorpay = async () => {
+  //   // Debug Device
+  //   // var withAppKey =
+  //   //   '{"userName":' +
+  //   //   "9903044748" +
+  //   //   ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
 
-    // Release Device
-    var withAppKey =
-      '{"userName":' +
-      "5551713830" +
-      ',"demoAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","prodAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","merchantName":"NILACHAKRA_MULTIPURPOSE_C","appMode":"PROD","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
-    var response = await RNEzetapSdk.initialize(withAppKey)
-    console.log(response)
-    // var jsonData = JSON.parse(response)
-    // setRazorpayInitializationJson(jsonData)
-    ezetapStorage.set("ezetap-initialization-json", response)
-  }
+  //   // Release Device
+  //   var withAppKey =
+  //     '{"userName":' +
+  //     "5551713830" +
+  //     ',"demoAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","prodAppKey":"821595fb-c14f-4cff-9fb5-c229b4f3325d","merchantName":"NILACHAKRA_MULTIPURPOSE_C","appMode":"PROD","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+  //   var response = await RNEzetapSdk.initialize(withAppKey)
+  //   console.log(response)
+  //   // var jsonData = JSON.parse(response)
+  //   // setRazorpayInitializationJson(jsonData)
+  //   ezetapStorage.set("ezetap-initialization-json", response)
+  // }
 
-  const init = async () => {
-    getUserId()
-    getVersionFromWeb()
+  // const init = async () => {
+  //   getUserId()
+  //   getVersionFromWeb()
 
-    console.log(
-      "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
-      ezetapStorage.contains("ezetap-initialization-json"),
-      ezetapStorage.getString("ezetap-initialization-json"),
-    )
-    // if (!ezetapStorage.contains("ezetap-initialization-json")) {
-    await initRazorpay()
+  //   console.log(
+  //     "PPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
+  //     ezetapStorage.contains("ezetap-initialization-json"),
+  //     ezetapStorage.getString("ezetap-initialization-json"),
+  //   )
+  //   // if (!ezetapStorage.contains("ezetap-initialization-json")) {
+  //   await initRazorpay()
 
-    var res = await RNEzetapSdk.prepareDevice()
-    console.warn("RAZORPAY===PREPARE DEVICE", res)
-    // }
-  }
+  //   var res = await RNEzetapSdk.prepareDevice()
+  //   console.warn("RAZORPAY===PREPARE DEVICE", res)
+  //   // }
+  // }
 
   const masterCallingFuncSequence = async () => {
     await getUserId()
     await getVersionFromWeb()
-    await printerFlagCheck()
+    // await printerFlagCheck()
 
-    if (printingSDKType.paxA910) {
-      init()
-    }
+    // if (printingSDKType.paxA910) {
+    //   // init()
+    // }
   }
 
   useEffect(() => {
