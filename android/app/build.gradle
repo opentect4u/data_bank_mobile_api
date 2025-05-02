@@ -112,6 +112,11 @@ android {
             
         }
     }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 dependencies {
@@ -129,7 +134,16 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-    implementation project(':react-native-ezetap-sdk')
+
+    implementation("androidx.core:core:1.9.0") {
+        exclude group: 'com.android.support', module: 'support-compat'
+    }
+
+    // Include the Ezetap SDK
+    implementation(name: 'ezetapandroidsdk-release-3.24_64', ext: 'aar')
+
+    // Add AppCompat library
+    implementation "androidx.appcompat:appcompat:1.2.0"
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

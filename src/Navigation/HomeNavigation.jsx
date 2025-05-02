@@ -6,7 +6,10 @@ import FindAccountScreen from "../Screens/FindAccountScreen/FindAccountScreen"
 import AccountDetails from "../Screens/FindAccountScreen/AccountDetails"
 import AccountPreview from "../Screens/FindAccountScreen/AccountPreview"
 import mainNavigationRoutes from "../Routes/NavigationRoutes"
+import PrintTemplateScreen from "../Screens/PrintScreen/PrintTemplateScreen"
+
 const Stack = createNativeStackNavigator()
+
 export default function HomeNavigation() {
   return (
     <>
@@ -28,6 +31,10 @@ export default function HomeNavigation() {
         <Stack.Screen
           name={mainNavigationRoutes.accountPreview}
           component={AccountPreview}
+        />
+        <Stack.Screen
+          name={mainNavigationRoutes.printScreen}
+          component={PrintTemplateScreen}
         />
       </Stack.Navigator>
     </>

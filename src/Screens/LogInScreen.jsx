@@ -25,9 +25,9 @@ import DeviceInfo from "react-native-device-info"
 import axios from "axios"
 import { address } from "../Routes/addresses"
 import CancelButtonComponent from "../Components/CancelButtonComponent"
-import RNEzetapSdk from "react-native-ezetap-sdk"
-import { ezetapStorage, printerFlagStorage } from "../storage/appStorage"
-import { printingSDKType } from "../PrintingAgents/config"
+// import RNEzetapSdk from "react-native-ezetap-sdk"
+// import { ezetapStorage, printerFlagStorage } from "../storage/appStorage"
+// import { printingSDKType } from "../PrintingAgents/config"
 
 const LogInScreen = ({ navigation }) => {
   const {

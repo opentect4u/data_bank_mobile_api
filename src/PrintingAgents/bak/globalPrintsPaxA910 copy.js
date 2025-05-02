@@ -1,5 +1,6 @@
 import ThermalPrinterModule from "react-native-thermal-printer"
 import { removeIndexes } from "../Functions/removeIndexes"
+import mainNavigationRoutes from "../Routes/NavigationRoutes"
 
 async function printReceiptPaxA910(
   rcptNo,
@@ -66,13 +67,21 @@ async function printReceiptPaxA910(
     payload += `[C]<font size='big'>--------------</font>\n`
     payload += `[C]                                      \n`
 
-    await ThermalPrinterModule.printBluetooth({
-      payload: payload,
-      printerNbrCharactersPerLine: 32,
-      printerDpi: 120,
-      printerWidthMM: 58,
-      mmFeedPaper: 25,
-    })
+    // await ThermalPrinterModule.printBluetooth({
+    //   payload: payload,
+    //   printerNbrCharactersPerLine: 32,
+    //   printerDpi: 120,
+    //   printerWidthMM: 58,
+    //   mmFeedPaper: 25,
+    // })
+    navigation.dispatch(
+      CommonActions.navigate({
+        name: mainNavigationRoutes.printScreen,
+        params: {
+          textData: text,
+        },
+      }),
+    )
   } catch (e) {
     console.log(e.message || "ERROR")
   }

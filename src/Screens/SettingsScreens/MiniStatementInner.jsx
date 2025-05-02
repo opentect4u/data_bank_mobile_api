@@ -20,7 +20,8 @@ import CalendarPicker from "react-native-calendar-picker"
 import { address } from "../../Routes/addresses"
 import { removeIndexes } from "../../Functions/removeIndexes"
 import { printingSDKType } from "../../PrintingAgents/config"
-import { printMiniStatementPaxA910 } from "../../PrintingAgents/globalPrintsPaxA910"
+// import { printMiniStatementPaxA910 } from "../../PrintingAgents/useGlobalPrintPaxA910"
+import useGlobalPrintPaxA910 from "../../PrintingAgents/useGlobalPrintPaxA910"
 import { printMiniStatementEscPos } from "../../PrintingAgents/globalPrintsEscPos"
 
 const MiniStatementInner = ({ route }) => {
@@ -35,6 +36,9 @@ const MiniStatementInner = ({ route }) => {
   const [miniStatementArray, setMiniStatementArray] = useState(() => [])
   const [totalAmount, setTotalAmount] = useState(() => 0)
   const [isLoading, setIsLoading] = useState(false)
+
+  const { printMiniStatementPaxA910 } = useGlobalPrintPaxA910()
+
   const startDate = selectedStartDate
     ? selectedStartDate.toISOString().slice(0, 10)
     : ""
@@ -396,8 +400,9 @@ const MiniStatementInner = ({ route }) => {
         </ScrollView>
         <Text style={{ fontWeight: "bold" }}>Total Amount: {totalAmount}</Text>
         <TouchableOpacity
-          disabled={tableData.length == 0}
+          disabled={tableData.length == 0 || isLoading}
           onPress={async () => {
+            setIsLoading(true)
             printingSDKType.paxA910 &&
               (await printMiniStatementPaxA910(
                 item,
@@ -416,6 +421,7 @@ const MiniStatementInner = ({ route }) => {
                 tableData,
                 totalAmount,
               ))
+            setIsLoading(false)
           }}
           style={
             tableData.length != 0 ? styles.dateButton : styles.disabledContainer

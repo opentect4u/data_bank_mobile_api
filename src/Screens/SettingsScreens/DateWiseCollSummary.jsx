@@ -21,7 +21,7 @@ import { address } from "../../Routes/addresses"
 import { Dropdown } from "react-native-element-dropdown"
 import { printingSDKType } from "../../PrintingAgents/config"
 import { printDatewiseCollectionSummaryEscPos } from "../../PrintingAgents/globalPrintsEscPos"
-import { printDatewiseCollectionSummaryPaxA910 } from "../../PrintingAgents/globalPrintsPaxA910"
+import useGlobalPrintPaxA910 from "../../PrintingAgents/useGlobalPrintPaxA910"
 
 const DateWiseCollSummary = () => {
   const {
@@ -53,6 +53,7 @@ const DateWiseCollSummary = () => {
   const [totalReceipts, setTotalReceipts] = useState(() => 0)
 
   const [total, setTotal] = useState(() => 0)
+  const { printDatewiseCollectionSummaryPaxA910 } = useGlobalPrintPaxA910()
 
   const startDate = selectedStartDate
     ? selectedStartDate.toISOString().slice(0, 10)

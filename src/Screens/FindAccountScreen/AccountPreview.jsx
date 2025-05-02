@@ -20,10 +20,11 @@ import { Alert } from "react-native"
 import CancelButtonComponent from "../../Components/CancelButtonComponent"
 // import logoCut from "../../Resources/Images/logo_cut.png"
 // import razor from "../../Resources/Images/razorpay.webp"
-import ThermalPrinterModule from "react-native-thermal-printer"
-import { ezetapStorage } from "../../storage/appStorage"
-import RNEzetapSdk from "react-native-ezetap-sdk"
-import { printReceiptPaxA910 } from "../../PrintingAgents/globalPrintsPaxA910"
+// import ThermalPrinterModule from "react-native-thermal-printer"
+// import { ezetapStorage } from "../../storage/appStorage"
+// import RNEzetapSdk from "react-native-ezetap-sdk"
+import useGlobalPrintPaxA910 from "../../PrintingAgents/useGlobalPrintPaxA910"
+import { printReceiptEscPos } from "../../PrintingAgents/globalPrintsEscPos"
 import { printingSDKType } from "../../PrintingAgents/config"
 
 const AccountPreview = ({ navigation, route }) => {
@@ -52,6 +53,7 @@ const AccountPreview = ({ navigation, route }) => {
   const { item, money } = route.params
 
   const [lastTnxDate, setLastTnxDate] = useState(() => "")
+  const { printReceiptPaxA910 } = useGlobalPrintPaxA910()
 
   const tableData = [
     [
@@ -197,6 +199,11 @@ const AccountPreview = ({ navigation, route }) => {
           setReceiptNumber(res.data.receipt_no)
           setIsSaveEnabled(false)
 
+          console.log(
+            "printingSDKType.paxA910 ===========>>>>>>>>>>>>>>>>",
+            printingSDKType.paxA910,
+          )
+
           printingSDKType.paxA910 &&
             (await printReceiptPaxA910(
               res.data.receipt_no,
@@ -209,7 +216,7 @@ const AccountPreview = ({ navigation, route }) => {
               lastTnxDate,
             ))
           printingSDKType.escpos &&
-            (await printReceiptPaxA910(
+            (await printReceiptEscPos(
               res.data.receipt_no,
               item,
               bankName,
@@ -220,7 +227,7 @@ const AccountPreview = ({ navigation, route }) => {
               lastTnxDate,
             ))
 
-          navigation.dispatch(resetAction)
+          // navigation.dispatch(resetAction)
         } else {
           setLoading(false)
           console.log("result else gggggggggggggggggg", res.data)
@@ -350,73 +357,73 @@ const AccountPreview = ({ navigation, route }) => {
     }
   }
 
-  const handleRazorpayClient = async () => {
-    let json = {
-      username: "9903044748",
-      amount: +money,
-      externalRefNumber: "",
-    }
+  // const handleRazorpayClient = async () => {
+  //   let json = {
+  //     username: "9903044748",
+  //     amount: +money,
+  //     externalRefNumber: "",
+  //   }
 
-    // Convert json object to string
-    let jsonString = JSON.stringify(json)
+  //   // Convert json object to string
+  //   let jsonString = JSON.stringify(json)
 
-    // await RNEzetapSdk.initialize(jsonString)
-    //   .then(res => {
-    //     console.log(">>>>>>>>>>>>>>>>>", res)
-    //   })
-    //   .catch(err => {
-    //     console.log("<<<<<<<<<<<<<<<<<", err)
-    //   })
+  //   // await RNEzetapSdk.initialize(jsonString)
+  //   //   .then(res => {
+  //   //     console.log(">>>>>>>>>>>>>>>>>", res)
+  //   //   })
+  //   //   .catch(err => {
+  //   //     console.log("<<<<<<<<<<<<<<<<<", err)
+  //   //   })
 
-    // var res = await RNEzetapSdk.prepareDevice()
-    // console.log("RAZORPAY===PREPARE DEVICE", res)
+  //   // var res = await RNEzetapSdk.prepareDevice()
+  //   // console.log("RAZORPAY===PREPARE DEVICE", res)
 
-    await RNEzetapSdk.pay(jsonString)
-      .then(res => {
-        console.log(">>>>>>>>>>>>>>>>>", res)
+  //   await RNEzetapSdk.pay(jsonString)
+  //     .then(res => {
+  //       console.log(">>>>>>>>>>>>>>>>>", res)
 
-        // if (res?.status == "success") {
-        //   handleSave()
-        //   Alert.alert("Txn ID", res?.txnId)
-        // } else {
-        //   Alert.alert("Error in Tnx", res?.error)
-        // }
-        tnxResponse = res
-        // setTnxResponse(res)
-      })
-      .catch(err => {
-        console.log("<<<<<<<<<<<<<<<<<", err)
-      })
-  }
+  //       // if (res?.status == "success") {
+  //       //   handleSave()
+  //       //   Alert.alert("Txn ID", res?.txnId)
+  //       // } else {
+  //       //   Alert.alert("Error in Tnx", res?.error)
+  //       // }
+  //       tnxResponse = res
+  //       // setTnxResponse(res)
+  //     })
+  //     .catch(err => {
+  //       console.log("<<<<<<<<<<<<<<<<<", err)
+  //     })
+  // }
 
-  const init = async () => {
-    // var withAppKey =
-    //   '{"userName":' +
-    //   "9903044748" +
-    //   ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
-    // var response = await RNEzetapSdk.initialize(withAppKey)
-    // console.log(response)
-    // var jsonData = JSON.parse(response)
+  // const init = async () => {
+  //   // var withAppKey =
+  //   //   '{"userName":' +
+  //   //   "9903044748" +
+  //   //   ',"demoAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","prodAppKey":"a40c761a-b664-4bc6-ab5a-bf073aa797d5","merchantName":"SYNERGIC_SOFTEK_SOLUTIONS","appMode":"DEMO","currencyCode":"INR","captureSignature":false,"prepareDevice":false}'
+  //   // var response = await RNEzetapSdk.initialize(withAppKey)
+  //   // console.log(response)
+  //   // var jsonData = JSON.parse(response)
 
-    let razorpayInitializationJson = JSON.parse(
-      ezetapStorage.getString("ezetap-initialization-json"),
-    )
+  //   let razorpayInitializationJson = JSON.parse(
+  //     ezetapStorage.getString("ezetap-initialization-json"),
+  //   )
 
-    if (razorpayInitializationJson.status == "success") {
-      await handleRazorpayClient()
-        .then(async res => {
-          console.log("###################", res)
-          // var res = await RNEzetapSdk.close()
-          // console.log("CLOSEEEEE TNXXXXX", res)
-          // var json = JSON.parse(res)
-        })
-        .catch(err => {
-          console.log("==================", err)
-        })
-    } else {
-      console.log("XXXXXXXXXXXXXXXXXXX", res)
-    }
-  }
+  //   if (razorpayInitializationJson.status == "success") {
+  //     await handleRazorpayClient()
+  //       .then(async res => {
+  //         console.log("###################", res)
+  //         // var res = await RNEzetapSdk.close()
+  //         // console.log("CLOSEEEEE TNXXXXX", res)
+  //         // var json = JSON.parse(res)
+  //       })
+  //       .catch(err => {
+  //         console.log("==================", err)
+  //       })
+  //   } else {
+  //     console.log("XXXXXXXXXXXXXXXXXXX", res)
+  //   }
+  // }
 
   return (
     <View>

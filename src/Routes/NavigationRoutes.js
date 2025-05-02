@@ -1,4 +1,5 @@
 const mainNavigationRoutes = {
+  printScreen: "PrintScreen",
   home: "Home",
   tab_home: "TabHome",
   login: "LogIn",

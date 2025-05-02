@@ -22,11 +22,12 @@
     "react-native-ble-manager": "^10.1.4",
     "react-native-bluetooth-escpos-printer": "^0.0.5",
     "react-native-calendar-picker": "^7.1.4",
+    "react-native-canvas": "^0.1.40",
     "react-native-config": "^1.5.1",
     "react-native-device-info": "^10.8.0",
     "react-native-dotenv": "^3.4.9",
     "react-native-element-dropdown": "^2.10.0",
-    "react-native-ezetap-sdk": "^1.2.1",
+    "react-native-fs": "^2.20.0",
     "react-native-linear-gradient": "^2.8.2",
     "react-native-mmkv": "^2.6.0",
     "react-native-normalize": "^1.0.1",
@@ -38,7 +39,8 @@
     "react-native-smooth-pincode-input": "^1.0.9",
     "react-native-table-component": "^1.2.2",
     "react-native-thermal-printer": "^2.3.6",
-    "react-native-vector-icons": "^10.0.0"
+    "react-native-vector-icons": "^10.0.0",
+    "react-native-webview": "^13.13.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

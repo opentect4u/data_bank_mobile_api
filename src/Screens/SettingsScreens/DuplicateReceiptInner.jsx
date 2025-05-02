@@ -20,7 +20,8 @@ import axios from "axios"
 import CalendarPicker from "react-native-calendar-picker"
 import { address } from "../../Routes/addresses"
 import { icon } from "../../Resources/Icons"
-import { printDuplicateReceiptPaxA910 } from "../../PrintingAgents/globalPrintsPaxA910"
+// import { printDuplicateReceiptPaxA910 } from "../../PrintingAgents/globalPrintsPaxA910"
+import useGlobalPrintPaxA910 from "../../PrintingAgents/useGlobalPrintPaxA910"
 import { printingSDKType } from "../../PrintingAgents/config"
 import { printDuplicateReceiptEscPos } from "../../PrintingAgents/globalPrintsEscPos"
 
@@ -40,6 +41,7 @@ const DuplicateReceiptInner = ({ route }) => {
   const [duplicateReceipts, setDuplicateReceipts] = useState(() => [])
 
   const [loading, setLoading] = useState(() => true)
+  const { printDuplicateReceiptPaxA910 } = useGlobalPrintPaxA910()
 
   const tableHead = ["Date", "Rcpt No", "Dep Amt", "Print"]
   let tableData = duplicateReceipts

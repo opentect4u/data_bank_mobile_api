@@ -24,10 +24,11 @@ import { Dropdown } from "react-native-element-dropdown"
 import { table } from "console"
 import { NodePath } from "@babel/core"
 import NoData from "../../Components/NoData"
-import {
-  printDayScrollReportPA910,
-  printDayScrollReportPaxA910,
-} from "../../PrintingAgents/globalPrintsPaxA910"
+// import {
+//   printDayScrollReportPA910,
+//   printDayScrollReportPaxA910,
+// } from "../../PrintingAgents/globalPrintsPaxA910"
+import useGlobalPrintPaxA910 from "../../PrintingAgents/useGlobalPrintPaxA910"
 import { printingSDKType } from "../../PrintingAgents/config"
 import { printDayScrollReportEscPos } from "../../PrintingAgents/globalPrintsEscPos"
 
@@ -52,6 +53,7 @@ const ReportDay = () => {
 
   const [totalAmount, setTotalAmount] = useState(() => 0)
   const [isLoading, setIsLoading] = useState(false)
+  const { printDayScrollReportPaxA910 } = useGlobalPrintPaxA910()
 
   const startDate = selectedStartDate
     ? selectedStartDate.toISOString().slice(0, 10)
