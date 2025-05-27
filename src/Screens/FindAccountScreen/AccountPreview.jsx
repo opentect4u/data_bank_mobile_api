@@ -227,7 +227,7 @@ const AccountPreview = ({ navigation, route }) => {
               lastTnxDate,
             ))
 
-          // navigation.dispatch(resetAction)
+          navigation.dispatch(resetAction)
         } else {
           setLoading(false)
           console.log("result else gggggggggggggggggg", res.data)

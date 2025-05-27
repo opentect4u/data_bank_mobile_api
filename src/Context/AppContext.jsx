@@ -4,7 +4,11 @@ import DeviceInfo from "react-native-device-info"
 import { ToastAndroid } from "react-native"
 import { REACT_APP_BASE_URL } from "../Config/config"
 import { address } from "../Routes/addresses"
-import { ezetapStorage, printerFlagStorage } from "../storage/appStorage"
+import {
+  ezetapStorage,
+  printerFlagStorage,
+  logoStorage,
+} from "../storage/appStorage"
 
 export const AppStore = createContext()
 
@@ -44,6 +48,7 @@ const AppContext = ({ children }) => {
   const [endFlag, setEndFlag] = useState("")
 
   const [totalDepositedAmount, setTotalDepositedAmount] = useState(() => 0)
+  const [logoPath, setLogoPath] = useState(() => "")
 
   const [next, setNext] = useState(() => false)
 
@@ -72,7 +77,18 @@ const AppContext = ({ children }) => {
       .then(res => {
         if (res?.data?.status) {
           setIsLogin(true)
-          // console.log('modified_dt '+new Date(res.data.success.setting.msg[0].modified_at))
+          console.log("LOGIN RES ==========> ", res?.data?.success)
+          // setLogoPath(
+          //   `${REACT_APP_BASE_URL?.slice(0, -3)}/bank_logo/${
+          //     res?.data?.success?.logo_path
+          //   }`,
+          // )
+          logoStorage.set(
+            "logoStore",
+            `${REACT_APP_BASE_URL?.slice(0, -3)}/bank_logo/${
+              res?.data?.success?.logo_path
+            }`,
+          )
           // console.log(res.data, res.status)
           // console.log("dataguli ",res.data.success.bank_acc_type)
           setId(res?.data?.success?.user_data?.msg[0]?.id)
@@ -291,6 +307,7 @@ const AppContext = ({ children }) => {
         isRD,
         transDt,
         setTotalCollection,
+        logoPath,
       }}>
       {children}
     </AppStore.Provider>

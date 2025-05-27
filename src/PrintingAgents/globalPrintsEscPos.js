@@ -1,5 +1,23 @@
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { removeIndexes } from "../Functions/removeIndexes"
+import { logoStorage } from "../storage/appStorage"
+
+async function fetchImageAsBase64(url) {
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch image: ${response.status}`)
+  }
+  const blob = await response.blob()
+
+  const base64data = await new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(blob)
+  })
+
+  return base64data.split(",")[1]
+}
 
 async function printReceiptEscPos(
   rcptNo,
@@ -11,11 +29,39 @@ async function printReceiptEscPos(
   money,
   lastTnxDate,
 ) {
+  const pureBase64 = await fetchImageAsBase64(
+    logoStorage.getString("logoStore"),
+  )
+
   try {
+    // await BluetoothEscposPrinter.setBlob(0)
+    // await BluetoothEscposPrinter.printPic(pureBase64, {
+    //   width: 200,
+    //   left: 0,
+    //   align: "center",
+    // })
+
+    await BluetoothEscposPrinter.printerInit()
+    await BluetoothEscposPrinter.setBlob(0)
+
+    await BluetoothEscposPrinter.printerLineSpace(0)
+
+    const paperWidth = 384
+    const imageWidth = 200
+    const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
+    await BluetoothEscposPrinter.printPic(pureBase64, {
+      width: imageWidth,
+      left: leftPadding,
+    })
+
+    await BluetoothEscposPrinter.printerLineSpace(0)
+
     await BluetoothEscposPrinter.printerAlign(
       BluetoothEscposPrinter.ALIGN.CENTER,
     )
-    await BluetoothEscposPrinter.printText(bankName, { align: "center" })
+    await BluetoothEscposPrinter.printText(bankName, {
+      align: "center",
+    })
     await BluetoothEscposPrinter.printText("\r\n", {})
     await BluetoothEscposPrinter.printText(branchName, { align: "center" })
     await BluetoothEscposPrinter.printText("\r\n", {})

@@ -7,3 +7,7 @@ export const ezetapStorage = new MMKV({
 export const printerFlagStorage = new MMKV({
   id: "printer-store",
 })
+
+export const logoStorage = new MMKV({
+  id: "logo-store",
+})
