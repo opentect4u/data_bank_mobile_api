@@ -30,6 +30,7 @@ async function printReceiptEscPos(
   money,
   lastTnxDate,
 ) {
+  console.log("CHECKKKXXXX LOGO_STORE", logoStorage.contains("logoStore"))
   const pureBase64 = await fetchImageAsBase64(
     logoStorage.getString("logoStore"),
   )
@@ -43,10 +44,13 @@ async function printReceiptEscPos(
     const paperWidth = 384
     const imageWidth = 200
     const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
-    await BluetoothEscposPrinter.printPic(pureBase64, {
-      width: imageWidth,
-      left: leftPadding,
-    })
+    {
+      logoStorage.contains("logoStore") &&
+        (await BluetoothEscposPrinter.printPic(pureBase64, {
+          width: imageWidth,
+          left: leftPadding,
+        }))
+    }
 
     await BluetoothEscposPrinter.printText("\r\n", {})
 
@@ -263,10 +267,13 @@ async function printDuplicateReceiptEscPos(
     const paperWidth = 384
     const imageWidth = 200
     const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
-    await BluetoothEscposPrinter.printPic(pureBase64, {
-      width: imageWidth,
-      left: leftPadding,
-    })
+    {
+      logoStorage.contains("logoStore") &&
+        (await BluetoothEscposPrinter.printPic(pureBase64, {
+          width: imageWidth,
+          left: leftPadding,
+        }))
+    }
 
     await BluetoothEscposPrinter.printText("\r\n", {})
 
@@ -490,10 +497,13 @@ async function printMiniStatementEscPos(
     const paperWidth = 384
     const imageWidth = 200
     const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
-    await BluetoothEscposPrinter.printPic(pureBase64, {
-      width: imageWidth,
-      left: leftPadding,
-    })
+    {
+      logoStorage.contains("logoStore") &&
+        (await BluetoothEscposPrinter.printPic(pureBase64, {
+          width: imageWidth,
+          left: leftPadding,
+        }))
+    }
 
     await BluetoothEscposPrinter.printText("\r\n", {})
 
@@ -661,10 +671,13 @@ async function printDayScrollReportEscPos(
     const paperWidth = 384
     const imageWidth = 200
     const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
-    await BluetoothEscposPrinter.printPic(pureBase64, {
-      width: imageWidth,
-      left: leftPadding,
-    })
+    {
+      logoStorage.contains("logoStore") &&
+        (await BluetoothEscposPrinter.printPic(pureBase64, {
+          width: imageWidth,
+          left: leftPadding,
+        }))
+    }
 
     await BluetoothEscposPrinter.printText("\r\n", {})
 
@@ -831,12 +844,19 @@ async function printDatewiseCollectionSummaryEscPos(
     const paperWidth = 384
     const imageWidth = 200
     const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
-    await BluetoothEscposPrinter.printPic(pureBase64, {
-      width: imageWidth,
-      left: leftPadding,
-    })
+    {
+      logoStorage.contains("logoStore") &&
+        (await BluetoothEscposPrinter.printPic(pureBase64, {
+          width: imageWidth,
+          left: leftPadding,
+        }))
+    }
 
     await BluetoothEscposPrinter.printText("\r\n", {})
+
+    await BluetoothEscposPrinter.printerAlign(
+      BluetoothEscposPrinter.ALIGN.CENTER,
+    )
 
     await BluetoothEscposPrinter.printText(bankName, { align: "center" })
     await BluetoothEscposPrinter.printText("\r\n", {})

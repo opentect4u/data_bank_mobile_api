@@ -83,12 +83,13 @@ const AppContext = ({ children }) => {
           //     res?.data?.success?.logo_path
           //   }`,
           // )
-          logoStorage.set(
-            "logoStore",
-            `${REACT_APP_BASE_URL?.slice(0, -3)}/bank_logo/${
-              res?.data?.success?.logo_path
-            }`,
-          )
+          res?.data?.success?.logo_path?.length !== 0 &&
+            logoStorage.set(
+              "logoStore",
+              `${REACT_APP_BASE_URL?.slice(0, -3)}/bank_logo/${
+                res?.data?.success?.logo_path
+              }`,
+            )
           // console.log(res.data, res.status)
           // console.log("dataguli ",res.data.success.bank_acc_type)
           setId(res?.data?.success?.user_data?.msg[0]?.id)
