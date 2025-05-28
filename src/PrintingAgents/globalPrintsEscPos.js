@@ -1,6 +1,7 @@
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { removeIndexes } from "../Functions/removeIndexes"
 import { logoStorage } from "../storage/appStorage"
+import { ToastAndroid } from "react-native"
 
 async function fetchImageAsBase64(url) {
   const response = await fetch(url)
@@ -34,13 +35,6 @@ async function printReceiptEscPos(
   )
 
   try {
-    // await BluetoothEscposPrinter.setBlob(0)
-    // await BluetoothEscposPrinter.printPic(pureBase64, {
-    //   width: 200,
-    //   left: 0,
-    //   align: "center",
-    // })
-
     await BluetoothEscposPrinter.printerInit()
     await BluetoothEscposPrinter.setBlob(0)
 
@@ -54,7 +48,7 @@ async function printReceiptEscPos(
       left: leftPadding,
     })
 
-    await BluetoothEscposPrinter.printerLineSpace(0)
+    await BluetoothEscposPrinter.printText("\r\n", {})
 
     await BluetoothEscposPrinter.printerAlign(
       BluetoothEscposPrinter.ALIGN.CENTER,
@@ -256,7 +250,26 @@ async function printDuplicateReceiptEscPos(
   prevTnxDate,
 ) {
   console.log(item)
+  const pureBase64 = await fetchImageAsBase64(
+    logoStorage.getString("logoStore"),
+  )
+
   try {
+    await BluetoothEscposPrinter.printerInit()
+    await BluetoothEscposPrinter.setBlob(0)
+
+    await BluetoothEscposPrinter.printerLineSpace(0)
+
+    const paperWidth = 384
+    const imageWidth = 200
+    const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
+    await BluetoothEscposPrinter.printPic(pureBase64, {
+      width: imageWidth,
+      left: leftPadding,
+    })
+
+    await BluetoothEscposPrinter.printText("\r\n", {})
+
     await BluetoothEscposPrinter.printerAlign(
       BluetoothEscposPrinter.ALIGN.CENTER,
     )
@@ -464,7 +477,26 @@ async function printMiniStatementEscPos(
   tableData,
   totalAmount,
 ) {
+  const pureBase64 = await fetchImageAsBase64(
+    logoStorage.getString("logoStore"),
+  )
+
   try {
+    await BluetoothEscposPrinter.printerInit()
+    await BluetoothEscposPrinter.setBlob(0)
+
+    await BluetoothEscposPrinter.printerLineSpace(0)
+
+    const paperWidth = 384
+    const imageWidth = 200
+    const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
+    await BluetoothEscposPrinter.printPic(pureBase64, {
+      width: imageWidth,
+      left: leftPadding,
+    })
+
+    await BluetoothEscposPrinter.printText("\r\n", {})
+
     await BluetoothEscposPrinter.printerAlign(
       BluetoothEscposPrinter.ALIGN.CENTER,
     )
@@ -616,7 +648,26 @@ async function printDayScrollReportEscPos(
   tableData,
   totalAmount,
 ) {
+  const pureBase64 = await fetchImageAsBase64(
+    logoStorage.getString("logoStore"),
+  )
+
   try {
+    await BluetoothEscposPrinter.printerInit()
+    await BluetoothEscposPrinter.setBlob(0)
+
+    await BluetoothEscposPrinter.printerLineSpace(0)
+
+    const paperWidth = 384
+    const imageWidth = 200
+    const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
+    await BluetoothEscposPrinter.printPic(pureBase64, {
+      width: imageWidth,
+      left: leftPadding,
+    })
+
+    await BluetoothEscposPrinter.printText("\r\n", {})
+
     await BluetoothEscposPrinter.printerAlign(
       BluetoothEscposPrinter.ALIGN.CENTER,
     )
@@ -767,10 +818,26 @@ async function printDatewiseCollectionSummaryEscPos(
   totalReceipts,
   total,
 ) {
+  const pureBase64 = await fetchImageAsBase64(
+    logoStorage.getString("logoStore"),
+  )
+
   try {
-    // await BluetoothEscposPrinter.printerAlign(
-    //   BluetoothEscposPrinter.ALIGN.CENTER,
-    // )
+    await BluetoothEscposPrinter.printerInit()
+    await BluetoothEscposPrinter.setBlob(0)
+
+    await BluetoothEscposPrinter.printerLineSpace(0)
+
+    const paperWidth = 384
+    const imageWidth = 200
+    const leftPadding = Math.floor((paperWidth - imageWidth) / 2)
+    await BluetoothEscposPrinter.printPic(pureBase64, {
+      width: imageWidth,
+      left: leftPadding,
+    })
+
+    await BluetoothEscposPrinter.printText("\r\n", {})
+
     await BluetoothEscposPrinter.printText(bankName, { align: "center" })
     await BluetoothEscposPrinter.printText("\r\n", {})
     await BluetoothEscposPrinter.printText(branchName, { align: "center" })
