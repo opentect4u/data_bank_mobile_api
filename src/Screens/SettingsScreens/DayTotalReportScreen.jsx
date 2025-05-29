@@ -429,14 +429,14 @@ const DayTotalReportScreen = () => {
           )}
         </ScrollView>
         <Text>Total Amount: {totalAmount}</Text>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           disabled={tableData.length == 0}
           onPress={() => printReceipt()}
           style={
             tableData.length != 0 ? styles.dateButton : styles.disabledContainer
           }>
           <Text style={styles.btnlabel}>PRINT</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   )

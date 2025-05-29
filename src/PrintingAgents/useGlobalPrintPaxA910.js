@@ -1,7 +1,7 @@
 import { useNavigation, CommonActions } from "@react-navigation/native"
 import ThermalPrinterModule from "react-native-thermal-printer"
 import { removeIndexes } from "../Functions/removeIndexes"
-import mainNavigationRoutes from "../Routes/NavigationRoutes"
+// import mainNavigationRoutes from "../Routes/NavigationRoutes"
 
 export default function useGlobalPrintPaxA910() {
   const navigation = useNavigation()
@@ -60,12 +60,19 @@ export default function useGlobalPrintPaxA910() {
       })}\n`
       payload += `[C]----------------------------\n`
 
-      navigation.dispatch(
-        CommonActions.navigate({
-          name: mainNavigationRoutes.printScreen,
-          params: { textData: payload },
-        }),
-      )
+      // navigation.dispatch(
+      //   CommonActions.navigate({
+      //     name: mainNavigationRoutes.printScreen,
+      //     params: { textData: payload },
+      //   }),
+      // )
+      await ThermalPrinterModule.printBluetooth({
+        payload: payload,
+        printerNbrCharactersPerLine: 32,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      })
     } catch (e) {
       console.log(e.message || e)
     }
@@ -130,12 +137,19 @@ export default function useGlobalPrintPaxA910() {
       //   printerWidthMM: 58,
       //   mmFeedPaper: 25,
       // })
-      navigation.dispatch(
-        CommonActions.navigate({
-          name: mainNavigationRoutes.printScreen,
-          params: { textData: payload },
-        }),
-      )
+      // navigation.dispatch(
+      //   CommonActions.navigate({
+      //     name: mainNavigationRoutes.printScreen,
+      //     params: { textData: payload },
+      //   }),
+      // )
+      await ThermalPrinterModule.printBluetooth({
+        payload: payload,
+        printerNbrCharactersPerLine: 32,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      })
     } catch (e) {
       console.log(e.message || e)
     }
@@ -174,19 +188,19 @@ export default function useGlobalPrintPaxA910() {
       payload += `[C]TOTAL AMT : ${totalAmount}\n`
       payload += `[C]----------------------------\n`
 
-      // await ThermalPrinterModule.printBluetooth({
-      //   payload,
-      //   printerNbrCharactersPerLine: 32,
-      //   printerDpi: 120,
-      //   printerWidthMM: 58,
-      //   mmFeedPaper: 25,
-      // })
-      navigation.dispatch(
-        CommonActions.navigate({
-          name: mainNavigationRoutes.printScreen,
-          params: { textData: payload },
-        }),
-      )
+      await ThermalPrinterModule.printBluetooth({
+        payload,
+        printerNbrCharactersPerLine: 32,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      })
+      // navigation.dispatch(
+      //   CommonActions.navigate({
+      //     name: mainNavigationRoutes.printScreen,
+      //     params: { textData: payload },
+      //   }),
+      // )
     } catch (e) {
       console.log(e.message || e)
     }
@@ -237,19 +251,19 @@ export default function useGlobalPrintPaxA910() {
       payload += `[C]TOTAL AMT : ${totalAmount}\n`
       payload += `[C]----------------------------\n`
 
-      // await ThermalPrinterModule.printBluetooth({
-      //   payload,
-      //   printerNbrCharactersPerLine: 32,
-      //   printerDpi: 120,
-      //   printerWidthMM: 58,
-      //   mmFeedPaper: 25,
-      // })
-      navigation.dispatch(
-        CommonActions.navigate({
-          name: mainNavigationRoutes.printScreen,
-          params: { textData: payload },
-        }),
-      )
+      await ThermalPrinterModule.printBluetooth({
+        payload,
+        printerNbrCharactersPerLine: 32,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      })
+      // navigation.dispatch(
+      //   CommonActions.navigate({
+      //     name: mainNavigationRoutes.printScreen,
+      //     params: { textData: payload },
+      //   }),
+      // )
     } catch (e) {
       console.error("Printing error:", e.message || e)
     }
@@ -285,20 +299,20 @@ export default function useGlobalPrintPaxA910() {
       payload += `[C]TOTAL AMT : ${total}\n`
       payload += `[C]----------------------------\n`
 
-      // await ThermalPrinterModule.printBluetooth({
-      //   payload,
-      //   printerNbrCharactersPerLine: 32,
-      //   printerDpi: 120,
-      //   printerWidthMM: 58,
-      //   mmFeedPaper: 25,
-      // })
+      await ThermalPrinterModule.printBluetooth({
+        payload,
+        printerNbrCharactersPerLine: 32,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      })
 
-      navigation.dispatch(
-        CommonActions.navigate({
-          name: mainNavigationRoutes.printScreen,
-          params: { textData: payload },
-        }),
-      )
+      // navigation.dispatch(
+      //   CommonActions.navigate({
+      //     name: mainNavigationRoutes.printScreen,
+      //     params: { textData: payload },
+      //   }),
+      // )
     } catch (e) {
       console.log(e.message || e)
     }

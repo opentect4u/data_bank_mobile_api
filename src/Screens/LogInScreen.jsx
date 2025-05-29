@@ -103,31 +103,31 @@ const LogInScreen = ({ navigation }) => {
   //     })
   // }
 
-  // const printerFlagCheck = async () => {
-  //   const creds = {
-  //     device_id: deviceId,
-  //     user_id: userId,
-  //   }
+  const printerFlagCheck = async () => {
+    const creds = {
+      device_id: deviceId,
+      user_id: userId,
+    }
 
-  //   console.log("PAYLOAD PRINT FLAGGG", creds)
+    console.log("PAYLOAD PRINT FLAGGG", creds)
 
-  //   await axios
-  //     .post(address.PRINTER_FLAG, creds)
-  //     .then(res => {
-  //       console.log("PRINTER FLAG RESSSSSS =======>>>>", res?.data)
-  //       console.log(
-  //         "PRINTER FLAG RESSSSSS =======>>>> RES?.DATA?.MSG",
-  //         res?.data?.success?.msg,
-  //       )
-  //       printerFlagStorage.set(
-  //         "printer-flag-json",
-  //         JSON.stringify(res?.data?.success?.msg),
-  //       )
-  //     })
-  //     .catch(err => {
-  //       console.log("Some error occurred while fetching flag.", err)
-  //     })
-  // }
+    await axios
+      .post(address.PRINTER_FLAG, creds)
+      .then(res => {
+        console.log("PRINTER FLAG RESSSSSS =======>>>>", res?.data)
+        console.log(
+          "PRINTER FLAG RESSSSSS =======>>>> RES?.DATA?.MSG",
+          res?.data?.success?.msg,
+        )
+        printerFlagStorage.set(
+          "printer-flag-json",
+          JSON.stringify(res?.data?.success?.msg),
+        )
+      })
+      .catch(err => {
+        console.log("Some error occurred while fetching flag.", err)
+      })
+  }
 
   // const initRazorpay = async () => {
   //   // Debug Device
@@ -168,7 +168,7 @@ const LogInScreen = ({ navigation }) => {
   const masterCallingFuncSequence = async () => {
     await getUserId()
     // await getVersionFromWeb()
-    // await printerFlagCheck()
+    await printerFlagCheck()
 
     // if (printingSDKType.paxA910) {
     //   // init()
