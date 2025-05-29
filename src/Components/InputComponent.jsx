@@ -20,7 +20,7 @@ const InputComponent = ({
   textHide = false,
   handlePasswordShow,
   keyboardType = "default",
-  autoFocus = true,
+  autoFocus = false,
 }) => {
   return (
     <View>

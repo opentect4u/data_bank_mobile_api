@@ -76,32 +76,32 @@ const LogInScreen = ({ navigation }) => {
     .split(".")
     .map(s => parseInt(s, 10))
 
-  const getVersionFromWeb = async () => {
-    await axios
-      .post(
-        address.GET_VERSION_DETAILS,
-        { app_version: version },
-        {
-          headers: {
-            Accept: "application/json",
-          },
-        },
-      )
-      .then(res => {
-        setLatestAppVersion(res?.data?.data?.app_version)
-        setAppDownloadLink(res?.data?.data?.app_download_link)
-        console.log(
-          "fsdadgtreyhgtdhyrfujfyudx",
-          res.data.data.app_download_link,
-        )
-        console.log("fsdadgtreyhgtdhysdfsdfsdrfujfyudx", res.data)
-        setUpdateStatus(res.data.update_status)
+  // const getVersionFromWeb = async () => {
+  //   await axios
+  //     .post(
+  //       address.GET_VERSION_DETAILS,
+  //       { app_version: version },
+  //       {
+  //         headers: {
+  //           Accept: "application/json",
+  //         },
+  //       },
+  //     )
+  //     .then(res => {
+  //       setLatestAppVersion(res?.data?.data?.app_version)
+  //       setAppDownloadLink(res?.data?.data?.app_download_link)
+  //       console.log(
+  //         "fsdadgtreyhgtdhyrfujfyudx",
+  //         res.data.data.app_download_link,
+  //       )
+  //       console.log("fsdadgtreyhgtdhysdfsdfsdrfujfyudx", res.data)
+  //       setUpdateStatus(res.data.update_status)
 
-        if (res.data.update_status == "Y") {
-          showAlertUpdate(res?.data?.data?.app_download_link)
-        }
-      })
-  }
+  //       if (res.data.update_status == "Y") {
+  //         showAlertUpdate(res?.data?.data?.app_download_link)
+  //       }
+  //     })
+  // }
 
   // const printerFlagCheck = async () => {
   //   const creds = {
@@ -167,7 +167,7 @@ const LogInScreen = ({ navigation }) => {
 
   const masterCallingFuncSequence = async () => {
     await getUserId()
-    await getVersionFromWeb()
+    // await getVersionFromWeb()
     // await printerFlagCheck()
 
     // if (printingSDKType.paxA910) {
@@ -183,11 +183,11 @@ const LogInScreen = ({ navigation }) => {
   console.log("skahlrcnsfytkuwhnf ", latestAppVersion)
   console.log("skahlrcnsfytkuwhnf ", updateStatus)
 
-  function showAlertUpdate(link) {
-    Alert.alert("Found Update!", "Please update your app.", [
-      { text: "Download", onPress: () => Linking.openURL(link) },
-    ])
-  }
+  // function showAlertUpdate(link) {
+  //   Alert.alert("Found Update!", "Please update your app.", [
+  //     { text: "Download", onPress: () => Linking.openURL(link) },
+  //   ])
+  // }
 
   // 1 3 0 ========= 1 1 0
 
@@ -200,6 +200,7 @@ const LogInScreen = ({ navigation }) => {
           <Text style={styles.grettingText}>Welcome to {"Data Bank"}</Text>
           {/* manual text */}
           <Text style={styles.manual}>Login with your pin</Text>
+          <Text style={styles.manual}>Version: {version}</Text>
         </View>
       </View>
       <View style={styles.mainContainer}>

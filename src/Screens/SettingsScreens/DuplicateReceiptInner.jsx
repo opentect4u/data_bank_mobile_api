@@ -418,6 +418,7 @@ const DuplicateReceiptInner = ({ route }) => {
         }}>
         <Text style={styles.todayCollection}>Duplicate Receipts</Text>
         <ScrollView>
+          <ActivityIndicator animating={loading} size={"large"} />
           {tableData.length != 0 && (
             <Table
               borderStyle={{
@@ -428,12 +429,7 @@ const DuplicateReceiptInner = ({ route }) => {
               }}
               style={{ backgroundColor: COLORS.lightScheme.background }}>
               <Row data={tableHead} textStyle={styles.head} />
-
-              {loading ? (
-                <ActivityIndicator animating={true} size={"large"} />
-              ) : (
-                <Rows data={tableData} textStyle={styles.text} />
-              )}
+              <Rows data={tableData} textStyle={styles.text} />
             </Table>
           )}
         </ScrollView>
