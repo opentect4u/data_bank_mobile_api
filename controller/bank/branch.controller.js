@@ -11,7 +11,7 @@ const branch_list=async (req,res)=>{
             table_name = 'md_branch AS a, md_user as b',
             whr = `a.bank_id=${user_data.bank_id} AND a.branch_code=b.branch_code AND a.bank_id='${user_data.bank_id}' AND b.bank_id='${user_data.bank_id}' AND b.user_type='R'`;
         const resData = await db_Select(select, table_name, whr, null)
-        // // console.log("======///////////=======",resData)
+        // console.log("======///////////=======",resData)
         delete resData.sql
         var viewData = {
             title: "Branch",
@@ -56,12 +56,12 @@ const add_branch=async (req,res)=>{
         let fields2 = '(bank_id, branch_code, user_type, password, user_id, active_flag, created_by, created_at, delete_flag, profile_pic)',
         values2 = `('${user_data.bank_id}','${value.branch_c}','R','${enc_pss}','${value.email}','N','${user_data.id}','${datetime}','N','')`;
         let res_dt2 = await db_Insert("md_user", fields2, values2, null, 0);
-        // console.log('========user==========',res_dt2)
+        console.log('========user==========',res_dt2)
 
         let fields = '(bank_id, branch_code, branch_name, branch_address, contact_person, phone_no, email_id, created_by, created_at, delete_flag, active_flag)',
             values = `('${user_data.bank_id}','${value.branch_c}','${value.branchname}','${value.branch_address}','${value.contactperson}','${value.mobile}','${value.email}','${user_data.id}','${datetime}','N','N')`;
         let res_dt = await db_Insert("md_branch", fields, values, null, 0);
-        // console.log('========branch==========',res_dt)
+        console.log('========branch==========',res_dt)
         res.redirect('/bank/branch')
     } catch (error) {
         res.json({
@@ -81,7 +81,7 @@ const editBranch = async (req, res) => {
             table_name = 'md_branch AS a,md_user as b',
             whr = `a.branch_code=b.branch_code AND a.branch_id='${branchid}' AND a.bank_id='${user_data.bank_id}' AND b.user_type='R'`;
         const resData = await db_Select(select, table_name, whr, null)
-        // console.log('========branch==========',resData);
+        console.log('========branch==========',resData);
         delete resData.sql
         var viewData = {
             title: "Edit Branch",

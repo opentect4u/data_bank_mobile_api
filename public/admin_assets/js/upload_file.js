@@ -17,8 +17,7 @@ document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
 
     if (e.dataTransfer.files.length) {
       const file = e.dataTransfer.files[0];
-      if ((file.type === 'text/plain' && file.name.endsWith('.txt')) || (file.type === 'text/csv' && file.name.endsWith('.csv'))) {
-       
+      if ((file.type === 'text/plain' && file.name.endsWith('.txt')) || (file.type === 'text/csv' && file.name.endsWith('.csv')) || file.name.toLowerCase().endsWith('.dat')) {
         if ($("#agent").val() == null || $("#agent").val() == "") {
           alert("Please select Agent")
           $("#uploadButton").attr("disabled", true);
@@ -50,9 +49,9 @@ document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
 
     if (inputElement.files.length) {
       const file = inputElement.files[0];
-      if ((file.type === 'text/plain' && file.name.endsWith('.txt')) || (file.type === 'text/csv' && file.name.endsWith('.csv'))) {
+      if ((file.type === 'text/plain' && file.name.endsWith('.txt')) || (file.type === 'text/csv' && file.name.endsWith('.csv')) || file.name.toLowerCase().endsWith('.dat')) {
         
-        // console.log($("#agent").val())
+        console.log($("#agent").val())
         if ($("#agent").val() == null || $("#agent").val() == "") {
           alert("Please select Agent")
           $("#uploadButton").attr("disabled", true);
@@ -89,6 +88,8 @@ function updateThumbnail(dropZoneEle, file) {
   thumbnailEle.dataset.label = file.name;
   if (file.type.startsWith("text/")) { // Check for text file type
     thumbnailEle.textContent = "Text File";
+  } else if (file.name.toLowerCase().endsWith('.dat')){
+    thumbnailEle.textContent = "DAT File";
   } else {
     thumbnailEle.textContent = "Invalid File";
   }

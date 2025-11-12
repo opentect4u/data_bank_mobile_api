@@ -144,7 +144,8 @@ const acc_type_list_ajax = async (req, res) => {
 const account_type_wise_report = async(req,res)=>{
     try {
     const user_data = req.session.user.user_data.msg[0];
-    var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
+    // var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
+	var whrDAta = `bank_id='${user_data.bank_id}' ${user_data.branch_code > 0 ? `AND branch_code='${user_data.branch_code}'` : ''} AND active_flag='Y'AND user_type='O'`,
         selectData = "user_id";
     let dbuser_data = await db_Select(selectData, "md_user", whrDAta, null);
     const datetimee = dateFormat(new Date(), "yyyy-mm-dd")
@@ -185,7 +186,7 @@ const account_type_wise_report_post = async(req,res)=>{
 
 
         let select = "transaction_date as date,account_number,account_holder_name,deposit_amount",
-            where = `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${value.from_date}' AND '${value.to_date}'`;
+            where = `bank_id=${user_data.bank_id} ${user_data.branch_code > 0 ? `AND branch_code='${user_data.branch_code}'` : ''} AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${value.from_date}' AND '${value.to_date}'`;
             let order=`ORDER BY transaction_date ASC`;
         let resData = await db_Select(select, "td_collection", where, order);
 
@@ -201,12 +202,6 @@ const account_type_wise_report_post = async(req,res)=>{
             datetime :dateFormat(new Date(), "dd-mm-yyyy hh:MM:ss")
         };
         res.render('common/layouts/main', viewData)
-
-
-
-
-        
-
 
     } catch (error) {
         res.json({

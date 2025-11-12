@@ -97,7 +97,7 @@ const edit_bank_list = async (req, res) => {
     `bank_id=${req.query.bank_id}`,
     null
   );
-  // // console.log(data, 'lalal');
+  // console.log(data, 'lalal');
   const viewData = {
     title: "Adminn",
     page_path: "/bank/edit_viewBank",
@@ -115,14 +115,14 @@ const edit_inactive_bank_list = async (req, res) => {
     `bank_id=${req.query.bank_id}`,
     null
   );
-  // // console.log(data, 'lalal');
+  // console.log(data, 'lalal');
   const viewData = {
     title: "Adminn",
     page_path: "/bank/edit_inactiveBank",
     data: data.suc > 0 && data.msg.length > 0 ? data.msg[0] : [],
     bank_id: req.query.bank_id,
   };
-  // console.log(viewData);
+  console.log(viewData);
   res.render("common/layouts/main", viewData);
 };
 const edit_bank_list_save = async (req, res) => {
@@ -151,13 +151,13 @@ const edit_bank_list_save = async (req, res) => {
       error.details.forEach((detail) => {
         errors[detail.context.key] = detail.message;
       });
-      // console.log(error);
-      res.redirect("/super-admin/bank");
+      console.log(error);
+      res.redirect("/super-admin/test");
     }
 
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     const user_data = req.session.user.user_data.msg[0];
-    // // console.log(user_data);
+    // console.log(user_data);
     var table_name = "md_bank",
       fields = `bank_name ='${value.bank_name}', bank_address = '${value.bank_address}', contact_person = '${value.contact_person}', phone_no = '${value.mobile}', email_id ='${value.email}', device_type = '${value.device_type}', data_version = '${value.data_version}', data_trf = '${value.data_transfer_type}', 
         receipt_type = '${value.receipt_type}', sec_amt_type = '${value.sucurity_amt_type}', active_flag = '${value.active_flag}', after_maturity_coll = '${value.after_maturity_coll}', max_day_entry_flag = '${value.max_day_entry_flag}', max_user = '${value.max_user}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
@@ -170,7 +170,7 @@ const edit_bank_list_save = async (req, res) => {
       values = null;
     whr = `bank_id= ${value.bank_id} AND active_flag = 'Y'`;
     var bank = await db_Insert(table_name, fields2, values, whr, 1);
-    // // console.log(bank);
+    // console.log(bank);
 
     var table_name = "md_agent",
       fields3 = `active_flag = '${value.active_flag}', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
@@ -187,7 +187,7 @@ const edit_bank_list_save = async (req, res) => {
     req.flash("success","Bank updated successfully")
     res.redirect("/super-admin/bank");
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     req.flash("error","Bank not updated successfully")
     res.redirect(`/super-admin/bank`);
   }
@@ -195,13 +195,13 @@ const edit_bank_list_save = async (req, res) => {
 
 const edit_inactive_bank_list_save = async (req, res) => {
   var data = req.body;
-  // // console.log(data);
+  // console.log(data);
   try {
     const schema = Joi.object({
       active_flag: Joi.string().valid("Y", "N").required(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    // console.log(value);
+    console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -224,7 +224,7 @@ const edit_inactive_bank_list_save = async (req, res) => {
       values = null;
     whr = `bank_id= ${value.bank_id} AND active_flag = 'N'`;
     var bank = await db_Insert(table_name, fields2, values, whr, 1);
-    // // console.log(bank);
+    // console.log(bank);
 
     var table_name = "md_agent",
       fields3 = `active_flag = 'Y', modified_by = '${user_data.id}' , updated_at = '${datetime}'`,
@@ -241,7 +241,7 @@ const edit_inactive_bank_list_save = async (req, res) => {
     req.flash("success", "Inactive bank added to Active bank");
     res.redirect("/super-admin/inactive_bank");
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     req.flash("error", "Inactive bank not added to Active bank");
     res.redirect("/super-admin/inactive_bank");
   }
@@ -259,33 +259,32 @@ const bank_list_logo = async (req, res) => {
 
 const upload_bank_logo = async (req, res) => {
   var data = req.body;
-  // // console.log(data);
+  // console.log(data);
 
   if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("No files were uploaded.");
+    return res.send("No files were uploaded.");
   }
 
   const uploadedFile = req.files.photo;
-  // // console.log(uploadedFile);
+  // console.log(uploadedFile);
 
   const allowedFileTypes = ["image/jpeg", "image/jpg", "image/png"];
   if (!allowedFileTypes.includes(uploadedFile.mimetype)) {
     return res
-      .status(400)
       .send("Invalid file type. Only JPEG and JPG and PNG are allowed.");
   }
 
   // Check file size
-  //  // console.log("//////////////",uploadedFile.size)
+  //  console.log("//////////////",uploadedFile.size)
   if (uploadedFile.size > 1 * 1024 * 1024) {
-    return res.status(400).send("File size exceeds the limit of 1 MB.");
+    return res.send("File size exceeds the limit of 1 MB.");
   }
 
   // Move the file to a directory (you can modify the destination path as needed)
   let fileName = Date.now() + "_" + uploadedFile.name;
   uploadedFile.mv("uploads/bank_logo/" + fileName, async (err) => {
     if (err) {
-      return res.status(500).send(err);
+      return res.send(err);
     } else {
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
@@ -314,7 +313,7 @@ const upload_bank_logo = async (req, res) => {
 
       req.flash("success", "Logo added Successful");
       res.redirect("/super-admin/logo");
-      // console.log(res_dt);
+      console.log(res_dt);
     }
   });
 };
@@ -326,7 +325,7 @@ const get_logo_dtls = async (req, res) => {
       table_name = "td_logo a, md_bank b",
       whr = `a.bank_id = b.bank_id AND a.bank_id = '${data.bank_id}'`;
     var resData = await db_Select(select, table_name, whr, null);
-    // // console.log(resData);
+    // console.log(resData);
     res.json(resData);
   } catch (error) {
     res.json({

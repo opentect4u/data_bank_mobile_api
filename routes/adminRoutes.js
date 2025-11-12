@@ -7,12 +7,17 @@ const { check_and_collection, settings, check_sync_data } = require("../controll
 const { day_scroll_report, day_scroll_report_post, account_type_wise_report, account_type_wise_report_post, individual_day_scroll_report_post, individual_day_scroll_report, summary_report, summary_report_post, acc_type_list_ajax } = require("../controller/admin/AdminReport");
 const { agent_info, fetchtransNumber, fetch_account } = require("../controller/admin/FetchData");
 const { agent, addAgent, editAgent, edit_save_agent, checkedUnicUser, fetch_agent_max_all_col, fetch_agent_name, col_days, col_days_save } = require("../controller/admin/Agent.controller");
+const { upload_logo } = require("../controller/admin/UploadLogo");
+
+const fileUpload = require('express-fileupload')
 
 const AdminRoutes = express.Router()
 
+AdminRoutes.use(fileUpload())
+
 // AdminRoutes.use((req, res, next) => {
 //     req.session['user'] = {id: 1, name: 'Amit', ShortCode: 'Laora'}
-//     // console.log(req.session);
+//     console.log(req.session);
 //     // req.session.user = '';
 //     // req.session.distroy()
 //     next()
@@ -26,6 +31,8 @@ AdminRoutes.get('/blank_page',blank_page)
 
 
 AdminRoutes.get('/dashboard',AuthCheckedMW,dashboard)
+
+AdminRoutes.all('/upload_logo', AuthCheckedMW, upload_logo)
 
 
 AdminRoutes.get('/upload_pctx',AuthCheckedMW,upload_pctx)

@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const dateFormat = require("dateformat");
-const { db_Select, db_Insert } = require("../../model/MasterModule");
+const { db_Select, db_Insert, PRINTER_TYPE_MASTER } = require("../../model/MasterModule");
 
 const agent_list = async (req, res) => {
   try {
@@ -27,7 +27,7 @@ const agent = async (req, res) => {
       table_name = "md_agent",
       whr = `bank_id = ${data.bank_id} AND branch_code = ${data.branch_id} AND active_flag='${data.flag}'`;
     var resData = await db_Select(select, table_name, whr, null);
-    // // console.log(resData);
+    // console.log(resData);
     res.json(resData);
   } catch (error) {
     res.json({
@@ -54,7 +54,7 @@ const add_agent = async (req, res) => {
       confirmPassword: Joi.string().required().valid(Joi.ref("password")),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    //   // console.log(value);
+    //   console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -67,23 +67,23 @@ const add_agent = async (req, res) => {
     let enc_pss = bcrypt.hashSync(pss, 10);
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     const user_data = req.session.user.user_data.msg[0];
-    //   // console.log(user_data);
+    //   console.log(user_data);
 
     let fields2 =
         "(bank_id,branch_code,user_type,password,user_id,device_id,active_flag,created_by,created_at)",
       values2 = `('${value.bank}','${value.branch_c}','O','${enc_pss}','${value.user_id}','${value.device_id}','${value.agent_active}','${user_data.id}','${datetime}')`;
     let res_dt2 = await db_Insert("md_user", fields2, values2, null, 0);
-    //   // console.log("========user==========", res_dt2);
+    //   console.log("========user==========", res_dt2);
 
     let fields =
         "(bank_id, branch_code,agent_code,agent_name,phone_no,email_id,max_amt,allow_collection_days,created_by,created_at)",
       values = `('${value.bank}','${value.branch_c}','${value.user_id}','${value.name}','${value.mobile}','${value.email}','${value.max_amt}','${value.allow_collection_days}','${user_data.id}','${datetime}')`;
     let res_dt = await db_Insert("md_agent", fields, values, null, 0);
-    //   // console.log("========branch==========", res_dt);
+    //   console.log("========branch==========", res_dt);
     req.flash("success", "Agent added successfully");
     res.redirect("/super-admin/agent");
   } catch (error) {
-    //   // console.log(error);
+    //   console.log(error);
     // res.json({
     //   error: error,
     //   status: false,
@@ -94,9 +94,8 @@ const add_agent = async (req, res) => {
 };
 
 const editAgentdata = async (req, res) => {
-  // // console.log(req.query.agent_id);
-  let select =
-      "a.agent_id,a.agent_code,a.branch_code,a.agent_name,a.phone_no,a.email_id,a.max_amt,a.allow_collection_days,a.bank_id,b.device_sl_no,b.device_id,b.active_flag,b.id,b.user_id,c.branch_name",
+  // console.log(req.query.agent_id);
+  let select = "a.agent_id,a.agent_code,a.branch_code,a.agent_name,a.phone_no,a.email_id,a.max_amt,a.allow_collection_days,a.bank_id,b.device_sl_no,b.device_id,b.active_flag,b.id,b.user_id,c.branch_name,a.printer_type",
     table_name = "md_agent a, md_user b, md_branch c",
     whr = `a.agent_code= b.user_id
             AND a.bank_id = b.bank_id
@@ -105,15 +104,16 @@ const editAgentdata = async (req, res) => {
             and c.bank_id = a.bank_id
             AND a.agent_id = ${req.query.agent_id}`;
   const resData = await db_Select(select, table_name, whr, null);
-  // // console.log(resData);
+  // console.log(resData);
   delete resData.sql;
   var viewData = {
     title: "Agent",
     page_path: "/agent/editView_super_admin",
     data: resData.suc > 0 && resData.msg.length > 0 ? resData.msg[0] : [],
     agent_id: req.query.agent_id,
+    printer_type: PRINTER_TYPE_MASTER
   };
-  // // console.log(viewData);
+  // console.log(viewData);
   res.render("common/layouts/main", viewData);
 };
 
@@ -131,9 +131,10 @@ const edit_save_agent_data = async (req, res) => {
       device_id: Joi.required(),
       agent_active: Joi.string(),
       agent_id: Joi.required(),
+      printer_type: Joi.string().required(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    // // console.log(value);
+    // console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -150,16 +151,16 @@ const edit_save_agent_data = async (req, res) => {
       }',modified_by='${user_data.id}',updated_at='${datetime}'`,
       where = `bank_id='${value.bank}' AND user_id='${value.user_id}'`;
     let res_dt2 = await db_Insert("md_user", fields, null, where, 1);
-    // // console.log(res_dt2);
+    // console.log(res_dt2);
 
-    let fields2 = `agent_name='${value.name}', phone_no='${value.mobile}', email_id='${value.email}',max_amt='${value.max_amt}',allow_collection_days='${value.allow_collection_days}',modified_by='${user_data.id}',updated_at='${datetime}'`,
+    let fields2 = `agent_name='${value.name}', phone_no='${value.mobile}', email_id='${value.email}',max_amt='${value.max_amt}',allow_collection_days='${value.allow_collection_days}',printer_type='${value.printer_type}',modified_by='${user_data.id}',updated_at='${datetime}'`,
       where2 = `agent_id='${value.agent_id}'`;
     let res_dt = await db_Insert("md_agent", fields2, null, where2, 1);
-    // // console.log(res_dt);
+    // console.log(res_dt);
     req.flash("success", "Agent updated successfully");
     res.redirect("/super-admin/agent");
   } catch (error) {
-    // // console.log(error);
+    // console.log(error);
     // res.json({
     //   error: error,
     //   status: false,
@@ -172,16 +173,16 @@ const edit_save_agent_data = async (req, res) => {
 const total_user = async (req, res) => {
   var data = req.body;
 
-  var select = "active_flag,COUNT(*) tot_dt",
-    table_name = "md_agent",
-    whr = `bank_id = ${data.bank_id} AND active_flag='Y'`;
+  var select = "count(b.id) tot_dt, b.active_flag",
+    table_name = "md_agent a, md_user b",
+    whr = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.user_id AND a.bank_id = ${data.bank_id} AND b.active_flag = 'Y'`;
   order = null;
   var active_resData = await db_Select(select, table_name, whr, order);
   // res.json(active_resData)
 
-  var select = "active_flag,COUNT(*) tot_dt",
-    table_name = "md_agent",
-    whr = `bank_id = ${data.bank_id} AND active_flag='N'`;
+  var select = "count(b.id) tot_dt, b.active_flag",
+    table_name = "md_agent a, md_user b",
+    whr = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.user_id AND a.bank_id = ${data.bank_id} AND b.active_flag = 'N'`;
   order = null;
   var inactive_resData = await db_Select(select, table_name, whr, order);
   var final_res = {
@@ -228,7 +229,7 @@ const add_sms = async (req, res) => {
       sms: Joi.required(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    // // console.log(value);
+    // console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -243,11 +244,11 @@ const add_sms = async (req, res) => {
     let fields2 = "(bank_id,template)",
       values2 = `('${value.bank}','${value.sms}')`;
     let res_dt2 = await db_Insert("md_sms", fields2, values2, null, 0);
-    // // console.log("========sms==========", res_dt2);
+    // console.log("========sms==========", res_dt2);
     req.flash("success", "Template added successfully");
     res.redirect("/super-admin/sms");
   } catch (error) {
-    // // console.log(error);
+    // console.log(error);
     // res.json({
     //   error: error,
     //   status: false,
@@ -264,7 +265,7 @@ const app_url = async (req, res) => {
     page_path: "/about/app_version",
     data: version_data,
   };
-  // // console.log(viewData);
+  // console.log(viewData);
   res.render("common/layouts/main", viewData);
 };
 
@@ -300,7 +301,7 @@ const add_header_footer = async (req, res) => {
       footer_4_flag: Joi.string(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    // // console.log(value);
+    // console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -312,7 +313,7 @@ const add_header_footer = async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     const user_data = req.session.user.user_data.msg[0];
 
-    // // console.log(value)
+    // console.log(value)
     let fields =
         "(bank_id,header_1,header_1_flag,header_2,header_2_flag,header_3,header_3_flag,header_4,header_4_flag,footer_1,footer_1_flag,footer_2,footer_2_flag,footer_3,footer_3_flag,footer_4,footer_4_flag,created_by,created_dt)",
       values = `('${value.bank_id}','${value.header_1}','${
@@ -329,7 +330,7 @@ const add_header_footer = async (req, res) => {
         user_data.id
       }','${datetime}')`;
     let res_dt = await db_Insert("md_header_footer", fields, values, null, 0);
-    // // console.log("========header==========", res_dt);
+    // console.log("========header==========", res_dt);
     req.flash("success", "Saved successful");
     res.redirect("/super-admin/header_footer");
     // res.json(
@@ -339,7 +340,7 @@ const add_header_footer = async (req, res) => {
 
     // })
   } catch (error) {
-    //  // console.log(error);
+    //  console.log(error);
     //  res.json({
     //   error: error,
     //   status: false,
@@ -373,7 +374,7 @@ const edit_header_footer = async (req, res) => {
     whr = `a.bank_id = b.bank_id
             AND a.bank_id = '${req.query.bank_id}'`;
   const resData = await db_Select(select, table_name, whr, null);
-  // console.log(resData);
+  console.log(resData);
   delete resData.sql;
   var viewData = {
     title: "Header_Footer",
@@ -381,7 +382,7 @@ const edit_header_footer = async (req, res) => {
     data: resData.suc > 0 && resData.msg.length > 0 ? resData.msg[0] : [],
     bank_id: req.query.bank_id,
   };
-  // console.log(viewData);
+  console.log(viewData);
   res.render("common/layouts/main", viewData);
 };
 
@@ -407,7 +408,7 @@ const edit_save_header_footer = async (req, res) => {
       footer_4_flag: Joi.string(),
     });
     const { error, value } = schema.validate(req.body, { abortEarly: false });
-    // // console.log(value);
+    // console.log(value);
     if (error) {
       const errors = {};
       error.details.forEach((detail) => {
@@ -438,11 +439,11 @@ const edit_save_header_footer = async (req, res) => {
       }',modified_by='${user_data.id}',updated_dt='${datetime}'`,
       where = `bank_id='${value.bank_id}'`;
     let res_dt2 = await db_Insert("md_header_footer", fields, null, where, 1);
-    // // console.log(res_dt2);
+    // console.log(res_dt2);
     req.flash("success", "Updated successful");
     res.redirect("/super-admin/header_footer");
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     // res.json({
     //     "error": error,
     //     "status": false
@@ -466,10 +467,10 @@ const edit_save_header_footer = async (req, res) => {
 //       bank_id: req.query.bank_id,
 
 //     };
-//     // console.log(viewData);
+//     console.log(viewData);
 //     res.render("common/layouts/main", viewData);
 //   } catch (error) {
-//     // console.log(error);
+//     console.log(error);
 //     res.json({
 //       ERROR: error,
 //       status: false,
@@ -488,7 +489,7 @@ const reset_bank_data = async (req, res) => {
     // bank_id: req.query.bank_id,
 
   };
-  // // console.log(viewData.data);
+  // console.log(viewData.data);
   res.render("common/layouts/main", viewData);
 };
 
@@ -499,7 +500,7 @@ const user_agent = async (req, res) => {
       table_name = "md_agent",
       whr = `bank_id = ${data.bank_id} AND branch_code = ${data.branch_id}`;
     var resData = await db_Select(select, table_name, whr, null);
-    // // console.log(resData);
+    // console.log(resData);
     res.json(resData);
   } catch (error) {
     res.json({
@@ -521,10 +522,10 @@ const save_agent_pin = async (req, res) => {
     let fields = `password = '${pass}',modified_by='${user_data.id}',updated_at='${datetime}'`,
       where = `user_id='${data.agent_code}'`;
     let res_dt = await db_Insert("md_user", fields, null, where, 1);
-    // // console.log(res_dt);    
+    // console.log(res_dt);    
     res.send(res_dt);
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     res.send({suc: 0, msg: error})
   }
 };

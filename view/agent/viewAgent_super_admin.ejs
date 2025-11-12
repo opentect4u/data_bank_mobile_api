@@ -94,9 +94,10 @@
       <div class="modal-body">
         <form action="/super-admin/add_agent" method="post" id="myForm">
           <div class="row">
-            <div class="col-md-12" id="userLimit" style="display: none;">
+			<div class="col-md-12" id="userLimit" style="display: none;">
               <label class="text-danger">*User limit exceeded.</label>
             </div>
+			  
             <div class="form-group col-6">
               <label for="bank"><b>Bank Name:</b></label>
               <select name="bank"
@@ -268,7 +269,7 @@
           }
         },
       error: function (error) {
-        // console.log(error);
+        console.log(error);
       //   tbody.empty();
         // $("#myBtn").hide()
       },
@@ -279,10 +280,10 @@
 <script>
   $('input[name="status"]').on('change', function(){
     var flag = $(this).val()
-    // console.log(flag);
+    console.log(flag);
     var branch = $('#branch').val();
     var bank = $('#bank').val();
-    // // console.log({ bank_id: bank, branch_id: branch });
+    // console.log({ bank_id: bank, branch_id: branch });
   generate_agent_list(bank,branch,flag);
 })
 </script>
@@ -297,7 +298,7 @@
           url: "/super-admin/get_branch_name",
           data: { bank_id: bankId },
           success: function(response) {
-            // // console.log(response.SUCCESS.branchData.msg)
+            // console.log(response.SUCCESS.branchData.msg)
            $('#branch').empty();
            $('#branch').append(`<option value="">Select Branch Name</option>`)
 
@@ -314,9 +315,9 @@
            
           },
         error: function (error) {
-          // // console.log(error);
+          // console.log(error);
         //   tbody.empty();
-        //  $("#myBtn").hide()
+         // $("#myBtn").hide()
         },
       });
   });
@@ -328,7 +329,7 @@
   $('#submitBtn').click(function () {
     var branch = $('#branch').val();
     var bank = $('#bank').val();
-    // // console.log({ bank_id: bank, branch_id: branch });
+    // console.log({ bank_id: bank, branch_id: branch });
   generate_agent_list(bank,branch,'Y');
 });
 
@@ -338,13 +339,13 @@ function generate_agent_list(bank, branch, flag){
       url: "/super-admin/agent_data",
       data: { bank_id: bank, branch_id: branch, flag: flag },
       success: function(response) {
-        // // console.log(response);
-        // // console.log(response.SUCCESS.branchData.msg)
+        // console.log(response);
+        // console.log(response.SUCCESS.branchData.msg)
         $('#showAgentDtls tbody').empty()
         let i = 1;
         if(response.suc > 0 && response.msg.length > 0)
           response.msg.forEach(function(resData) {
-        // // console.log(resData);
+        // console.log(resData);
               $('#showAgentDtls tbody').append(`
               <tr>
                 <td>${i}</td>
@@ -366,7 +367,7 @@ function generate_agent_list(bank, branch, flag){
 
       },
     error: function (error) {
-      // // console.log(error);
+      // console.log(error);
     //   tbody.empty();
     //  $("#myBtn").hide()
     },

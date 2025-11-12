@@ -70,7 +70,7 @@
           url: "/super-admin/acc_type_list_ajax",
           data: { agent_code: $(this).val() },
           success: function(response) {
-            // // console.log(response.SUCCESS.branchData.msg)
+            // console.log(response.SUCCESS.branchData.msg)
            $('#account_type').empty();
            $('#account_type').append(`<option value="">Select Account Type</option>`)
            
@@ -81,7 +81,7 @@
            
           },
         error: function (error) {
-          // // console.log(error);
+          // console.log(error);
         //   tbody.empty();
          $("#myBtn").hide()
         },

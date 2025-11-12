@@ -15,12 +15,12 @@ const dtFmtInUpld = (inputDate) => {
     var parsedDate = parse(inputDate, 'dd.MM.yy', new Date());
     return format(parsedDate, 'yyyy-MM-dd');
     var inpDt = '29.08.23'
-    // console.log(Date.parse(inpDt.replace('.', '-')));
+    console.log(Date.parse(inpDt.replace('.', '-')));
     return dateFormat(Date.parse(inpDt.replace('.', '-')), 'yyyy-mm-dd');
 }
 
 const strDAta = (inputStr) => {
-    // // console.log(inputStr)
+    // console.log(inputStr)
     try {
         return inputStr.replace(/^\s*/, '').trim()
     } catch (error) {
@@ -106,7 +106,7 @@ const update_agent_amount = async (req, res) => {
 
         //     let whr = `bank_id=${user_data.bank_id} and branch_code='${user_data.branch_code}' agent_code='${value.agent_code}'`;   
         //    var resdata= await db_Select('*', 'md_agent', whr, null);
-        //    // console.log("**********************", resdata)
+        //    console.log("**********************", resdata)
 
         //db connection
         let fields = "clr_bal",
@@ -116,18 +116,18 @@ const update_agent_amount = async (req, res) => {
             flag = 1;
         let tableDate = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null);
 
-        //// console.log("**********************", tableDate)
+        //console.log("**********************", tableDate)
 
 
         if (tableDate.msg[0].CLR_BAL) {
-            // console.log("**********************", tableDate.msg[0].CLR_BAL)
+            console.log("**********************", tableDate.msg[0].CLR_BAL)
 
             let whr = `bank_id=${user_data.bank_id} and branch_code='${user_data.branch_code}' and agent_code='${value.agent_id}'`,
                 fields = `max_amt='${tableDate.msg[0].CLR_BAL}'`;
 
 
             var resdata = await db_Insert('md_agent', fields, null, whr, 1);
-            // console.log("**********************", resdata)
+            console.log("**********************", resdata)
 
 
         }
@@ -145,27 +145,30 @@ const update_agent_amount = async (req, res) => {
     }
 }
 
-const upload_pctx_file_data = async (req, res) => {
+const upload_pctx_file_data_1 = async (req, res) => {
     try {
         const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
         const selectAgentId = req.body.agent_id;
         const user_data = req.session.user.user_data.msg[0];
+		console.log(user_data,'user_data')
         const firstRow = req.body.firstRow.split(',');
         const file_AGENT_CODE = firstRow[6]
         var er
         const chk_arr = req.body.batch[0].split(',');
-        // // console.log("========FIRST ROW==========", req.body.agent_id)
+		console.log(chk_arr,'chk_arr')
+        // console.log("========FIRST ROW==========", req.body.agent_id)
         // for (let i = 0; i < req.body.batch.length; i++) {
-        // // console.log(req.body.batch.length);
+        // console.log(req.body.batch.length);
         if(user_data.branch_code == chk_arr[0].replace(/^\s*/, '').trim()){
+			console.log(user_data.branch_code == chk_arr[0].replace(/^\s*/, '').trim(),'debug')
             if(parseInt(selectAgentId) == parseInt(file_AGENT_CODE)){
                 for (let dt of req.body.batch) {
                     // var input = req.body.batch[i];
                     var input = dt;
                     const valuesArray = input.split(',');
-                    // // console.log("************************",valuesArray.length)
+                    // console.log("************************",valuesArray.length)
                     if (valuesArray.length == 9) {
-                        // // console.log(JSON.stringify(valuesArray));
+                        // console.log(JSON.stringify(valuesArray));
                         // for (let i = 0; i < valuesArray.length; i++) {
                         //     valuesArray[i].replace(/^\s*/, '').trim();
                         // }
@@ -214,6 +217,246 @@ const upload_pctx_file_data = async (req, res) => {
     }
 }
 
+const upload_pctx_file_data_latest_backup = async (req, res) => {
+    
+    try {
+        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+        const selectAgentId = req.body.agent_id;
+        const user_data = req.session.user.user_data.msg[0];
+        // console.log(user_data,'user_data')
+        const firstRow = req.body.firstRow.split(',');
+        // console.log(firstRow,'firstrow')
+        const file_AGENT_CODE = firstRow[6]
+        var er
+        const chk_arr = req.body.batch[0].split(',');
+        // console.log(chk_arr,'chk_arr')
+        // console.log(chk_arr.length,'chk_arr_length')
+        // // console.log("========FIRST ROW==========", req.body.agent_id)
+        // for (let i = 0; i < req.body.batch.length; i++) {
+        // console.log(req.body.batch.length,'length');
+        // console.log(user_data.branch_code == chk_arr[0].replace(/^\s*/, '').trim(),'debug')
+        if(chk_arr.length > 1){
+            if(user_data.branch_code == chk_arr[0].replace(/^\s*/, '').trim()){
+            if(parseInt(selectAgentId) == parseInt(file_AGENT_CODE)){
+                for (let dt of req.body.batch) {
+                    // var input = req.body.batch[i];
+                    var input = dt;
+                    const valuesArray = input.split(',');
+                    // // console.log("************************",valuesArray.length)
+                    if (valuesArray.length == 9) {
+                        // // console.log(JSON.stringify(valuesArray));
+                        // for (let i = 0; i < valuesArray.length; i++) {
+                        //     valuesArray[i].replace(/^\s*/, '').trim();
+                        // }
+                        var fields = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
+        
+                            // values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? 'D' : (valuesArray[1] == '-') ? 'L' : 'R'}','D','${valuesArray[2]}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+        
+                            values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${selectAgentId}','${datetime}','${valuesArray[1] == '+' ? 'D' : 'L'}','${(valuesArray[1] == '+') ? (valuesArray[2].trim().split(' ').join('') != 'RD' ? 'D' : 'R') : 'L'}','${valuesArray[2].trim().split(' ').join('')}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+                        res_dt
+                        try {
+                            var res_dt = await db_Insert("td_account_dtls", fields, values, null, 0);
+                            er = res_dt
+                        } catch (error) {
+                            er = error
+                        }
+                    }
+                }
+                if (req.body.batch.length > 0) {
+                    res.json({
+                        "success": req.body.batch.length,
+                        "status": true
+                    });
+                } else {
+                    res.json({
+                        "ERROR": req.body.batch.length,
+                        "status": true
+                    });
+                }
+            }else{
+                res.send({
+                    "ERROR": 'Selected Agent Code and PCTX Agent code does not match.',
+                    "status": false
+                });
+            }
+                }else{
+            res.send({
+                "ERROR": 'Selected Branch Code and PCTX Branch code does not match.',
+                "status": false
+            });
+            }
+        }else {
+			res.json({
+				"success": req.body.batch.length,
+				"status": true
+			});
+    	}
+    } catch (error) {
+        res.json({
+            "ERROR": error,
+            "status": false
+        });
+    }
+}
+
+const upload_pctx_file_data = async (req, res) => {
+    var user_data = req.session.user.user_data.msg[0];
+    if (user_data.data_version != 'N'){
+        uploadPctxForCoaching(req, res);
+    }else{
+        uploadPctxForNormal(req, res);
+    }
+}
+
+const uploadPctxForCoaching = async (req, res) => {
+    try {
+        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+        const selectAgentId = req.body.agent_id;
+        const user_data = req.session.user.user_data.msg[0];
+        // console.log(user_data,'user_data')
+        const firstRow = req.body.firstRow.split(',');
+        // console.log(firstRow,'firstrow')
+        const file_AGENT_CODE = firstRow[6]
+        var er
+        const chk_arr = req.body.batch[0].split(',');
+        // console.log(chk_arr,'chk_arr')
+        // console.log(chk_arr.length,'chk_arr_length')
+        // // console.log("========FIRST ROW==========", req.body.agent_id)
+        // for (let i = 0; i < req.body.batch.length; i++) {
+        // console.log(req.body.batch.length,'length');
+        console.log(user_data.branch_code == chk_arr[0].replace(/^\s*/, '').trim(), 'debug')
+        if (chk_arr.length > 1) {
+            if (user_data.branch_code == chk_arr[0].replace(/^\s*/, '').trim()) {
+                if (parseInt(selectAgentId) == parseInt(file_AGENT_CODE)) {
+                    for (let dt of req.body.batch) {
+                        // var input = req.body.batch[i];
+                        var input = dt;
+                        const valuesArray = input.split(',');
+                        // // console.log("************************",valuesArray.length)
+                        if (valuesArray.length == 9) {
+                            // // console.log(JSON.stringify(valuesArray));
+                            // for (let i = 0; i < valuesArray.length; i++) {
+                            //     valuesArray[i].replace(/^\s*/, '').trim();
+                            // }
+                            var fields = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
+
+                                // values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${file_AGENT_CODE}','${datetime}','${(valuesArray[1] == '+') ? 'D' : (valuesArray[1] == '-') ? 'L' : 'R'}','D','${valuesArray[2]}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+
+                                values = `('${user_data.bank_id}','${valuesArray[0].replace(/^\s*/, '').trim()}','${selectAgentId}','${datetime}','${valuesArray[1] == '+' ? 'D' : 'L'}','${(valuesArray[1] == '+') ? (valuesArray[2].trim().split(' ').join('') != 'RD' ? 'D' : 'R') : 'L'}','${valuesArray[2].trim().split(' ').join('')}','${strDAta(valuesArray[3])}','${strDAta(valuesArray[5])}', '${dtFmtInUpld(valuesArray[7])}','${valuesArray[6]}','${user_data.id}','${datetime}')`;
+                            res_dt
+                            try {
+                                var res_dt = await db_Insert("td_account_dtls", fields, values, null, 0);
+                                er = res_dt
+                            } catch (error) {
+                                er = error
+                            }
+                        }
+                    }
+                    if (req.body.batch.length > 0) {
+                        res.json({
+                            "success": req.body.batch.length,
+                            "status": true
+                        });
+                    } else {
+                        res.json({
+                            "ERROR": req.body.batch.length,
+                            "status": true
+                        });
+                    }
+                } else {
+                    res.send({
+                        "ERROR": 'Selected Agent Code and PCTX Agent code does not match.',
+                        "status": false
+                    });
+                }
+            } else {
+                res.send({
+                    "ERROR": 'Selected Branch Code and PCTX Branch code does not match.',
+                    "status": false
+                });
+            }
+        } else {
+            res.json({
+                "success": req.body.batch.length,
+                "status": true
+            });
+        }
+    } catch (error) {
+        res.json({
+            "ERROR": error,
+            "status": false
+        });
+    }
+}
+
+const uploadPctxForNormal = async (req, res) => {
+    try {
+        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+        const selectAgentId = req.body.agent_id;
+        const user_data = req.session.user.user_data.msg[0];
+        // console.log(user_data,'user_data')
+        const firstRow = req.body.firstRow.split(',');
+        // console.log(firstRow,'firstrow')
+        const file_AGENT_CODE = firstRow[3]
+        var er
+        const chk_arr = req.body.batch[0].split(',');
+        // console.log(chk_arr[3].replace(/^\s*/, '').trim(), firstRow[3].replace(/^\s*/, '').trim().substr(0, 3), '-------------------');
+        
+        if (chk_arr.length > 1) {
+            // if (user_data.branch_code == firstRow[3].replace(/^\s*/, '').trim().substr(0, 3)) {
+                if (parseInt(selectAgentId) == parseInt(file_AGENT_CODE)) {
+                    for (let dt of req.body.batch) {
+                        var input = dt;
+                        const valuesArray = input.split(',');
+                        if (valuesArray.length == 6) {
+                            var fields = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
+                                values = `('${user_data.bank_id}','${user_data.branch_code}','${selectAgentId}','${datetime}','D','D','DDSD','${valuesArray[0]}','${strDAta(valuesArray[2])}', '${dtFmtInUpld(valuesArray[4])}','${parseInt(valuesArray[3])}','${user_data.id}','${datetime}')`;
+                            res_dt
+                            try {
+                                var res_dt = await db_Insert("td_account_dtls", fields, values, null, 0);
+                                er = res_dt
+                            } catch (error) {
+                                er = error
+                            }
+                        }
+                    }
+                    if (req.body.batch.length > 0) {
+                        res.json({
+                            "success": req.body.batch.length,
+                            "status": true
+                        });
+                    } else {
+                        res.json({
+                            "ERROR": req.body.batch.length,
+                            "status": true
+                        });
+                    }
+                } else {
+                    res.send({
+                        "ERROR": 'Selected Agent Code and PCTX Agent code does not match.',
+                        "status": false
+                    });
+                }
+            // } else {
+            //     res.send({
+            //         "ERROR": 'Selected Branch Code and PCTX Branch code does not match.',
+            //         "status": false
+            //     });
+            // }
+        } else {
+            res.json({
+                "success": req.body.batch.length,
+                "status": true
+            });
+        }
+    } catch (error) {
+        res.json({
+            "ERROR": error,
+            "status": false
+        });
+    }
+}
+
 const download_pcrx = async (req, res) => {
     const user_data = req.session.user.user_data.msg[0];
     var whrDAta = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND active_flag='Y'AND user_type='O'`,
@@ -223,7 +466,8 @@ const download_pcrx = async (req, res) => {
 
     // upload_data
 
-    var template = (user_data.data_trf != 'M') ? "upload_file/pushserver_pcrx" : "upload_file/download_pcrx";
+    // var template = (user_data.data_trf == 'A') ? "upload_file/pushserver_pcrx" : "upload_file/download_pcrx";
+	var template = (user_data.data_trf != 'M') ? "upload_file/pushserver_pcrx" : "upload_file/download_pcrx";
 
     var viewData = {
         title: "DOWNLOAD || PCRX",
@@ -241,7 +485,7 @@ const download_pcrx_file = async (req, res) => {
         const format = req.query.format;
         const transitionNumber = req.query.transaction_number;
         const user_data = req.session.user.user_data.msg[0];
-        // // console.log(user_data);
+        // console.log(user_data);
         const currTimeStamp = new Date().getTime();
         var text = '';
         switch (user_data.data_version) { // S-> Coching; C-> Dhanbad; N-> Normal;
@@ -253,7 +497,7 @@ const download_pcrx_file = async (req, res) => {
                     );
                     break;
             case "C":
-                // // console.log(user_data.data_version, 'dataversion');
+                // console.log(user_data.data_version, 'dataversion');
                 text = await dhanbad_version_download(
                 user_data,
                 agent_code,
@@ -271,8 +515,8 @@ const download_pcrx_file = async (req, res) => {
             default:
                 break;
         }
-
-        try {
+		
+		try {
             var dateTime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
             var fld = `(agent_trans_no, bank_id, branch_code, agent_code, send_date, send_by, send_type, created_by, created_dt)`,
             ival = `('${transitionNumber}', '${user_data.bank_id}', '${user_data.branch_code}', '${agent_code}', '${dateTime}', '${user_data.user_id}', 'M', '${user_data.user_id}', '${dateTime}')`;
@@ -286,14 +530,20 @@ const download_pcrx_file = async (req, res) => {
             console.log(error);
         }
 
-        // // console.log(text, 'TEXT IS HERE');
+        // console.log(text, 'TEXT IS HERE');
         // res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + transitionNumber + '.txt"');
-        if(format != 'C'){
+		
+        // res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.txt"');
+        // res.setHeader('Content-Type', 'text/plain');
+		if(format == 'T'){
             res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.txt"');
             res.setHeader('Content-Type', 'text/plain');
-        }else{
+        }else if(format == 'C'){
             res.setHeader('Content-Disposition', 'attachment; filename="PCRX' + agent_code + currTimeStamp + '.csv"');
             res.setHeader('Content-Type', 'text/csv');
+        } else {
+            res.setHeader('Content-Disposition', 'attachment; filename="PCRX.DAT"');
+            res.setHeader('Content-Type', 'text/plain');
         }
         const readable = new stream.Readable();
         readable._read = () => { };
@@ -311,7 +561,7 @@ const coching_version_download = (user_data, agent_code, transitionNumber) => {
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
         
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
-        // // console.log("=====================", res_dt)
+        // console.log("=====================", res_dt)
         
         const formattedDate = dateFormat(new Date(), "dd.mm.yy"),
         currTime = dateFormat(new Date(), "HH.MM.ss")
@@ -352,13 +602,13 @@ const coching_version_download = (user_data, agent_code, transitionNumber) => {
 const dhanbad_version_download = (user_data, agent_code, transitionNumber) => {
     return new Promise(async (resolve, reject) => {
         try{
-            var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,LPAD(account_number, 6, '0') as account_number,RPAD(UPPER(account_holder_name), 16, ' ') as name,LPAD(ROUND(deposit_amount, 0), 6, '0') as deposit_amount, LPAD(ROUND(balance_amount, 0), 6, '0') as balance_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,LPAD(receipt_no, 5, '0') as receipt_no";
+            var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,LPAD(account_number, 6, '0') as account_number,RPAD(UPPER(account_holder_name), 16, ' ') as name,LPAD(ROUND(deposit_amount, 0), 6, '0') as deposit_amount, LPAD(ROUND(balance_amount, 0), 6, '0') as balance_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,RIGHT(receipt_no, 5) as receipt_no";
             var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
             
             let res_dt = await db_Select(select_q, "td_collection", whr, null);
-            // // console.log("=====================", res_dt)
+            // console.log("=====================", res_dt)
             
-            const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
+            const formattedDate = dateFormat(new Date(), "dd.mm.yy"),
             currTime = dateFormat(new Date(), "HH.MM.ss")
             
             let formattedData = '', tot_coll_amt = 0, tot_coll = 0, 
@@ -393,10 +643,10 @@ const dhanbad_version_download = (user_data, agent_code, transitionNumber) => {
             formattedData = col_header + '\n' + formattedData
     
             const text = formattedData + "";
-            // // console.log(text, 'LAALALLALALALALAL');
+            // console.log(text, 'LAALALLALALALALAL');
             resolve(text)
         }catch(err){
-            // console.log(err);
+            console.log(err);
             reject(err)
         }
     })
@@ -404,7 +654,7 @@ const dhanbad_version_download = (user_data, agent_code, transitionNumber) => {
 
 const normal_version_download = (user_data, agent_code, transitionNumber) => {
     return new Promise(async (resolve, reject) => {
-        var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,RPAD(account_number, 19, ' ') as account_number,RPAD(UPPER(account_holder_name), 20, ' ') as name,LPAD(deposit_amount, 10, '0') as deposit_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,LPAD(receipt_no, 5, '0') as receipt_no";
+        var select_q = "LPAD(UPPER(branch_code), 3, '0') as branch_code,RPAD(UPPER(product_code), 5, ' ') as product_code,RPAD(account_number, 6, ' ') as account_number,RPAD(UPPER(account_holder_name), 16, ' ') as name,LPAD(CAST(deposit_amount AS DECIMAL(0)), 6, '0') as deposit_amount, LPAD(CAST(balance_amount AS DECIMAL(0)), 6, '0') as balance_amount, DATE_FORMAT(transaction_date, '%d.%m.%y') as transaction_date, DATE_FORMAT(transaction_date, '%H.%i.%s') as transaction_time,LPAD(receipt_no, 5, '0') as receipt_no";
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL`;
         
         let res_dt = await db_Select(select_q, "td_collection", whr, null);
@@ -413,10 +663,11 @@ const normal_version_download = (user_data, agent_code, transitionNumber) => {
         const formattedDate = dateFormat(new Date(), "dd.MM.yy"),
         currTime = dateFormat(new Date(), "HH.MM.ss")
         
-        let formattedData = '', tot_coll_amt = 0, tot_coll = 1, 
-        agent_code_final = await createStrWithZero(10, agent_code.toString(), '0', 'P');
+        let formattedData = '', tot_coll_amt = 0, tot_coll = 1, last_acc_no = 0,
+        agent_code_final = await createStrWithZero(6, agent_code.toString(), '0', 'P');
 
         if(res_dt.suc > 0){
+            last_acc_no = res_dt.msg.length > 0 ? res_dt.msg[res_dt.msg.length - 1].account_number : 0;
             for(let item of res_dt.msg){
                 const {
                     branch_code,
@@ -425,19 +676,20 @@ const normal_version_download = (user_data, agent_code, transitionNumber) => {
                     name,
                     deposit_amount,
                     transaction_date,
+                    balance_amount,
                     transaction_time,
                     receipt_no
                 } = item;
-                const formattedLine = `${branch_code},${product_code},${account_number},${name},${deposit_amount},${transaction_date},${receipt_no}`;
+                const formattedLine = `${account_number},${deposit_amount},${name},${balance_amount},${transaction_date},${deposit_amount}  `;
                 formattedData += formattedLine + "\n";
                 tot_coll_amt += parseFloat(deposit_amount)
                 tot_coll++
             }
         }
 
-        let tot_col_amt_final = await createStrWithZero(19, tot_coll_amt.toString(), '0', 'P'),
-        tot_col_final = await createStrWithZero(20, tot_coll.toString(), '0', 'P');
-        let col_header = `000,12345,${tot_col_amt_final},${tot_col_final},${agent_code_final},${formattedDate},12345`
+        let tot_col_amt_final = await createStrWithZero(6, tot_coll_amt.toString(), '0', 'P'),
+        tot_col_final = await createStrWithZero(6, tot_coll.toString(), '0', 'P');
+        let col_header = `${last_acc_no},${tot_col_final},${tot_col_amt_final}          ,${agent_code_final},${formattedDate},12341234`
 
         formattedData = col_header + '\n' + formattedData
 
@@ -501,7 +753,7 @@ const fetch_pcrx_file = async (req, res) => {
         var whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}' AND agent_code='${agent_code}'  AND agent_trans_no='${transitionNumber}' AND agent_trans_no IS NOT NULL AND download_flag = 'N'`;
         let res_dt = await db_Select('*', "td_collection", whr, null);
 
-        // console.log('-=-=-=-=-=', res_dt)
+        console.log('-=-=-=-=-=', res_dt)
 
         const dbdataarrayOfArrays = res_dt.msg.map((lData) => {
             return {
@@ -524,9 +776,9 @@ const fetch_pcrx_file = async (req, res) => {
         try {
             var uploaddb = await F_insert_bulk_data(user_data.bank_id, dbdataarrayOfArrays);
             if (uploaddb.suc == 1) {
-                try {
-                    var fld = `agent_trans_no, bank_id, branch_code, agent_code, send_date, send_by, created_by, created_dt`,
-                    ival = `'${transitionNumber}', '${user_data.bank_id}', '${user_data.branch_code}', '${agent_code}', '${dateTime}', '${user_data.user_id}', '${user_data.user_id}', '${dateTime}'`;
+				try {
+                    var fld = `(agent_trans_no, bank_id, branch_code, agent_code, send_date, send_by, created_by, created_dt)`,
+                    ival = `('${transitionNumber}', '${user_data.bank_id}', '${user_data.branch_code}', '${agent_code}', '${dateTime}', '${user_data.user_id}', '${user_data.user_id}', '${dateTime}')`;
                     await db_Insert("md_trans_log", fld, ival, null, 0)
                 } catch (error) {
                     console.log(error);
@@ -541,7 +793,7 @@ const fetch_pcrx_file = async (req, res) => {
             
 
         } catch (error) {
-            // console.log(error)
+            console.log(error)
 
             return res.json(false);
         }
@@ -651,7 +903,7 @@ const del_all_pctx_file_data = async (req, res) => {
         let delwhr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'  AND agent_code='${value.agent_code}'`;
 
         var res_del = await db_Delete("td_account_dtls", delwhr)
-        // console.log("**********************", res_del)
+        console.log("**********************", res_del)
         res.json({
             "SUCCESS": res_del,
             "status": true
@@ -664,6 +916,54 @@ const del_all_pctx_file_data = async (req, res) => {
     }
 }
 
+
+const fetchdata_to_server_backup = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            agent_code: Joi.string().required()
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+        const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
+        const user_data = req.session.user.user_data.msg[0];
+
+
+        //db connection
+		//AND a.MAT_DT>sysdate 
+        let fields = "a.brn_cd,a.acc_num,b.cust_name,to_char(a.opening_dt,'yyyy-mm-dd') opening_dt,a.prn_amt,b.phone ",
+            table_name = "TM_DEPOSIT a, MM_CUSTOMER b",
+            where = `a.CUST_CD = b.CUST_CD AND a.ACC_TYPE_CD = 11 AND nvl(a.acc_status,'O') = 'O' AND a.constitution_cd !=1 AND a.brn_cd = ${user_data.branch_code} AND a.agent_cd = ${value.agent_code} ${user_data.after_maturity_coll != 'Y' ? 'AND a.MAT_DT>sysdate' : ''}`,
+            order = null,
+            flag = 1;
+        let tableDate = await F_Select(user_data.bank_id, fields, table_name, where, order, flag, full_query = null);
+        console.log("**********************", tableDate)
+
+        for (let dbdata of tableDate.msg) {
+            try {
+                var fields2 = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number,mobile_no, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
+                    values = `('${user_data.bank_id}','${user_data.branch_code}','${value.agent_code}','${datetime}','D','D','DDSD',${dbdata.ACC_NUM},${dbdata.PHONE},'${dbdata.CUST_NAME}', '${dbdata.OPENING_DT}','${dbdata.PRN_AMT}','${user_data.id}','${datetime}')`;
+
+                var res_dt = await db_Insert("td_account_dtls", fields2, values, null, 0);
+                er = true
+            } catch (error) {
+                er = error
+            }
+
+        }
+        (er == true) ? res.json(er) : res.json(er)
+    } catch (error) {
+        res.json({
+            "ERROR": error,
+            "status": false
+        });
+    }
+}
 
 const fetchdata_to_server = async (req, res) => {
     try {
@@ -752,8 +1052,8 @@ const fetchDataToServerWithProcedure = (userData, value) => {
             fields = '*',
             where = null,
             order = null;
+            // console.log(pro_query);
             var tableDate = await RunProcedure(user_data.bank_id, pro_query, table_name, fields, where, order)
-            console.log(tableDate, '======================');
             if(tableDate.length > 0){
                 for (let dbdata of tableDate) {
                     try {
@@ -763,8 +1063,6 @@ const fetchDataToServerWithProcedure = (userData, value) => {
                         var res_dt = await db_Insert("td_account_dtls", fields2, values, null, 0);
                         er = true
                     } catch (error) {
-                        console.log(error, '----------------------');
-                        
                         er = error
                     }
                 }

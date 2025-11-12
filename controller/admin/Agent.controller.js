@@ -1,10 +1,9 @@
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const dateFormat = require('dateformat');
-const { db_Insert, db_Select } = require('../../model/MasterModule');
+const { db_Insert, db_Select, PRINTER_TYPE_MASTER } = require('../../model/MasterModule');
 const { F_Select } = require('../../model/OrcModel');
 const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
-
 const getTotalAgent = (bank_id, flag = null) => {
     return new Promise(async (resolve, reject) => {
         let select = 'COUNT(agent_id) tot_agent',
@@ -105,7 +104,7 @@ const addAgent = async (req, res) => {
 const editAgent = async (req, res) => {
     try {
         const user_data = req.session.user.user_data.msg[0];
-        let select = 'b.allow_collection_days,a.id, a.user_id,a.active_flag,a.device_id,a.device_sl_no,b.agent_name,b.agent_address,b.phone_no,b.email_id,b.max_amt,b.account_no',
+        let select = 'b.allow_collection_days,a.id, a.user_id,a.active_flag,a.device_id,a.device_sl_no,b.agent_name,b.agent_address,b.phone_no,b.email_id,b.max_amt,b.account_no, b.printer_type',
             table_name = 'md_user as a, md_agent as b',
             whr = `a.user_id=b.agent_code AND a.bank_id='${user_data.bank_id}' AND a.branch_code='${user_data.branch_code}' AND b.bank_id='${user_data.bank_id}' AND b.branch_code='${user_data.branch_code}' AND a.user_type='O' AND a.id=${req.params['agent_id']}`;
         const resData = await db_Select(select, table_name, whr, null)
@@ -113,7 +112,8 @@ const editAgent = async (req, res) => {
         var viewData = {
             title: "Agent",
             page_path: "/agent/editViewAgent",
-            data: resData.msg
+            data: resData.msg,
+            printer_type: PRINTER_TYPE_MASTER
         };
         res.render('common/layouts/main', viewData)
     } catch (error) {
@@ -133,6 +133,7 @@ const edit_save_agent = async (req, res) => {
             max_amt: Joi.number().required(),
             allow_collection_days:Joi.number().required(),
             device_id: Joi.required(),
+            printer_type: Joi.string().required(),
 
             // device_sl_no: Joi.required(),
             // adress: Joi.string().required(),
@@ -151,7 +152,7 @@ const edit_save_agent = async (req, res) => {
         let fields = `device_id='${value.device_id}',modified_by='${user_data.id}',updated_at='${datetime}'`,
             whr1 = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'AND user_id='${value.user_id}' AND id='${req.params['agent_id']}'`;
         let res_dt = await db_Insert("md_user", fields, null, whr1, 1);
-        let fields2 = `agent_name='${value.name}', phone_no='${value.mobile}', email_id='${value.email}',max_amt='${value.max_amt}',allow_collection_days='${value.allow_collection_days}',modified_by='${user_data.id}',updated_at='${datetime}'`,
+        let fields2 = `agent_name='${value.name}', phone_no='${value.mobile}', email_id='${value.email}',max_amt='${value.max_amt}',allow_collection_days='${value.allow_collection_days}', printer_type='${value.printer_type}',modified_by='${user_data.id}',updated_at='${datetime}'`,
             whr = `bank_id='${user_data.bank_id}' AND branch_code='${user_data.branch_code}'AND agent_code='${value.user_id}'`;
         let res_dt2 = await db_Insert("md_agent", fields2, null, whr, 1);
         res.redirect('/admin/agent')
@@ -203,11 +204,12 @@ const col_days_save = async (req, res) => {
         }
         res.redirect('/admin/col_days')
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         req.flash('danger', 'Something went wrong while updating please try again later.')
         res.redirect('/admin/col_days')
     }
 }
+
 
 
 const checkedUnicUser = async (req, res) => {

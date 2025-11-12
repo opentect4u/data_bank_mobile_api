@@ -73,14 +73,13 @@
                 id="data_version"
                 value="" disabled
                 >
-                  <option value="">Select Data Version</option>
-                  <!-- <option value="S" <%= data.data_version == 'S' ? 'selected' : '' %>>Cochin Version with Mobile No</option>
-                  <option value="C" <%= data.data_version == 'C' ? 'selected' : '' %>>Cochin Version without Mobile(applicable in DDS Mc)</option>
-                  <option value="N" <%= data.data_version == 'N' ? 'selected' : '' %>>Normal Version(applicable in DDS Mc)</option> -->
-
-                  <option value="S" <%= data.data_version == 'S' ? 'selected' : '' %>>Cochin Version</option>
-                  <option value="C" <%= data.data_version == 'C' ? 'selected' : '' %>>Dhanbad Version</option>
-                  <option value="N" <%= data.data_version == 'N' ? 'selected' : '' %>>Normal Version</option>
+                  <!-- <option value="S" <%# data.data_version == 'S' ? 'selected' : '' %>>Cochin Version with Mobile No</option>
+                <option value="C" <%# data.data_version == 'C' ? 'selected' : '' %>>Cochin Version without Mobile(applicable in DDS Mc)</option>
+                <option value="N" <%# data.data_version == 'N' ? 'selected' : '' %>>Normal Version(applicable in DDS Mc)</option> -->
+                
+                <option value="S" <%= data.data_version == 'S' ? 'selected' : '' %>>Cochin Version</option>
+                <option value="C" <%= data.data_version == 'C' ? 'selected' : '' %>>Dhanbad Version</option>
+                <option value="N" <%= data.data_version == 'N' ? 'selected' : '' %>>Normal Version</option>
                 </select>
               </div>
   
