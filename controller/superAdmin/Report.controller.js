@@ -48,12 +48,12 @@ const get_branch_name=async (req,res)=>{
 const agent_report = async (req, res) => {
     try {
         var data = req.body
-        // // console.log(data);
+        // console.log(data);
         let select = 'agent_id, agent_code, agent_name, phone_no',
             table_name = 'md_agent',
             whr = `bank_id = ${data.bank_id} AND branch_code = ${data.branch_id}`;
         var agenData = await db_Select(select, table_name, whr, null)
-        // // console.log(agenData);
+        // console.log(agenData);
         res.json(agenData)
         
     } catch (error) {
@@ -94,15 +94,15 @@ const summary_report_post_admin = async(req,res)=>{
         let select = "",
             where = null;
 
-            //// console.log('111111 '+full_query); 
+            //console.log('111111 '+full_query); 
 
         let resData = await db_Select(null, null, null, null, full_query, true);
-        // console.log(resData);
+        console.log(resData);
 
         let resData2 = await db_Select('*', "md_agent", `bank_id=${data.bank_id} AND branch_code='${data.branch_id}' AND agent_code='${data.agent_code}'`, null);
-        // console.log(resData2);
+        console.log(resData2);
 
-        // console.log("resData============",resData2);
+        console.log("resData============",resData2);
         delete resData.sql
         var viewData = {
             title: "Day Scroll Report",
@@ -112,12 +112,12 @@ const summary_report_post_admin = async(req,res)=>{
             agent_info:resData2.msg[0]
         };
 
-        // console.log("Starting Date",viewData);
+        console.log("Starting Date",viewData);
         res.send(resData)
 
 
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         res.json({
             "success": error,
             "status": false
@@ -134,7 +134,7 @@ const col_report_list = async(req,res)=>{
         };
         res.render('common/layouts/main', viewData)
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         res.json({
             "ERROR": error,
             "status": false
@@ -148,7 +148,7 @@ const collection_report = async(req,res)=>{
             agent_trans: Joi.string().required(),
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
-        // console.log(value);
+        console.log(value);
         if (error) {
             const errors = {};
             error.details.forEach(detail => {
@@ -157,7 +157,7 @@ const collection_report = async(req,res)=>{
             return res.json({ error: errors });
         }
         const user_data = req.session.user.user_data.msg[0];
-        // // console.log(user_data,'user');
+        // console.log(user_data,'user');
         var select = "receipt_no,transaction_date,account_number,account_holder_name,deposit_amount,balance_amount,download_flag, bank_id, branch_code, agent_code",
         where = `agent_trans_no ='${value.agent_trans}' `;
         let resData = await db_Select(select, "td_collection", where);
@@ -167,7 +167,7 @@ const collection_report = async(req,res)=>{
         where = `a.bank_id=b.bank_id AND a.branch_code=c.branch_code AND a.agent_code=d.agent_code AND a.agent_trans_no = '${value.agent_trans}'`;
         let resDat2 = await db_Select(select, "md_agent_trans a, md_bank b, md_branch c, md_agent d", where);
 
-        // console.log("resData============",resDat2);
+        console.log("resData============",resDat2);
         delete resData.sql
         
         var viewData = {
@@ -175,12 +175,12 @@ const collection_report = async(req,res)=>{
             agent_info:resDat2.msg[0]
         };
 
-        // console.log("Starting Date",viewData);
+        console.log("Starting Date",viewData);
         res.send(viewData)
 
 
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         res.json({
             "success": error,
             "status": false
@@ -197,7 +197,7 @@ const col_progress = async(req,res)=>{
         };
         res.render('common/layouts/main', viewData)
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         res.json({
             "ERROR": error,
             "status": false
@@ -211,7 +211,7 @@ const collection_progress = async(req,res)=>{
             agent_code: Joi.string().required(),
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
-        // console.log(value);
+        console.log(value);
         if (error) {
             const errors = {};
             error.details.forEach(detail => {
@@ -220,7 +220,7 @@ const collection_progress = async(req,res)=>{
             return res.json({ error: errors });
         }
         const user_data = req.session.user.user_data.msg[0];
-        // // console.log(user_data,'user');
+        // console.log(user_data,'user');
         var select = "receipt_no,transaction_date,account_number,account_holder_name,deposit_amount,balance_amount,download_flag, bank_id, branch_code",
         where = `agent_code ='${value.agent_code}' AND download_flag='N'`;
         let resData = await db_Select(select, "td_collection", where);
@@ -230,7 +230,7 @@ const collection_progress = async(req,res)=>{
         where = `a.bank_id=b.bank_id AND a.branch_code=c.branch_code AND a.agent_code=d.agent_code AND a.agent_code = '${value.agent_code}' AND a.end_flag = 'N'`;
         let resDat2 = await db_Select(select, "md_agent_trans a, md_bank b, md_branch c, md_agent d", where);
 
-        // console.log("resData============",resDat2);
+        console.log("resData============",resDat2);
         delete resData.sql
         
         var viewData = {
@@ -238,12 +238,12 @@ const collection_progress = async(req,res)=>{
             agent_info:resDat2.msg[0]
         };
 
-        // console.log("Starting Date",viewData);
+        console.log("Starting Date",viewData);
         res.send(viewData)
 
 
     } catch (error) {
-        // console.log(error);
+        console.log(error);
         res.json({
             "success": error,
             "status": false

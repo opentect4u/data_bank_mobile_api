@@ -104,12 +104,15 @@ const login = async (req, res) => {
             let setting = await db_Select("*", "td_settings", whrSeetingData, null);
             delete setting.sql;
 
-            let trans = await db_Select(`sl_no, agent_code, coll_flag, DATE_FORMAT(send_date, '%Y-%m-%d') trans_dt`, 'md_agent_trans', `agent_code='${value.user_id}' AND coll_flag = 'Y'`, null)
+            let trans = await db_Select(`sl_no, agent_code, coll_flag, DATE_FORMAT(send_date, '%Y-%m-%d') trans_dt`, 'md_agent_trans', `bank_id=${userallData.bank_id} AND branch_code=${userallData.branch_code} AND agent_code='${value.user_id}' AND coll_flag = 'Y'`, null)
             // console.log(trans);
             delete trans.sql
+			
+			let logo_dt = await db_Select("file_path", "td_logo", `bank_id='${userallData.bank_id}'`, null);
+            delete logo_dt.sql
 
             res.json({
-                "success": { user_data, total_collection, setting, bank_acc_type: bank_acc_type.suc > 0 ? bank_acc_type.msg : [], trans },
+                "success": { user_data, total_collection, setting, bank_acc_type: bank_acc_type.suc > 0 ? bank_acc_type.msg : [], trans, logo_path: logo_dt.suc > 0 && logo_dt.msg.length > 0 ? logo_dt.msg[0].file_path : '' },
                 "status": true
             });
         } else {
@@ -144,7 +147,7 @@ const my_agent = async (req, res) => {
         var whrDAta = `device_id='${value.device_id}' AND active_flag='Y'AND user_type='O'`,
             selectData = "user_id";
         let res_data = await db_Select(selectData, "md_user", whrDAta, null);
-        // // console.log("===length===",res_data.msg.length)
+        // console.log("===length===",res_data.msg.length)
         delete res_data.sql;
         if (res_data.msg.length > 0) {
             res.json({
@@ -239,7 +242,7 @@ const app_version = async (req, res) => {
 
 
         let res_dt = await db_Select('*', "md_app_version", null, null);
-        // console.log("===res_dt===",res_dt.msg[0].app_version)
+        console.log("===res_dt===",res_dt.msg[0].app_version)
 
 
         let update_status=(res_dt.msg[0].app_version==value.app_version) ?'N':'Y';
@@ -259,4 +262,40 @@ const app_version = async (req, res) => {
     }
 }
 
-module.exports = { register, login, my_agent, change_pin,app_version }
+const getAgentPrintType = async (req, res) => {
+    try{
+        const schema = Joi.object({
+            device_id: Joi.required(),
+            user_id: Joi.optional(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
+        var whr = `a.agent_code = b.user_id and a.bank_id=b.bank_id and a.branch_code=b.branch_code and b.device_id='${value.device_id}' AND a.active_flag='Y' AND b.user_type='O'`;
+        let res_dt = await db_Select('a.agent_code, a.printer_type', "md_agent a, md_user b", whr, null);
+        delete res_dt.sql;
+        if (res_dt.suc > 0 && res_dt.msg.length > 0) {
+            res.json({
+                "success": res_dt,
+                "status": true
+            });
+        } else {
+            res.json({
+                "Error": "Please Asign Devices",
+                "status": false
+            });
+        }
+    }catch(error){
+        res.json({
+            "error": error,
+            "status": false
+        });
+    }
+}
+
+module.exports = { register, login, my_agent, change_pin,app_version, getAgentPrintType }

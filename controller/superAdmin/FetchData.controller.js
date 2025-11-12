@@ -58,12 +58,13 @@ const get_branch_name=async (req,res)=>{
         //          where a.bank_id = ${value.bank_id}`
         var sql=`select branch_id,branch_code,branch_name,contact_person,phone_no from md_branch 
                  where bank_id = ${value.bank_id}`
-        
-        var max_bank_user = await getBankMaxUser(value.bank_id),
+		
+		var max_bank_user = await getBankMaxUser(value.bank_id),
         tot_user = await getTotalAgent(value.bank_id, 'Y');
 
         var branchData= await db_db_Select_Sqery(sql);
-        branchData['max_user'] = max_bank_user.suc > 0 ? max_bank_user.msg[0].max_user : 0
+	
+		branchData['max_user'] = max_bank_user.suc > 0 ? max_bank_user.msg[0].max_user : 0
         branchData['active_user'] = tot_user.suc > 0 ? tot_user.msg[0].tot_agent : 0
         res.json({
             "SUCCESS": {branchData},
@@ -73,7 +74,7 @@ const get_branch_name=async (req,res)=>{
 
 const bank_name = async (req, res) => {
     const user_data = req.session.user.user_data.msg[0];
-    // // console.log(user_data)
+    // console.log(user_data)
     var bank = await db_Select('*','md_bank',null,null);
     const viewData = {
         title: "Adminn",
@@ -85,17 +86,17 @@ const bank_name = async (req, res) => {
 
 const password = async (req, res) => {
       const user_data = req.session.user.user_data.msg[0];
-      // console.log(user_data,"123456");
+      console.log(user_data,"123456");
       const datetime = dateFormat(new Date(), "yyyy-mm-dd");
       
       var data = req.body,result;
-    //   // console.log(data,"1234");
+    //   console.log(data,"1234");
 
       var select = "id,password",
       table_name = "md_user",
       whr = `id='${user_data.id}'`;
       var res_dt = await db_Select(select,table_name,whr,null)
-    //   // console.log(res_dt,"1234");
+    //   console.log(res_dt,"1234");
 
       if(res_dt.suc > 0) {
         if(res_dt.msg.length > 0) {

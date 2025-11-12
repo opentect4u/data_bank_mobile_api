@@ -61,7 +61,11 @@ const fetchtransNumber = async (req, res) => {
             return res.json({ error: errors });
         }
         const user_data = req.session.user.user_data.msg[0];
-        // console.log("user_data", user_data)
+        // let table = 'md_agent_trans as a, md_user as b, md_agent as c, td_collection AS d',
+        //     select = "a.agent_trans_no,c.agent_name,a.received_date,SUM(d.deposit_amount) as amount,d.download_flag,a.agent_code, COUNT(d.deposit_amount) as count_account",
+        //     where = `d.agent_trans_no=a.agent_trans_no AND c.agent_code=a.agent_code AND a.agent_code = b.user_id AND a.bank_id=${user_data.bank_id} AND a.branch_code='${user_data.branch_code}' AND b.active_flag='Y' AND b.bank_id =${user_data.bank_id} AND b.branch_code='${user_data.branch_code}' AND a.agent_trans_no IS NOT NULL AND a.coll_flag='N'AND a.end_flag='Y' AND a.received_date BETWEEN '${value.fDate}' AND '${value.tDate}'`,
+        //     order=`GROUP BY a.agent_trans_no, c.agent_name, a.received_date, a.agent_code,d.download_flag`;
+        // let resData = await db_Select(select, table, where, order);
         let table = 'md_agent_trans a, md_agent b',
             select = "a.agent_trans_no,a.agent_code,b.agent_name,a.received_date",
             where = `a.agent_code=b.agent_code AND a.bank_id = b.bank_id AND a.bank_id =${user_data.bank_id} AND a.branch_code='${user_data.branch_code}' AND b.bank_id =${user_data.bank_id} AND b.branch_code='${user_data.branch_code}' AND a.agent_trans_no IS NOT NULL AND a.coll_flag='N' AND a.end_flag='Y' AND a.received_date BETWEEN '${value.fDate}' AND '${value.tDate}'`,
@@ -81,7 +85,7 @@ const fetchtransNumber = async (req, res) => {
             }
         }
 
-        // console.log("====================",resData)
+        //console.log("====================",resData)
 
         // delete resData.sql
         res.json({

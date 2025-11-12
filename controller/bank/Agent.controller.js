@@ -90,7 +90,7 @@ const editAgent = async (req, res) => {
             table_name = 'md_user as a, md_agent as b,md_branch as c',
             whr = `a.user_id=b.agent_code AND c.bank_id=a.bank_id AND c.branch_code=a.branch_code AND a.bank_id='${user_data.bank_id}' AND b.bank_id='${user_data.bank_id}' AND a.user_type='O' AND a.id=${req.params['agent_id']}`;
         const resData = await db_Select(select, table_name, whr, null)
-        // console.log("===///=======",resData)
+        console.log("===///=======",resData)
         delete resData.sql
         var viewData = {
             title: "Agent",
@@ -133,25 +133,21 @@ const edit_save_agent = async (req, res) => {
         const user_data = req.session.user.user_data.msg[0];
 
         let active_flag = (value.agent_active) ? 'Y' : 'N';
-        // console.log('===', (value.agent_active) ? 'Y' : 'N')
+        //console.log('===', (value.agent_active) ? 'Y' : 'N')
 
         if (active_flag == 'Y') {
 
             let whcheck = `bank_id='${user_data.bank_id}'`;
             let resdata = await db_Select('IF(SUM(no_of_users)>0, no_of_users, 0) as no_of_users', 'md_subscription', whcheck, null);
-            // console.log('==========////========', resdata.msg[0].no_of_users)
+            //console.log('==========////========', resdata.msg[0].no_of_users)
             let whcheck_agent = `bank_id='${user_data.bank_id}' AND active_flag='Y' and user_type='O'`;
             let resdata_agent = await db_Select('ifnull(count(*),0) as total_agent', 'md_user', whcheck_agent, null);
-            // console.log('********++++++**********', resdata_agent.msg[0].total_agent)
-            if (resdata_agent.msg[0].total_agent < resdata.msg[0].no_of_users) {
-
-
+            //console.log('********++++++**********', resdata_agent.msg[0].total_agent)
+            //if (resdata_agent.msg[0].total_agent < resdata.msg[0].no_of_users) {
 
                 let fields = `device_id='${value.device_id}',active_flag='Y',modified_by='${user_data.id}',updated_at='${datetime}'`,
                     whr1 = `bank_id='${user_data.bank_id}' AND branch_code='${value.branch_code}'AND user_id='${value.user_id}' AND id='${req.params['agent_id']}'`;
                 let res_dt = await db_Insert("md_user", fields, null, whr1, 1);
-
-
 
                 let fields2 = `agent_name='${value.name}', phone_no='${value.mobile}', email_id='${value.email}',max_amt='${value.max_amt}',allow_collection_days='${value.allow_collection_days}',modified_by='${user_data.id}',updated_at='${datetime}'`,
                     whr = `bank_id='${user_data.bank_id}' AND branch_code='${value.branch_code}'AND agent_code='${value.user_id}'`;
@@ -159,10 +155,10 @@ const edit_save_agent = async (req, res) => {
 				//res.send({res_dt2,res_dt});
                 req.flash('success', 'Agent updated successfully')
                 res.redirect('/bank/agent')
-            } else {
-                req.flash('error', 'Agent limit is over')
-               	res.redirect('/bank/agent')
-            }
+            // } else {
+            //    req.flash('error', 'Agent limit is over')
+            //   	res.redirect('/bank/agent')
+            // }
         } 
 		
 		// else {
@@ -202,9 +198,6 @@ const edit_save_agent = async (req, res) => {
     }
 }
 
-
-
-
 const checkedUnicUser = async (req, res) => {
     try {
         const user_data = req.session.user.user_data.msg[0];
@@ -220,7 +213,6 @@ const checkedUnicUser = async (req, res) => {
         res.json(false);
     }
 }
-
 const check_user_collection = async (req, res) => {
     try {
         const schema = Joi.object({
@@ -319,4 +311,5 @@ const delete_agent = async (req, res) => {
 }
 
 module.exports = { agent, editAgent, edit_save_agent,checkedUnicUser, check_user_collection, delete_agent }
+// module.exports = { agent, editAgent, edit_save_agent,checkedUnicUser }
 // module.exports = { agent, addAgent, editAgent, edit_save_agent,checkedUnicUser }

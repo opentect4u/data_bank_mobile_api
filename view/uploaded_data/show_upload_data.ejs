@@ -186,10 +186,10 @@ var table = $('#accountDtTable').DataTable()
         url: "/admin/fetch_show_account",
         data: { agent_code: agentCode },
         success: function (response) {
-          //// console.log(response.SUCCESS.msg[0].upload_dt);
+          //console.log(response.SUCCESS.msg[0].upload_dt);
           if (response.SUCCESS.msg[0].upload_dt) {
             var datetime=formatDate(response.SUCCESS.msg[0].upload_dt)
-            // console.log(datetime);
+            console.log(datetime);
             $("#fetchDate").text(datetime);
           }else{
             $("#fetchDate").text('');
@@ -247,7 +247,7 @@ var table = $('#accountDtTable').DataTable()
           // });
         },
         error: function (error) {
-          // console.log(error);
+          console.log(error);
         },
       });
     }
@@ -268,7 +268,7 @@ var table = $('#accountDtTable').DataTable()
         url: "/admin/agent_info",
         data: { agent_code: agent_id },
         success: function (response) {
-          // console.log(response);
+          console.log(response);
           $("#agent_info").show();
 
           $("#showAgentname").text(response.SUCCESS.msg[0].agent_name);
@@ -277,7 +277,7 @@ var table = $('#accountDtTable').DataTable()
           $("#showPhone_no").text(response.SUCCESS.msg[0].phone_no);
         },
         error: function (error) {
-          // console.log(error);
+          console.log(error);
         },
       });
     }

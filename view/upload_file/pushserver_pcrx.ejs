@@ -117,9 +117,9 @@ const currentDate=getCurrentDate();
 		  $(".loader_div").show()
 		},
         success: function (response) {
-          // console.log(response.SUCCESS);
+          console.log(response.SUCCESS);
 
-          // console.log(response.SUCCESS);
+          console.log(response.SUCCESS);
           tbody.empty();
           response.SUCCESS.msg.forEach(function (item, index) {
             var row =
@@ -153,7 +153,7 @@ const currentDate=getCurrentDate();
 			  $(".loader_div").hide()
 		  },
         error: function (error) {
-          // console.log(error);
+          console.log(error);
           $("#transitionNumber option:not(:first)").remove();
         },
       });
@@ -180,7 +180,7 @@ const currentDate=getCurrentDate();
         url: "/admin/fetch_pcrx_file?agent_code=" + agentcode + "&fDate=" + fDate + "&tDate=" + tDate + '&transaction_number=' + transaction_number,
         success: function (data) {
           $(".loader_div").hide();
-          // console.log(data)
+          console.log(data)
           Swal.fire("SUCCESS", "Send data Successful", "success").then((result) => {
 
           });

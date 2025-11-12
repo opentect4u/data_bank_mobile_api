@@ -1,5 +1,5 @@
 <style>
-  .bank-logo-img {
+  .bank-logo-img{
     width: 50px;
   }
 </style>
@@ -11,15 +11,23 @@
         <div class="titleSec">
           <h2>Logo Upload</h2>
         </div>
-
+        
         <form action="/super-admin/logo_upload" method="post" id="myForm" enctype="multipart/form-data">
           <div class="row">
             <div class="form-group col-md-7">
               <label for="bank"><b>Bank Name:</b></label>
               <select name="bank" class="form-control" id="bank" required>
                 <option value="">Select Bank Name</option>
-                <% data.msg.forEach(function(item2,index) { %>
-                  <option value="<%=item2.bank_id%>">
+                <% 
+                var user_bank = user.user_data.msg[0].bank_id,
+                user_type = user.user_data.msg[0].user_type;
+                data.msg.forEach(function(item2,index) {
+                    var _selected = '';
+                    if(user_type == 'B' && user_bank == item2.bank_id){
+                      _selected = 'selected';
+                    }
+                  %>
+                  <option value="<%=item2.bank_id%>" <%= _selected %>>
                     <%=item2.bank_name%>
                   </option>
                   <% }); %>
@@ -35,29 +43,24 @@
 
             <div class="form-group col-md-12">
               <label for="bank" id="photo1"><b>Upload Logo:</b>&nbsp;
-                <span id="act_dt" style="font-size: 12px; color: red;">(.JPG, .JPEG, .PNG)&nbsp;(*File size should not
-                  be more than 1MB)</span></label><br>
+                <span id="act_dt" style="font-size: 12px; color: red;">(.JPG, .JPEG, .PNG)&nbsp;(*File size should not be more than 2MB)</span></label><br>
               <input type="file" name="photo" id="photo" accept=".jpg, .jpeg, .png" onchange="previewImage()">
-              <img id="imagePreview" src="#" alt="Image Preview" class="center"
-                style="display:none; max-width: 400px; max-height: 400px; margin-top: 2vw;">
+                <img id="imagePreview" src="<%= data.length > 0 ? `/bank_logo/${data[0].file_path}` : '#' %>" alt="Image Preview" class="center" style="display:<%= data.length > 0 ? 'block' : 'none' %>; max-width: 400px; max-height: 400px; margin-top: 2vw;">
+            </div>
+            <div class="col-md-12">
+              <table class="showAgentDtls table table-bordered">
+                <thead>
+                  <tr>
+                    <td>#</td>
+                    <td>Bank Name</td>
+                    <td>Image</td>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
           </div>
         </form>
-
-        <table class="table showAgentDtls mt-3" style="width:100%">
-          <thead>
-            <tr>
-              <th>Sl. No.</th>
-              <th>Bank Name</th>
-              <th>Image</th>
-            </tr>
-          </thead>
-          <tbody>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
@@ -66,7 +69,7 @@
 
 <script>
   $('.showAgentDtls').hide()
-  $('#bank').change(function () {
+  $('#bank').change(function(){
     var bank_id = $(this).val()
     var tbody = $(".showAgentDtls tbody");
     $("#bank_image").val('');
@@ -74,28 +77,28 @@
       type: "POST",
       url: "/super-admin/get_logo",
       data: { bank_id: bank_id },
-      success: function (response) {
+      success: function(response) {
         tbody.empty();
-        if (response.suc > 0 && response.msg.length > 0)
-          response.msg.forEach(function (item, index) {
+        if(response.suc > 0 && response.msg.length > 0)
+response.msg.forEach(function (item,index) {
             var row =
               "<tr>" +
-              "<td>" +
-              (index + 1) +
-              "</td>" +
-              "<td>" +
+                "<td>" +
+                  (index+1) +
+                "</td>" +
+                "<td>" +
               item.bank_name +
               "</td>" +
-              "<td><img class='bank-logo-img' src='/bank_logo/" + item.file_path + "'></td>" +
+              "<td><a href='/bank_logo/" + item.file_path +"' target='_blank'><img class='bank-logo-img' src='/bank_logo/" + item.file_path +"'></a></td>" +
               "</tr>";
             tbody.append(row);
             $('.showAgentDtls').show()
 
-            $("#bank_image").val(item?.file_path);
-
+                  $("#bank_image").val(item?.file_path);
+           
 
           });
-        else {
+        else{
           $('.showAgentDtls tbody').append(`
             <tr>
               <td colspan="2" class="text-danger text-center">No data found</td>
@@ -104,18 +107,19 @@
         }
 
       },
-      error: function (error) {
-        // console.log(error);
-        tbody.empty();
-        $('.showAgentDtls').hide()
+    error: function (error) {
+      console.log(error);
+      tbody.empty();
+      $('.showAgentDtls').hide()
 
-      },
-    });
+    },
+  });
 
   });
 </script>
 
 <script>
+  <% if(user.user_data.msg[0].user_type != 'B'){ %>
   $("#photo1").hide()
   $("#photo").hide()
   $('#submitbtn').hide()
@@ -124,6 +128,9 @@
     $("#photo").show()
     $('#submitbtn').show()
   })
+  <% }else{ %>
+    $('#submitbtn').removeAttr('disabled')
+  <% } %>
 </script>
 
 

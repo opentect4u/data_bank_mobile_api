@@ -26,10 +26,11 @@
               <td><%=(index+1)%></td>
               <td><%=item.bank_name%></td>
               <td><%=item.contact_person%></td>
+              <td><%=item.phone_no%></td>
+              <!-- <td>
+                <h5><span class="badge badge-success"><%# item.active_flag=='Y'? 'Active' : ''%></span></h5> 
+              </td> -->
               <td><%=item.max_user %></td>
-              <td>
-                <h5><span class="badge badge-success"><%=item.active_flag=='Y'? 'Active' : ''%></span></h5> 
-              </td>
               <td><a class="btn btn-info view-button" href="/super-admin/edit_bank?bank_id=<%= item.bank_id %>">Edit</a></td>
 
               <!-- <td>

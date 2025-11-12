@@ -14,7 +14,6 @@ BankRoutes.get('/delete_agent',AuthCheckedMW,delete_agent)
 BankRoutes.get('/check_user_collection',AuthCheckedMW,check_user_collection)
 
 
-
 BankRoutes.get('/branch',AuthCheckedMW,branch_list)
 BankRoutes.post('/add_branch',AuthCheckedMW,add_branch)
 BankRoutes.get('/edit_branch/:branchid',AuthCheckedMW,editBranch)

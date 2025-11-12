@@ -69,8 +69,8 @@
         url: "/super-admin/collection_progress_update",
         data: { agent_code: agent_code },
         success: function(response) {
-          // console.log(response.data);
-          // // console.log(response.SUCCESS.branchData.msg)
+          console.log(response.data);
+          // console.log(response.SUCCESS.branchData.msg)
           $('#AgentColDtls tbody').empty()
           function formatDate(inputDate) {
                     const date = new Date(inputDate);
@@ -86,7 +86,7 @@
 
           if(response.data.length > 0){
             response.data.forEach(function(resData) {
-          // console.log(resData);
+          console.log(resData);
         total_amount+=resData.deposit_amount
 
         $('#AgentColDtls tbody').append(`
@@ -136,7 +136,7 @@
             $('#sts').text(agent_data.end_flag== 'Y'? 'End Collection' : 'Collection in Progress')
         },
       error: function (error) {
-        // console.log(error);
+        console.log(error);
       //   tbody.empty();
       },
     });

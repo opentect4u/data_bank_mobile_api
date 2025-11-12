@@ -148,7 +148,7 @@
         data: JSON.stringify({ agent_code: agent_code }),
         contentType: "application/json",
         success: function (response) {
-          // console.log(response);
+          console.log(response);
 
           if(response){
 
@@ -159,7 +159,7 @@
               data: JSON.stringify({ agent_code: agent_code }),
               contentType: "application/json",
               success: function (response) {
-                // console.log(response);
+                console.log(response);
                 if (response >= 1) {
                   $(".loader_div").hide();
                   //alert("Not terminating in collection, an agent");
@@ -174,7 +174,7 @@
                 }
               },
               error: function (error) {
-                // console.log(error);
+                console.log(error);
                 $("#uploadButton").attr('disabled',false);
               },
             });
@@ -189,7 +189,7 @@
           }
         },
         error: function (error) {
-          // console.log(error);
+          console.log(error);
         },
       });
 
@@ -208,7 +208,7 @@
       data: { agent_code: agent_id },
       success: function (response) {
         $(".loader_div").hide();
-        // console.log(response);
+        console.log(response);
         insert_agent_trans()
         Swal.fire("SUCCESS","Data upload Successful","success").then((result) => {
             
@@ -217,7 +217,7 @@
 
       },
       error: function (error) {
-        // console.log(error);
+        console.log(error);
         $("#agent2_info").hide();
 
         Swal.fire({
@@ -242,10 +242,10 @@
       url: "/admin/create_agent_trans",
       data: { agent_code: agent_id },
       success: function (response) {
-        // console.log(response);
+        console.log(response);
       },
       error: function (error) {
-        // console.log(error);
+        console.log(error);
       },
     });
   }
@@ -271,7 +271,7 @@
         url: "/admin/agent_info",
         data: { agent_code: agent_id },
         success: function (response) {
-          // console.log(response);
+          console.log(response);
           $(".agent_info").show();
           $("#showAgentname").text(response.SUCCESS.msg[0].agent_name);
           $("#showBranch").text(response.SUCCESS.msg[0].branch_name);
@@ -294,7 +294,7 @@
           
         },
         error: function (error) {
-          // console.log(error);
+          console.log(error);
           $(".agent_info").hide();
         },
       });
@@ -308,11 +308,11 @@
         success: function (response) {
           $(".loader_div").hide();
           $("#maxAllColAmt").text(response.CLR_BAL);
-          // console.log("=================",response);
+          console.log("=================",response);
         },
         error: function (error) {
           $(".loader_div").hide();
-          // console.log(error);
+          console.log(error);
           $(".agent_info").hide();
         },
       }); 
@@ -325,10 +325,10 @@
         data: { agent_code: agent_id },
         success: function (response) {
           fitchDatabase();
-          // console.log(response);
+          console.log(response);
         },
         error: function (error) {
-          // console.log(error);
+          console.log(error);
         },
       });
     }

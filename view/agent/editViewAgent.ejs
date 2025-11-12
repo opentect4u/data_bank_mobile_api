@@ -109,7 +109,20 @@
               />
             </div>
 
-
+			<div class="form-group col-6">
+                  <label for="printer_type">Printer Type :</label>
+                  <select name="printer_type" id="printer_type" class="form-control" required
+                    <%=(data[0].active_flag=='N' )?'readonly':''%>>
+                    <option value="">Select Printer Type</option>
+                    <% if(Object.keys(printer_type).length> 0){
+                      Object.keys(printer_type).forEach(dt => {
+                      var _selected = (data[0].printer_type == dt) ? 'selected' : ''; %>
+                      <option value="<%= dt %>" <%= _selected %>>
+                        <%= printer_type[dt] %>
+                      </option>
+                      <% }) } %>
+                  </select>
+			  </div>
 
             <div class="form-group col-6">
               <label for="abc"></label>
