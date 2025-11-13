@@ -75,8 +75,10 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     namespace "com.banking"
+    // namespace "in.co.opentech4u.databank"
     defaultConfig {
         applicationId "com.banking"
+        // applicationId "in.co.opentech4u.databank"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

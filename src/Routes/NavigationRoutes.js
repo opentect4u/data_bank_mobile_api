@@ -19,6 +19,7 @@ const mainNavigationRoutes = {
   changePinScreen: "ChangePinScreen",
   reportDayScreen: "ReportDayScreen",
   reportTypeScreen: "ReportTypeScreen",
+  reportNoScreen: "ReportNoScreen",
   nonCollectionReport: "NonCollectionReport",
   miniStatement: "MiniStatement",
   miniStatementInner: "MiniStatementInner",

@@ -1,4 +1,5 @@
 package com.banking;
+// package in.co.opentech4u.databank;
 
 import cn.jystudio.bluetooth.RNBluetoothEscposPrinterPackage;
 import android.app.Application;
@@ -58,6 +59,37 @@ public class MainApplication extends Application implements ReactApplication {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       DefaultNewArchitectureEntryPoint.load();
     }
-    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+  }
+
+  /**
+   * Loads Flipper in React Native templates. Call this in the onCreate method with something like
+   * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+   *
+   * @param context
+   * @param reactInstanceManager
+   */
+  private static void initializeFlipper(
+      android.content.Context context, com.facebook.react.ReactInstanceManager reactInstanceManager) {
+    if (com.facebook.react.BuildConfig.DEBUG) {
+      try {
+        /*
+         We use reflection here to pick up the class that initializes Flipper,
+        since Flipper library is not available in release builds
+        */
+        Class<?> aClass = Class.forName("in.co.opentech4u.databank.ReactNativeFlipper");
+        aClass
+            .getMethod("initializeFlipper", android.content.Context.class, com.facebook.react.ReactInstanceManager.class)
+            .invoke(null, context, reactInstanceManager);
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (java.lang.reflect.InvocationTargetException e) {
+        e.printStackTrace();
+      }
+    }
   }
 }

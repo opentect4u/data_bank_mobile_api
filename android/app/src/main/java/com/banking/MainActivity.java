@@ -1,4 +1,5 @@
 package com.banking;
+// package in.co.opentech4u.databank;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

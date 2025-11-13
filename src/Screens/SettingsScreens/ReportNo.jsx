@@ -24,8 +24,9 @@ import DropdownComponent from "../../Components/DropdownComponent"
 import CalendarPicker from "react-native-calendar-picker"
 import { Dropdown } from "react-native-element-dropdown"
 import { address } from "../../Routes/addresses"
+import React from 'react'
 
-const ReportType = () => {
+function ReportNo() {
   const { userId, bankId, branchCode } = useContext(AppStore)
 
   // const [startingDate, setStartingDate] = useState(() => "From Date") // date in yyyy-mm-dd
@@ -128,7 +129,7 @@ const ReportType = () => {
     }
     let totalDepositedAmount = 0
     await axios
-      .post(address.TYPE_WISE_REPORT, obj, {
+      .post(address.NO_WISE_REPORT, obj, {
         headers: {
           Accept: "application/json",
         },
@@ -199,7 +200,7 @@ const ReportType = () => {
           margin: 20,
           borderRadius: 10,
         }}>
-        <Text style={styles.todayCollection}>Type Wise Report</Text>
+        <Text style={styles.todayCollection}>No. Wise Report</Text>
         <View style={styles.dateWrapper}>
           {/* <TouchableOpacity onPress={() => showStartingDatePicker()} style={styles.dateButton}>
             <Text>{startingDate}</Text>
@@ -358,7 +359,7 @@ const ReportType = () => {
   )
 }
 
-export default ReportType
+export default ReportNo
 
 const styles = StyleSheet.create({
   dateWrapper: {
