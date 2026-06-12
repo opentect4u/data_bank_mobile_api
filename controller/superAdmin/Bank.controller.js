@@ -262,7 +262,7 @@ const upload_bank_logo = async (req, res) => {
   // console.log(data);
 
   if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send("No files were uploaded.");
+    return res.send("No files were uploaded.");
   }
 
   const uploadedFile = req.files.photo;
@@ -271,21 +271,20 @@ const upload_bank_logo = async (req, res) => {
   const allowedFileTypes = ["image/jpeg", "image/jpg", "image/png"];
   if (!allowedFileTypes.includes(uploadedFile.mimetype)) {
     return res
-      .status(400)
       .send("Invalid file type. Only JPEG and JPG and PNG are allowed.");
   }
 
   // Check file size
   //  console.log("//////////////",uploadedFile.size)
   if (uploadedFile.size > 1 * 1024 * 1024) {
-    return res.status(400).send("File size exceeds the limit of 1 MB.");
+    return res.send("File size exceeds the limit of 1 MB.");
   }
 
   // Move the file to a directory (you can modify the destination path as needed)
   let fileName = Date.now() + "_" + uploadedFile.name;
   uploadedFile.mv("uploads/bank_logo/" + fileName, async (err) => {
     if (err) {
-      return res.status(500).send(err);
+      return res.send(err);
     } else {
       const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 

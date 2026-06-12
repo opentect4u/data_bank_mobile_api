@@ -28,6 +28,16 @@
                     }
                   %>
                   <option value="<%=item2.bank_id%>" <%= _selected %>>
+                <% 
+                var user_bank = user.user_data.msg[0].bank_id,
+                user_type = user.user_data.msg[0].user_type;
+                data.msg.forEach(function(item2,index) {
+                    var _selected = '';
+                    if(user_type == 'B' && user_bank == item2.bank_id){
+                      _selected = 'selected';
+                    }
+                  %>
+                  <option value="<%=item2.bank_id%>" <%= _selected %>>
                     <%=item2.bank_name%>
                   </option>
                   <% }); %>
@@ -44,20 +54,10 @@
             <div class="form-group col-md-12">
               <label for="bank" id="photo1"><b>Upload Logo:</b>&nbsp;
                 <span id="act_dt" style="font-size: 12px; color: red;">(.JPG, .JPEG, .PNG)&nbsp;(*File size should not be more than 2MB)</span></label><br>
+                <span id="act_dt" style="font-size: 12px; color: red;">(.JPG, .JPEG, .PNG)&nbsp;(*File size should not be more than 2MB)</span></label><br>
               <input type="file" name="photo" id="photo" accept=".jpg, .jpeg, .png" onchange="previewImage()">
-                <img id="imagePreview" src="<%= data.length > 0 ? `/bank_logo/${data[0].file_path}` : '#' %>" alt="Image Preview" class="center" style="display:<%= data.length > 0 ? 'block' : 'none' %>; max-width: 400px; max-height: 400px; margin-top: 2vw;">
-            </div>
-			  <div class="col-md-12">
-              <table class="showAgentDtls table table-bordered">
-                <thead>
-                  <tr>
-                    <td>#</td>
-                    <td>Bank Name</td>
-                    <td>Image</td>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
+              <img id="imagePreview" src="#" alt="Image Preview" class="center"
+                style="display:none; max-width: 400px; max-height: 400px; margin-top: 2vw;">
             </div>
           </div>
         </form>
@@ -89,20 +89,22 @@ $(document).ready(function () {
       type: "POST",
       url: "/super-admin/get_logo",
       data: { bank_id: bank_id },
-      success: function (response) {
+      success: function(response) {
         tbody.empty();
 
         // defensive checks
         if (response && response.suc > 0 && Array.isArray(response.msg) && response.msg.length > 0) {
           response.msg.forEach(function (item, index) {
             var row =
-              '<tr>' +
-                '<td>' + (index + 1) + '</td>' +
-                '<td>' + (item.bank_name || '') + '</td>' +
-                "<td><a href='/bank_logo/" + (item.file_path || '') + "' target='_blank'>" +
-                  "<img class='bank-logo-img' src='/bank_logo/" + (item.file_path || '') + "' alt='logo'>" +
-                '</a></td>' +
-              '</tr>';
+              "<tr>" +
+              "<td>" +
+              (index + 1) +
+              "</td>" +
+              "<td>" +
+              item.bank_name +
+              "</td>" +
+              "<td><img class='bank-logo-img' src='/bank_logo/" + item.file_path + "'></td>" +
+              "</tr>";
             tbody.append(row);
 
             // if you want the last item's file_path in the hidden field:
@@ -138,6 +140,7 @@ $(document).ready(function () {
 
 <script>
   <% if(user.user_data.msg[0].user_type != 'B'){ %>
+  <% if(user.user_data.msg[0].user_type != 'B'){ %>
   $("#photo1").hide()
   $("#photo").hide()
   $('#submitbtn').hide()
@@ -146,6 +149,9 @@ $(document).ready(function () {
     $("#photo").show()
     $('#submitbtn').show()
   })
+  <% }else{ %>
+    $('#submitbtn').removeAttr('disabled')
+  <% } %>
   <% }else{ %>
     $('#submitbtn').removeAttr('disabled')
   <% } %>

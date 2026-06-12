@@ -416,8 +416,6 @@ const uploadPctxForNormal = async (req, res) => {
                                 var res_dt = await db_Insert("td_account_dtls", fields, values, null, 0);
                                 er = res_dt
                             } catch (error) {
-                                console.log(error, 'ERROR-------------------');
-                                
                                 er = error
                             }
                         }
@@ -452,8 +450,6 @@ const uploadPctxForNormal = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error, 'ERROR --------------- MAIN CATCH---------------');
-        
         res.json({
             "ERROR": error,
             "status": false
