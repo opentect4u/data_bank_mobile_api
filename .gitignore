@@ -14,5 +14,10 @@ yarn-error.log
 /.idea
 /.vscode
 /config/DB.js
-instantclient/
 *.zip
+uploads/*
+*_*_*_*.js
+*_*_*_*
+*backup*
+*txt
+*.bat

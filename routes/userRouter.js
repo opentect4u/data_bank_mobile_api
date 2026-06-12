@@ -3,7 +3,7 @@ const { register, login, my_agent, change_pin,app_version, getAgentPrintType } =
 const { search_account, account_info, get_acc_prev_col } = require("../controller/api/AccountInfo");
 const { transaction, end_collection, now_date, collection_checked, total_collection } = require("../controller/api/Transaction");
 const { endcollectionMW } = require("../middleware/EndcollectionMW");
-const { day_scroll_report, type_wise_report, non_collection_report, mini_statement, date_wise_summary, date_wise_mini_statement, account_wise_scroll_report,last_five_transaction, day_tot_report, type_wise_report_modified } = require("../controller/api/ApiReport");
+const { day_scroll_report, type_wise_report, type_wise_report_modified, non_collection_report, mini_statement, date_wise_summary, date_wise_mini_statement, account_wise_scroll_report,last_five_transaction, day_tot_report } = require("../controller/api/ApiReport");
 
 const UserRouter = express.Router();
 //find account No
@@ -34,7 +34,7 @@ UserRouter.post('/collection_checked',collection_checked)
 UserRouter.post('/total_collection',total_collection)
 
 UserRouter.post('/day_scroll_report',day_scroll_report)
-UserRouter.post('/type_wise_report', type_wise_report)
+UserRouter.post('/type_wise_report',type_wise_report)
 UserRouter.post('/type_wise_report_modified', type_wise_report_modified)
 UserRouter.post('/non_collection_report',non_collection_report)
 UserRouter.post('/mini_statement',mini_statement)

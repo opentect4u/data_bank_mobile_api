@@ -6,7 +6,7 @@ try {
   // oracledb.initOracleClient({
   //   libDir: "C:\\instaclient\\instantclient",
   // });
-    oracledb.initOracleClient({ libDir: "C:\\instantclient_11_2"});
+    oracledb.initOracleClient({ libDir: process.env.ORACLE_INSTACLIENT_PATH });
 } catch (err) {
   console.error("Whoops!");
   console.error(err);

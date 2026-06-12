@@ -1,6 +1,6 @@
 const express=require('express');
-// const { UserRouter } = require('./routes/UserRouter');
-const { UserRouter } = require('./routes/userRouter');
+require('dotenv').config();
+const { UserRouter } = require('./routes/UserRouter');
 const { AdminRoutes } = require('./routes/adminRoutes');
 // const { F_Select } = require('./model/OrcModel');
 const dateFormat = require('dateformat');
@@ -8,6 +8,7 @@ const { update_endcollection } = require('./controller/Scheduler');
 const { BankRoutes } = require('./routes/BankRoutes');
 const { ServerRoures } = require('./routes/ServerRoures');
 const { Sadmin } = require('./routes/Sadmin.routes');
+const { offlineApiRouter } = require('./routes/offline/apiRouter');
 const app = express(),
 path = require('path'),
 flash = require('connect-flash'),
@@ -80,13 +81,8 @@ app.use('/agent_account',ServerRoures);
 //full online app Api
 app.use('/v1/user',UserRouter);
 
-app.get('/test', async (req, res) => {
-  const { createStrWithZero } = require('./model/MasterModule');  
-  var tot_col = '1300.00'
-  var data = await createStrWithZero(10, tot_col.toString(), '0', 'P')
-  // console.log(data);
-  res.send(data.toString())
-})
+// full offline app api
+app.use('/v1/offline', offlineApiRouter);
 
 app.get('*', function(req, res){
   res.render('auth/error_404')
@@ -99,17 +95,16 @@ app.get('*', function(req, res){
 // });
 
 
-
 // Schedule the task to run at every day
 setInterval(() => {
   const datetime = dateFormat(new Date(), "HH")
   // const datetime = dateFormat(new Date(), "HH:MM")
   // if (datetime == "01:00") {
     if (datetime == "23") {
-    // console.log("Schedule time "+datetime);
+    console.log("Schedule time "+datetime);
     update_endcollection()
   }
-  // console.log("update_endcollection");
+  console.log("update_endcollection");
 }, 1000*60*60);
 
 

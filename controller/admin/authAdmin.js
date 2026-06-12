@@ -45,6 +45,10 @@ const post_login = async (req, res) => {
             selectData = "a.user_type,a.id, a.bank_id, a.branch_code, a.device_sl_no, a.device_id, a.user_id, a.pin_no, a.profile_pic";
         }
 
+
+        
+
+
         let user_data = await db_Select(selectData, table_name, whrDAta, null);
 
 
@@ -55,9 +59,9 @@ const post_login = async (req, res) => {
 
         let logo_data = await db_Select(select, 'td_logo', where, null);
 
-        // console.log(logo_data);
+        console.log(logo_data);
 
-        // console.log("=================================",user_data)
+        console.log("=================================",user_data)
         delete user_data.sql;
         
     const datetime = dateFormat(new Date(), "dd/mm/yyyy hh:MM:ss")
@@ -86,6 +90,10 @@ const post_login = async (req, res) => {
     });
 }
 }
+
+
+
+
 
 const blank_page = async (req, res) => {
     try {

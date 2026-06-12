@@ -175,14 +175,14 @@ const total_user = async (req, res) => {
 
   var select = "count(b.id) tot_dt, b.active_flag",
     table_name = "md_agent a, md_user b",
-    whr = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.user_id AND a.bank_id = ${data.bank_id} AND b.active_flag = 'Y'`;
+    whr = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.user_id AND a.bank_id = ${data.bank_id} AND b.active_flag = 'Y'`,
   order = null;
   var active_resData = await db_Select(select, table_name, whr, order);
   // res.json(active_resData)
 
   var select = "count(b.id) tot_dt, b.active_flag",
     table_name = "md_agent a, md_user b",
-    whr = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.user_id AND a.bank_id = ${data.bank_id} AND b.active_flag = 'N'`;
+    whr = `a.bank_id=b.bank_id AND a.branch_code=b.branch_code AND a.agent_code=b.user_id AND a.bank_id = ${data.bank_id} AND b.active_flag = 'N'`,
   order = null;
   var inactive_resData = await db_Select(select, table_name, whr, order);
   var final_res = {

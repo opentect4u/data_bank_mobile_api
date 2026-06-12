@@ -129,10 +129,7 @@ const type_wise_report_modified = async (req, res) => {
             "status": false
         });
     }
-
-
 }
-
 
 const non_collection_report = async (req, res) => {
     try {

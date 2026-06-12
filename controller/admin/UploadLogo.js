@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const Joi = require("joi");
 const { db_Select, db_Insert } = require("../../model/MasterModule");
 const dateFormat = require('dateformat');
@@ -35,12 +37,24 @@ const upload_logo = async (req, res) => {
         if (uploadedFile.size > 2 * 1024 * 1024) {
           return res.status(400).send("File size exceeds the limit of 1 MB.");
         }
-      
+		
+		//let fileName = Date.now() + "" + uploadedFile.name;
+		let fileName = Date.now() + "_" + uploadedFile.name;
+		const appRoot = path.resolve(__dirname, '../../'); // Go up 2 levels from controller
+        const uploadDir = path.join(appRoot, 'uploads/bank_logo/');
+			
+
         // Move the file to a directory (you can modify the destination path as needed)
-        let fileName = Date.now() + "_" + uploadedFile.name;
-        uploadedFile.mv("uploads/bank_logo/" + fileName, async (err) => {
+       const filePath = path.join(uploadDir, fileName);
+
+        uploadedFile.mv(filePath, async (err) => {
+			//uploadedFile.mv("uploads/bank_logo/" + fileName, async (err) => {
           if (err) {
-            return res.status(500).send(err);
+			  return res.send(`
+						  Upload directory: ${uploadDir}<br>
+						  File will be saved as: ${err}
+						`);
+           // return res.status(500).send(err);
           } else {
             const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       
@@ -50,6 +64,9 @@ const upload_logo = async (req, res) => {
               var up_flag = chk_img.suc > 0 && chk_img.msg.length > 0 ? true : false;
               if (up_flag) {
                   let filePathToDelete = "uploads/bank_logo/" + chk_img.msg[0].file_path;
+				  
+				 // let filePathToDelete = path.join(uploadDir, chk_img.msg[0].file_path);
+
       
               if (fs.existsSync(filePathToDelete)) {
                 fs.unlinkSync(filePathToDelete);
@@ -88,7 +105,7 @@ const upload_logo = async (req, res) => {
             title: "Upload Logo",
             page_path: "/logo_upload/bank_logo",
             data: logo_data.suc > 0 ? logo_data.msg : [],
-            bank_dt: bank,
+            data: bank,
             bank_id: user.user_type == 'B' ? user.bank_id : "0",
         };
         res.render("common/layouts/main", viewData);
