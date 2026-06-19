@@ -140,7 +140,6 @@ $(document).ready(function () {
 
 <script>
   <% if(user.user_data.msg[0].user_type != 'B'){ %>
-  <% if(user.user_data.msg[0].user_type != 'B'){ %>
   $("#photo1").hide()
   $("#photo").hide()
   $('#submitbtn').hide()
@@ -149,9 +148,6 @@ $(document).ready(function () {
     $("#photo").show()
     $('#submitbtn').show()
   })
-  <% }else{ %>
-    $('#submitbtn').removeAttr('disabled')
-  <% } %>
   <% }else{ %>
     $('#submitbtn').removeAttr('disabled')
   <% } %>

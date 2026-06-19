@@ -8,7 +8,7 @@ const search_account = async (req, res) => {
             bank_id: Joi.number().required(),
             branch_code: Joi.string().required(),
             agent_code: Joi.string().required(),
-            account_number: Joi.string().min(3).required(),
+            account_number: Joi.string().min(3).optional(),
             flag: Joi.string().max(1).optional().default(null),
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });

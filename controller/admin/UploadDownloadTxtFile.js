@@ -62,9 +62,23 @@ const create_agent_trans = async (req, res) => {
             return res.json({ error: errors });
         }
         const user_data = req.session.user.user_data.msg[0];
-        var fields = '(bank_id, branch_code, agent_code, coll_flag, send_date, end_flag)',
+        let agent_trans_no = null
 
-            values = `('${user_data.bank_id}','${user_data.branch_code}','${value.agent_code}','Y','${dateFormat(new Date(), "yyyy-mm-dd")}','N')`;
+        try{
+            let wheree = `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}' AND coll_flag='N' AND end_flag='Y' AND agent_trans_no IS NOT NULL`;
+            let lastagent_trans = await db_Select("MAX(sl_no)+1 sl_no", "md_agent_trans", wheree, null);
+            // let transDate = dateFormat(value.transaction_date, "yyyymmdd")
+
+            if (lastagent_trans.suc > 0 && lastagent_trans.msg.length > 0) {
+                agent_trans_no = `${((value.agent_code).toString() + (lastagent_trans.msg[0].sl_no).toString()).toString()}`
+            }
+        }catch(err){
+            console.log(err);
+        }
+
+        var fields = '(bank_id, branch_code, agent_code, coll_flag, send_date, end_flag, sync_agent_trans_no)',
+
+            values = `('${user_data.bank_id}','${user_data.branch_code}','${value.agent_code}','Y','${dateFormat(new Date(), "yyyy-mm-dd")}','N', ${agent_trans_no ? `'${agent_trans_no}'` : null})`;
         var res_dt = await db_Insert("md_agent_trans", fields, values, null, 0);
 
         // var dt = new Date()

@@ -1,6 +1,6 @@
 const offlineApiRouter = require('express').Router();
 const { search_account, get_acc_prev_col, account_info } = require('../../controller/offline/accountDetails');
-const { receiveCollection, endcollectionCheckUser } = require('../../controller/offline/transaction');
+const { receiveCollection, endcollectionCheckUser, checkOfflineSyncStatus } = require('../../controller/offline/transaction');
 const { my_agent, login, getAgentPrintType } = require('../../controller/offline/userAuth');
 
 
@@ -16,5 +16,7 @@ offlineApiRouter.post('/get_acc_prev_col', get_acc_prev_col)
 offlineApiRouter.post('/account_info', account_info)
 
 offlineApiRouter.post('/receive_collection', endcollectionCheckUser, receiveCollection)
+
+offlineApiRouter.post('/check_offline_sync_status', checkOfflineSyncStatus)
 
 module.exports = { offlineApiRouter };

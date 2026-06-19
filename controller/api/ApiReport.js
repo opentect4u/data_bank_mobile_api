@@ -6,7 +6,7 @@ const { RunProcedure, F_Select } = require('../../model/OrcModel');
 const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss")
 
 
-const day_scroll_report = async (req, res) => {
+const day_scroll_report_backup_17062026 = async (req, res) => {
     try {
         const schema = Joi.object({
             bank_id: Joi.number().required(),
@@ -36,16 +36,71 @@ const day_scroll_report = async (req, res) => {
             "success": resData,
             "status": true
         });
-
-
     } catch (error) {
         res.json({
             "success": error,
             "status": false
         });
     }
+}
 
+const day_scroll_report = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            bank_id: Joi.number().required(),
+            branch_code: Joi.string().required(),
+            agent_code: Joi.string().required(),
+            account_type: Joi.string().valid('D', 'R', 'L').required(),
+            // product_code: Joi.string().required(),
+            from_date: Joi.string().required(),
+            to_date: Joi.string().required(),
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+        }
 
+        const prevMonthFirstDate = new Date();
+        prevMonthFirstDate.setMonth(prevMonthFirstDate.getMonth() - 1, 1);
+        prevMonthFirstDate.setHours(0, 0, 0, 0)
+
+        let frmDt = value.from_date
+
+        if (new Date(frmDt).getTime() < prevMonthFirstDate.getTime()) {
+            frmDt = prevMonthFirstDate;
+        }
+
+        let sql = `select DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,account_type,account_number,account_holder_name,deposit_amount, product_code, collected_at
+from td_collection
+where bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${dateFormat(frmDt, "yyyy-mm-dd")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd")}'
+union
+SELECT DATE_FORMAT(transaction_date, '%Y-%m-%d') AS DATE,account_type,account_number,account_holder_name,deposit_amount, product_code, collected_at
+FROM bkp_collection
+WHERE bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${dateFormat(frmDt, "yyyy-mm-dd")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd")}'
+ORDER BY date DESC, collected_at DESC`
+
+        let resData = await db_Select(null, null, null, null, sql, true)
+        // console.log(resData.sql);
+        
+        delete resData.sql
+
+        res.json({
+            "success": resData,
+            "status": true
+        });
+
+    } catch (error) {
+        console.log(error);
+        
+        res.json({
+            "success": error,
+            "status": false
+        });
+    }
 }
 
 
@@ -212,11 +267,7 @@ const mini_statement = async (req, res) => {
     }
 }
 
-
-
-
-
-const date_wise_summary = async (req, res) => {
+const date_wise_summary_backup_17062026 = async (req, res) => {
     try {
         const schema = Joi.object({
             bank_id: Joi.number().required(),
@@ -261,7 +312,67 @@ const date_wise_summary = async (req, res) => {
     }
 }
 
-const date_wise_mini_statement = async (req, res) => {
+const date_wise_summary = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            bank_id: Joi.number().required(),
+            branch_code: Joi.string().required(),
+            agent_code: Joi.string().required(),
+            //account_number: Joi.number().required(),
+            account_type: Joi.string().valid('D', 'R', 'L').required(),
+            from_date: Joi.string().required(),
+            to_date: Joi.string().required()
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+
+        }
+
+        const prevMonthFirstDate = new Date();
+        prevMonthFirstDate.setMonth(prevMonthFirstDate.getMonth() - 1, 1);
+        prevMonthFirstDate.setHours(0, 0, 0, 0)
+
+        let frmDt = value.from_date
+
+        if (new Date(frmDt).getTime() < prevMonthFirstDate.getTime()) {
+            frmDt = prevMonthFirstDate;
+        }
+
+        let sql = `select DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,SUM(deposit_amount) as deposit_amount, COUNT(account_number)as rcpts
+from td_collection
+where bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${dateFormat(new Date(frmDt), "yyyy-mm-dd")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd")}'
+GROUP BY transaction_date
+union
+select DATE_FORMAT(transaction_date, '%Y-%m-%d') as date,SUM(deposit_amount) as deposit_amount, COUNT(account_number)as rcpts
+from bkp_collection
+where bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND transaction_date BETWEEN '${dateFormat(new Date(frmDt), "yyyy-mm-dd")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd")}'
+GROUP BY transaction_date
+ORDER BY date DESC`
+
+        let resData = await db_Select(null, null, null, null, sql, true)
+        delete resData.sql
+
+        res.json({
+            "success": resData,
+            "status": true
+        });
+
+    } catch (error) {
+        console.log(error);
+        
+        res.json({
+            "error": error,
+            "status": false
+        });
+    }
+}
+
+const date_wise_mini_statement_backup_17062026 = async (req, res) => {
     try {
         const schema = Joi.object({
             bank_id: Joi.number().required(),
@@ -310,6 +421,64 @@ const date_wise_mini_statement = async (req, res) => {
         });
 
 
+
+    } catch (error) {
+        console.log(error)
+        res.json({
+            "error": error,
+            "status": false
+        });
+    }
+}
+
+const date_wise_mini_statement = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            bank_id: Joi.number().required(),
+            branch_code: Joi.string().required(),
+            agent_code: Joi.string().required(),
+            account_number: Joi.number().required(),
+            account_type: Joi.string().valid('D', 'R', 'L').required(),
+            // from_date: Joi.string().required(),
+            // to_date: Joi.string().required()
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+
+        }
+        const pastDate = new Date();
+        pastDate.setDate(pastDate.getDate() - 30);
+        var acc_num = value.account_number;
+        
+        let frmdt = dateFormat(pastDate, "yyyy-mm-dd"),
+            todt = dateFormat(new Date(), "yyyy-mm-dd");
+
+        let sql = `SELECT account_number acc_num, account_type trans_type, transaction_date PAID_DT, deposit_amount PAID_AMT, balance_amount BALANCE_AMT, collected_at
+FROM td_collection
+WHERE bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${acc_num}' AND account_type='${value.account_type}'
+AND transaction_date BETWEEN '${frmdt}' AND '${todt}'
+UNION
+
+SELECT account_number acc_num, account_type trans_type, transaction_date PAID_DT, deposit_amount PAID_AMT, balance_amount BALANCE_AMT, collected_at
+FROM bkp_collection
+WHERE bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${acc_num}' AND account_type='${value.account_type}'
+AND transaction_date BETWEEN '${frmdt}' AND '${todt}'
+ORDER BY PAID_DT DESC, collected_at DESC`
+
+        var resDt = await db_Select(null, null, null, null, sql, true)
+        delete resDt.sql
+
+        // console.log(resDt)
+
+        res.json({
+            "success": resDt,
+            "status": true
+        });
 
     } catch (error) {
         console.log(error)
@@ -421,7 +590,7 @@ const last_five_transaction = async (req, res) => {
     }
 }
 
-const day_tot_report = async (req, res) => {
+const day_tot_report_backup_17062026 = async (req, res) => {
     try {
         const schema = Joi.object({
             bank_id: Joi.number().required(),
@@ -446,6 +615,63 @@ const day_tot_report = async (req, res) => {
             where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND transaction_date BETWEEN '${dateFormat(new Date(value.from_date), "yyyy-mm-dd")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd")}'`,
             order = `GROUP BY transaction_date`;
         var resDt = await db_Select(select, 'td_collection', where, order);
+
+        res.json({
+            "success": resDt,
+            "status": true
+        });
+
+    } catch (error) {
+        console.log(error)
+        res.json({
+            "error": error,
+            "status": false
+        });
+    }
+}
+
+const day_tot_report = async (req, res) => {
+    try {
+        const schema = Joi.object({
+            bank_id: Joi.number().required(),
+            branch_code: Joi.string().required(),
+            agent_code: Joi.string().required(),
+            from_date: Joi.string().required(),
+            to_date: Joi.string().required()
+        });
+        const { error, value } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const errors = {};
+            error.details.forEach(detail => {
+                errors[detail.context.key] = detail.message;
+            });
+            return res.json({ error: errors });
+
+        }
+
+        const prevMonthFirstDate = new Date();
+        prevMonthFirstDate.setMonth(prevMonthFirstDate.getMonth() - 1, 1);
+
+        let frmDt = value.from_date        
+
+        if (new Date(frmDt).getTime() < prevMonthFirstDate.getTime()) {
+            frmDt = prevMonthFirstDate;
+        }
+
+        let sql = `select SUM(deposit_amount) tot_col_amt, COUNT(agent_code) tot_col, transaction_date trns_date
+from td_collection
+where bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND transaction_date BETWEEN '${dateFormat(new Date(frmDt), "yyyy-mm-dd")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd")}'
+GROUP BY transaction_date
+union
+select SUM(deposit_amount) tot_col_amt, COUNT(agent_code) tot_col, transaction_date trns_date
+from bkp_collection
+where bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND transaction_date BETWEEN '${dateFormat(new Date(frmDt), "yyyy-mm-dd")}' AND '${dateFormat(new Date(value.to_date), "yyyy-mm-dd")}'
+GROUP BY transaction_date`
+
+        let resDt = await db_Select(null, null, null, null, sql, true)
+        console.log(resDt.sql);
+        
+        delete resDt.sql
 
         res.json({
             "success": resDt,

@@ -65,7 +65,7 @@ const login = async (req, res) => {
         if (await bcrypt.compare(value.password, db_pass)) {
             var table_name = "md_user a,md_bank b,md_branch c,md_agent d",
                 whrDAta = `a.bank_id=b.bank_id AND a.branch_code=c.branch_code AND b.bank_id=c.bank_id AND d.agent_code=a.user_id AND d.bank_id=a.bank_id AND d.branch_code=a.branch_code AND a.device_id='${value.device_id}'AND a.user_id='${value.user_id}' AND a.active_flag='Y'AND user_type='O'`,
-                selectData = "d.allow_collection_days,a.id, a.bank_id, a.branch_code, a.device_sl_no, a.device_id, a.user_id, a.pin_no, a.profile_pic , b.bank_name,c.branch_name, d.agent_name,d.email_id,d.phone_no,IF(b.sec_amt_type != 'M', d.max_amt, d.allow_collection_days * d.max_amt) max_amt,b.sec_amt_type,d.print_opt";
+                selectData = "d.allow_collection_days,a.id, a.bank_id, a.branch_code, a.device_sl_no, a.device_id, a.user_id, a.pin_no, a.profile_pic , b.bank_name,c.branch_name, d.agent_name,d.email_id,d.phone_no,IF(b.sec_amt_type != 'M', d.max_amt, d.allow_collection_days * d.max_amt) max_amt,b.sec_amt_type,d.print_opt,b.active_flag bank_active_flag, d.active_flag agent_active_flag, b.bank_address, b.device_type";
 
             let user_data = await db_Select(selectData, table_name, whrDAta, null);
 
@@ -89,12 +89,13 @@ const login = async (req, res) => {
             AND  download_flag = 'N'`;
 
             let total_collection = await db_Select(selectCollectionData, "td_collection", whrCollectionDAta, null);
+            
             delete total_collection.sql;
             let whrSeetingData = `device_id='${value.device_id}'`;
             let setting = await db_Select("*", "td_settings", whrSeetingData, null);
             delete setting.sql;
 
-            let trans = await db_Select(`sl_no, agent_trans_no, agent_code, coll_flag, DATE_FORMAT(send_date, '%Y-%m-%d') trans_dt`, 'md_agent_trans', `bank_id=${userallData.bank_id} AND branch_code=${userallData.branch_code} AND agent_code='${value.user_id}' AND coll_flag = 'Y'`, 'ORDER BY send_date DESC LIMIT 1')
+            let trans = await db_Select(`sl_no, sync_agent_trans_no agent_trans_no, agent_code, coll_flag, DATE_FORMAT(send_date, '%Y-%m-%d') trans_dt`, 'md_agent_trans', `bank_id=${userallData.bank_id} AND branch_code=${userallData.branch_code} AND agent_code='${value.user_id}' AND coll_flag = 'Y'`, 'ORDER BY send_date DESC LIMIT 1')
             // console.log(trans, '-------------------');
             delete trans.sql
             
