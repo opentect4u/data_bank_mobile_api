@@ -66,7 +66,7 @@ const create_agent_trans = async (req, res) => {
 
         try{
             let wheree = `bank_id=${user_data.bank_id} AND branch_code='${user_data.branch_code}' AND agent_code='${value.agent_code}' AND coll_flag='N' AND end_flag='Y' AND agent_trans_no IS NOT NULL`;
-            let lastagent_trans = await db_Select("MAX(sl_no)+1 sl_no", "md_agent_trans", wheree, null);
+            let lastagent_trans = await db_Select("IFNULL(MAX(sl_no),0)+1 sl_no", "md_agent_trans", wheree, null);
             // let transDate = dateFormat(value.transaction_date, "yyyymmdd")
 
             if (lastagent_trans.suc > 0 && lastagent_trans.msg.length > 0) {
