@@ -94,15 +94,15 @@ const endcollectionCheckUser = async (req, res, next) => {
     }
 }
 
-const updateDatabaseTable = (agent_code, bank_id, branch_code, agent_trans_no) => {
+const updateDatabaseTable = (agent_code, bank_id, branch_code, agent_trans_no, no_coll_flag = false) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let fields = `coll_flag='N', received_date='${dateFormat(new Date(), "yyyy-mm-dd")}', end_flag='Y'`,
-                wherre = `bank_id=${bank_id} AND branch_code='${branch_code}' AND agent_code='${agent_code}' AND coll_flag='Y' AND end_flag='N' AND agent_trans_no ='${agent_trans_no}'`;
+            let fields = `agent_trans_no=${no_coll_flag ? null : `'${agent_trans_no}'`}, coll_flag='N', received_date='${dateFormat(new Date(), "yyyy-mm-dd")}', end_flag='Y'`,
+                wherre = `bank_id=${bank_id} AND branch_code='${branch_code}' AND agent_code='${agent_code}' AND coll_flag='Y' AND end_flag='N' AND sync_agent_trans_no ='${agent_trans_no}'`;
             let res_dt = await db_Insert("md_agent_trans", fields, null, wherre, 1);
             resolve({
                 "success": res_dt,
-                "status": true
+                "status": res_dt.suc > 0 ? true : false
             });
         } catch (err) {
             console.log(err);
@@ -118,10 +118,25 @@ const receiveCollection = async (req, res) => {
     // --- OPTIMIZATION: Step 3 (In-Memory Validation) ---
     // Validate the count BEFORE doing any slow disk operations
     if (!Array.isArray(collection_dtls)) {
-        return res.send({
-            "error": 'collection_dt is missing or not an array.',
-            "status": false
-        });
+        if (collection_dtls.length == 0) {
+            let noCollEndWork = await updateDatabaseTable(agent_code, bank_id, branch_code, agent_trans_no, true);
+            if (noCollEndWork.status){
+                return res.send({
+                    "success": 'End work completed successfully with no collection data.',
+                    "status": true
+                });
+            }else{
+                return res.send({
+                    "error": 'Error while updating the database for no collection end work with no collection data.',
+                    "status": false
+                });
+            }
+        }else{
+            return res.send({
+                "error": "Invalid collection_dtls format. Expected an array.",
+                "status": false
+            });
+        }
     }
 
     if (collection_dtls.length !== total_collection_count) {
@@ -205,7 +220,7 @@ const checkOfflineSyncStatus = async (req, res, next) => {
                 errors[detail.context.key] = detail.message;
             });
             return res.json({ error: errors });
-        }
+        }        
 
         let chkTransNo = await db_Select('sl_no, coll_flag, end_flag', 'md_agent_trans', `agent_trans_no='${value.agent_trans_no}' AND bank_id='${value.bank_id}' AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}'`);
 
