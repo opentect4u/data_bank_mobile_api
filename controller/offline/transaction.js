@@ -81,13 +81,13 @@ const endcollectionCheckUser = async (req, res, next) => {
         if (await bcrypt.compare(value.password, db_pass)) {
             next();
         } else {
-            res.json({
+            return res.json({
                 "error": "Incorrect Password",
                 "status": false
             });
         }
     } catch (error) {
-        res.json({
+        return res.json({
             "error": "User Not Found",
             "status": false
         });
@@ -120,18 +120,18 @@ const receiveCollection = async (req, res) => {
     if (!Array.isArray(collection_dtls)) {
         if (collection_dtls.length == 0) {
             let noCollEndWork = await updateDatabaseTable(agent_code, bank_id, branch_code, agent_trans_no, true);
-            if (noCollEndWork.status){
+            if (noCollEndWork.status) {
                 return res.send({
                     "success": 'End work completed successfully with no collection data.',
                     "status": true
                 });
-            }else{
+            } else {
                 return res.send({
                     "error": 'Error while updating the database for no collection end work with no collection data.',
                     "status": false
                 });
             }
-        }else{
+        } else {
             return res.send({
                 "error": "Invalid collection_dtls format. Expected an array.",
                 "status": false
@@ -220,7 +220,7 @@ const checkOfflineSyncStatus = async (req, res, next) => {
                 errors[detail.context.key] = detail.message;
             });
             return res.json({ error: errors });
-        }        
+        }
 
         let chkTransNo = await db_Select('sl_no, coll_flag, end_flag', 'md_agent_trans', `agent_trans_no='${value.agent_trans_no}' AND bank_id='${value.bank_id}' AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}'`);
 
