@@ -4,7 +4,8 @@ const { db_Select } = require('../model/MasterModule');
 const transactionSms = async (phone_no, amount, account_holder_name, total_deposit_amount, tnx_id, date, mode, account_number, bank_id, account_type = '') => {
     try {
         encodeURI(account_holder_name)
-        encodeURI(date ? dateFormat(new Date(date), "dd/mm/yyyy HH:MM:ss") : new Date())
+        encodeURI(date)
+		// let tnx_dt = encodeURIComponent(dateFormat(new Date(), "dd/mm/yyyy HH:MM:ss"))
         encodeURI(mode)
         account_number = String(account_number).slice(-4)
 
@@ -22,7 +23,7 @@ const transactionSms = async (phone_no, amount, account_holder_name, total_depos
                 .replace('${text}', text)
                 .replace('${account_holder_name}', account_holder_name)
                 .replace('${tnx_id}', tnx_id)
-                .replace('${date}', date)
+                .replace('${date}', dateFormat(new Date(date), "yyyy-mm-dd"))
                 .replace('${account_type}', account_type)
                 .replace('${transaction_type}', 'Deposit')
                 .replace('${total_deposit_amount}', total_deposit_amount);
