@@ -1,9 +1,13 @@
 const offlineApiRouter = require('express').Router();
 const { search_account, get_acc_prev_col, account_info } = require('../../controller/offline/accountDetails');
 const { receiveCollection, endcollectionCheckUser, checkOfflineSyncStatus } = require('../../controller/offline/transaction');
-const { my_agent, login, getAgentPrintType } = require('../../controller/offline/userAuth');
+const { my_agent, login, getAgentPrintType, register, challenge } = require('../../controller/offline/userAuth');
 
 
+//register device/account
+offlineApiRouter.post('/register', register);
+//get login challenge
+offlineApiRouter.post('/challenge', challenge);
 //register account 
 offlineApiRouter.post('/my_agent', my_agent)
 //login account

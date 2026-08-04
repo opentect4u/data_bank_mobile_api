@@ -30,6 +30,7 @@ const search_account = async (req, res) => {
 			for(let dt of res_data.msg){
                 dt['last_trns_dt'] = ''
 				dt['last_depo_amt'] = 0
+                dt.current_balance = +dt.current_balance
             }
             res.json({
                 "success": res_data,
