@@ -5,7 +5,7 @@ const { my_agent, login, getAgentPrintType, register, challenge } = require('../
 
 
 //register device/account
-offlineApiRouter.post('/register', register);
+offlineApiRouter.post('/register_new_user', register);
 //get login challenge
 offlineApiRouter.post('/challenge', challenge);
 //register account 
