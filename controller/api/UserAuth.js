@@ -69,13 +69,15 @@ const login = async (req, res) => {
         }
 
         try{
-            var whr = `user_id='${value.user_id}' AND active_flag='Y' AND user_type='O' AND bank_id='${value.bank_id}'`;
-            let chk_res_dt = await db_Select('password, device_id', "md_user", whr, null);
-    
-            if(chk_res_dt.suc > 0 && chk_res_dt.msg.length > 0){
-                let divId = chk_res_dt.msg[0].device_id;
-                if(divId != value.device_id){
-                    await db_Insert('md_user', `device_id='${value.device_id}'`, null, whr, 1);
+            if(value.bank_id > 0){
+                var whr = `user_id='${value.user_id}' AND active_flag='Y' AND user_type='O' AND bank_id='${value.bank_id}'`;
+                let chk_res_dt = await db_Select('password, device_id', "md_user", whr, null);
+        
+                if(chk_res_dt.suc > 0 && chk_res_dt.msg.length > 0){
+                    let divId = chk_res_dt.msg[0].device_id;
+                    if(divId != value.device_id){
+                        await db_Insert('md_user', `device_id='${value.device_id}'`, null, whr, 1);
+                    }
                 }
             }
         }catch(err){
