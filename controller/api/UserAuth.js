@@ -55,6 +55,7 @@ const login = async (req, res) => {
         const schema = Joi.object({
             device_id: Joi.required(),
             user_id: Joi.required(),
+            bank_id: Joi.required(),
             password: Joi.string().required(),
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
@@ -66,6 +67,21 @@ const login = async (req, res) => {
             });
             return res.json({ error: errors });
         }
+
+        try{
+            var whr = `user_id='${value.user_id}' AND active_flag='Y' AND user_type='O' AND bank_id='${value.bank_id}'`;
+            let chk_res_dt = await db_Select('password, device_id', "md_user", whr, null);
+    
+            if(chk_res_dt.suc > 0 && chk_res_dt.msg.length > 0){
+                let divId = chk_res_dt.msg[0].device_id;
+                if(divId != value.device_id){
+                    await db_Insert('md_user', `device_id='${value.device_id}'`, null, whr, 1);
+                }
+            }
+        }catch(err){
+            console.log('Error in login page', err);
+        }
+
         var whr = `device_id='${value.device_id}'AND user_id='${value.user_id}' AND active_flag='Y' AND user_type='O'`;
         let res_dt = await db_Select('password', "md_user", whr, null);
         delete res_dt.sql;
