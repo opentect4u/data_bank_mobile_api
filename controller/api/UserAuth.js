@@ -55,7 +55,7 @@ const login = async (req, res) => {
         const schema = Joi.object({
             device_id: Joi.required(),
             user_id: Joi.required(),
-            bank_id: Joi.required(),
+            bank_id: Joi.optional(),
             password: Joi.string().required(),
         });
         const { error, value } = schema.validate(req.body, { abortEarly: false });
