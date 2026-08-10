@@ -1072,34 +1072,34 @@ const fetchDataToServerWithAPI = (userData, value) => {
 
 const fetchDataToServerWithProcedure = (userData, value) => {
     return new Promise(async (resolve, reject) => {
-        try {
+        try{
             const currDate = dateFormat(new Date(), "dd/mm/yyyy"),
-                datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
-                user_data = userData
+            datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
+            user_data = userData
             var pro_query = `DECLARE AS_AGENT_CD VARCHAR2(200); ADT_DT DATE; AS_BRN_CD VARCHAR2(200); BEGIN AS_AGENT_CD := '${value.agent_code}'; ADT_DT := to_date('${currDate}','dd/mm/yyyy'); AS_BRN_CD := '${user_data.branch_code}'; P_GENERATE_EXPFILE_ANDROID( AS_AGENT_CD => AS_AGENT_CD, ADT_DT => ADT_DT, AS_BRN_CD => AS_BRN_CD ); END;`,
-                table_name = 'tt_app_export',
-                fields = '*',
-                where = null,
-                order = null;
+            table_name = 'tt_app_export',
+            fields = '*',
+            where = null,
+            order = null;
             // console.log(pro_query);
             var tableDate = await RunProcedure(user_data.bank_id, pro_query, table_name, fields, where, order)
-            if (tableDate.length > 0) {
+            if(tableDate.length > 0){
                 for (let dbdata of tableDate) {
                     try {
                         var fields2 = '(bank_id, branch_code, agent_code, upload_dt, deposit_loan_flag, acc_type, product_code, account_number,mobile_no, customer_name, opening_date, current_balance, uploaded_by, upload_at)',
                             values = `('${user_data.bank_id}','${user_data.branch_code}','${value.agent_code}','${datetime}','${dbdata.DEPOSIT_LOAN_FLAG}','${dbdata.ACC_TYPE}','${dbdata.PRODUCT_CODE}',${dbdata.ACCOUNT_NUMBER},${dbdata.MOBILE_NO},'${dbdata.CUSTOMER_NAME}', '${dateFormat(dbdata.OPENING_DATE, 'yyyy-mm-dd')}','${dbdata.CURRENT_BALANCE}','${user_data.id}','${datetime}')`;
-
+        
                         var res_dt = await db_Insert("td_account_dtls", fields2, values, null, 0);
                         er = true
                     } catch (error) {
                         er = error
                     }
                 }
-            } else {
+            }else{
                 err = false
             }
             (er == true) ? resolve(er) : resolve(er)
-        } catch (error) {
+        }catch(error){
             resolve({
                 "ERROR": error,
                 "status": false
