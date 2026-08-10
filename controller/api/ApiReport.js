@@ -205,7 +205,7 @@ const non_collection_report = async (req, res) => {
         }
         const datetime = dateFormat(new Date(), "yyyy-mm-dd")
         let select = "deposit_loan_flag,acc_type,product_code,account_number,mobile_no,customer_name,DATE_FORMAT(opening_date, '%Y-%m-%d') as opening_date,current_balance",
-            where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number not in (select account_number from td_collection where bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND   transaction_date = '${datetime}') `;
+            where = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND acc_type='${value.account_type}' AND account_number not in (select account_number from td_collection where bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_type='${value.account_type}' AND   transaction_date = '${datetime}') `;
         let resData = await db_Select(select, "td_account_dtls", where, null);
 
         // delete resData.sql
