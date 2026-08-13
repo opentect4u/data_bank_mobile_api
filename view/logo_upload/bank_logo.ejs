@@ -3,6 +3,7 @@
     width: 50px;
   }
 </style>
+
 <div class="main-panel">
   <div class="content-wrapper">
     <div class="card col-12">
@@ -11,7 +12,7 @@
           <h2>Logo Upload</h2>
         </div>
         
-        <form action="/<%= user.user_data.msg[0].user_type == 'B' ? 'admin/upload_logo' : 'super-admin/log
+        <form action="/<%= user.user_data.msg[0].user_type == 'B' ? 'admin/upload_logo' : 'super-admin/logo_upload' %>" method="post" id="myForm" enctype="multipart/form-data">
           <div class="row">
             <div class="form-group col-md-7">
               <label for="bank"><b>Bank Name:</b></label>
@@ -26,10 +27,11 @@
                       _selected = 'selected';
                     }
                   %>
-                  <option value="<%=item2.bank_id%>" <%= _selected %>>
-                    <%=item2.bank_name%>
+                  <option value="<%= item2.bank_id %>" <%= _selected %>>
+                    <%= item2.bank_name %>
                   </option>
                   <% }); %>
+
               </select>
             </div>
             <input type="hidden" id="bank1" value="<%= data.bank_id%>">
@@ -37,11 +39,13 @@
             <div class="form-group col-md-5" style="margin-top: 30px;">
               <button type="submit" id="submitbtn" class="btn btn-success" disabled>Upload</button>
             </div>
+
+
             <div class="form-group col-md-12">
               <label for="bank" id="photo1"><b>Upload Logo:</b>&nbsp;
-                <span id="act_dt" style="font-size: 12px; color: red;">(.JPG, .JPEG, .PNG)&nbsp;(*File siz
-              <input type="file" name="photo" id="photo" accept=".jpg, .jpeg, .png" onchange="previewImage
-                <img id="imagePreview" src="<%= data.length > 0 ? `/bank_logo/${data[0].file_path}` : '#' 
+                <span id="act_dt" style="font-size: 12px; color: red;">(.JPG, .JPEG, .PNG)&nbsp;(*File size should not be more than 2MB)</span></label><br>
+              <input type="file" name="photo" id="photo" accept=".jpg, .jpeg, .png" onchange="previewImage()">
+                <img id="imagePreview" src="<%= data.length > 0 ? `/bank_logo/${data[0].file_path}` : '#' %>" alt="Image Preview" class="center" style="display:<%= data.length > 0 ? 'block' : 'none' %>; max-width: 400px; max-height: 400px; margin-top: 2vw;">
             </div>
 			  <div class="col-md-12">
               <table class="showAgentDtls table table-bordered">
@@ -62,27 +66,32 @@
   </div>
 </div>
 </div>
+
 <script>
 $(document).ready(function () {
   // hide initially
   $('.showAgentDtls').hide();
+
   // attach handler first
   $('#bank').on('change', function () {
     var bank_id = parseInt($(this).val() || 0, 10);
     var tbody = $(".showAgentDtls tbody");
     $("#bank_image").val('');
+
     // if no valid bank id, clear and hide
     if (!bank_id) {
       tbody.empty();
       $('.showAgentDtls').hide();
       return;
     }
+
     $.ajax({
       type: "POST",
       url: "/super-admin/get_logo",
       data: { bank_id: bank_id },
       success: function (response) {
         tbody.empty();
+
         // defensive checks
         if (response && response.suc > 0 && Array.isArray(response.msg) && response.msg.length > 0) {
           response.msg.forEach(function (item, index) {
@@ -91,13 +100,15 @@ $(document).ready(function () {
                 '<td>' + (index + 1) + '</td>' +
                 '<td>' + (item.bank_name || '') + '</td>' +
                 "<td><a href='/bank_logo/" + (item.file_path || '') + "' target='_blank'>" +
-                  "<img class='bank-logo-img' src='/bank_logo/" + (item.file_path || '') + "' alt='logo'>"
+                  "<img class='bank-logo-img' src='/bank_logo/" + (item.file_path || '') + "' alt='logo'>" +
                 '</a></td>' +
               '</tr>';
             tbody.append(row);
+
             // if you want the last item's file_path in the hidden field:
             $("#bank_image").val(item.file_path || '');
           });
+
           $('.showAgentDtls').show();
         } else {
           // table has 3 columns (index, name, image) — colspan should be 3
@@ -116,6 +127,7 @@ $(document).ready(function () {
       }
     });
   });
+
   // then trigger change if bank already selected
   var initialBankId = parseInt($('#bank').val() || 0, 10);
   if (initialBankId > 0) {
@@ -123,6 +135,7 @@ $(document).ready(function () {
   }
 });
 </script>
+
 <script>
   <% if(user.user_data.msg[0].user_type != 'B'){ %>
   $("#photo1").hide()
@@ -137,11 +150,14 @@ $(document).ready(function () {
     $('#submitbtn').removeAttr('disabled')
   <% } %>
 </script>
+
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
   function previewImage() {
     var input = document.getElementById('photo');
     var preview = document.getElementById('imagePreview');
+
     var file = input.files[0];
     if (file) {
       var reader = new FileReader();
@@ -154,6 +170,7 @@ $(document).ready(function () {
       preview.src = '#';
       preview.style.display = 'none';
     }
+
     // enable upload button
     var fileInput = document.getElementById('photo');
     var uploadButton = document.getElementById('submitbtn');
