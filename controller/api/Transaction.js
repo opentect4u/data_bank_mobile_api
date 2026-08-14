@@ -465,7 +465,7 @@ const total_collection = async (req, res) => {
         whrCollectionDAta = `bank_id='${value.bank_id}' AND branch_code='${value.branch_code}'AND agent_code ='${value.agent_code}' AND agent_trans_no IS NULL AND download_flag = 'N'`;
         let total_collection = await db_Select(selectCollectionData, "td_collection", whrCollectionDAta, null);
         if(total_collection.suc > 0 && total_collection.msg.length > 0){
-            total_collection.suc[0].deposit_amount = +total_collection.suc[0].deposit_amount
+            total_collection.msg[0].deposit_amount = +total_collection.msg[0].deposit_amount
         }
         delete total_collection.sql;
         res.json({
