@@ -65,9 +65,9 @@ const transaction = async (req, res) => {
 
         // var totalallowamt = total_collectlimite.msg[0].max_amt * total_collectlimite.msg[0].allow_collection_days;
 
-        var totalallowamt = total_collectlimite.msg[0].tot_amt;
+        var totalallowamt = +total_collectlimite.msg[0].tot_amt;
 
-        var totalallowamt2 = total_collectlimite.msg[0].max_amt;
+        var totalallowamt2 = +total_collectlimite.msg[0].max_amt;
         // console.log("======totalallowamt===========", totalallowamt2)
         var cbalcheck5 = `bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND agent_trans_no IS NULL`
 
@@ -75,7 +75,7 @@ const transaction = async (req, res) => {
 
         // console.log(value.sec_amt_type, totalallowamt, (total_collectamttt.msg[0].deposit_amount + value.deposit_amount), (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))), 'LALALALALAAAAAAAAAAAAAA');
 
-        if (value.sec_amt_type == 'M' && (totalallowamt > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
+        if (value.sec_amt_type == 'M' && (totalallowamt > (+total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
             // console.log("tttttttttttttttttttttttttttttttt")
             if (checkedData.msg > 0) {
                 // let select = "ifnull(max(receipt_no),0) + 1 AS rc_no",
@@ -148,7 +148,7 @@ const transaction = async (req, res) => {
                     "status": false
                 });
             }
-        } else if (value.sec_amt_type == 'A' && (totalallowamt2 > (total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
+        } else if (value.sec_amt_type == 'A' && (totalallowamt2 > (+total_collectamttt.msg[0].deposit_amount + value.deposit_amount))) {
             // =================================================================
             // =================================================================
             if (checkedData.msg > 0) {
