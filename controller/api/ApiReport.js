@@ -460,13 +460,13 @@ const date_wise_mini_statement = async (req, res) => {
 
         let sql = `SELECT account_number acc_num, account_type trans_type, transaction_date PAID_DT, deposit_amount PAID_AMT, balance_amount BALANCE_AMT, collected_at
 FROM td_collection
-WHERE bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${acc_num}' AND account_type='${value.account_type}'
+WHERE bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND (account_number='${acc_num}' OR account_number='0${acc_num}') AND account_type='${value.account_type}'
 AND transaction_date BETWEEN '${frmdt}' AND '${todt}'
 UNION
 
 SELECT account_number acc_num, account_type trans_type, transaction_date PAID_DT, deposit_amount PAID_AMT, balance_amount BALANCE_AMT, collected_at
 FROM bkp_collection
-WHERE bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND account_number='${acc_num}' AND account_type='${value.account_type}'
+WHERE bank_id=${value.bank_id} AND branch_code='${value.branch_code}' AND agent_code='${value.agent_code}' AND (account_number='${acc_num}' OR account_number='0${acc_num}') AND account_type='${value.account_type}'
 AND transaction_date BETWEEN '${frmdt}' AND '${todt}'
 ORDER BY PAID_DT DESC, collected_at DESC`
 
