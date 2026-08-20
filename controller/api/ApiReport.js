@@ -530,12 +530,12 @@ const account_wise_scroll_report = async (req, res) => {
                 // dt['closing_bal'] = dt.current_balance - tot_col
                 // tot_col += dt.deposit_amount
                 // dt['opening_bal'] = dt.current_balance - tot_col
-				dt['closing_bal'] = (dt.current_balance - tot_col) > 0 ? dt.current_balance - tot_col : dt.current_balance
+				dt['closing_bal'] = ((+dt.current_balance) - tot_col) > 0 ? (+dt.current_balance) - tot_col : (+dt.current_balance)
                 tot_col += +dt.deposit_amount
                 if(value.account_type != 'L'){
-                    dt['opening_bal'] = (dt.current_balance - tot_col) > 0 ? dt.current_balance - tot_col : 0
+                    dt['opening_bal'] = ((+dt.current_balance) - tot_col) > 0 ? (+dt.current_balance) - tot_col : 0
                 }else{
-                    dt['opening_bal'] = dt.current_balance + tot_col
+                    dt['opening_bal'] = (+dt.current_balance) + tot_col
                 }
             }
         }
