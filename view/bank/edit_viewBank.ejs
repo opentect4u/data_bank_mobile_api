@@ -213,6 +213,24 @@
                 value="<%= data.max_user %>"/>
             </div>
 
+            <div class="form-group col-4">
+              <label>Holiday Entry Flag:</label>
+            
+              <div class="form-check form-check-inline">
+                <input type="radio" name="holiday_entry_flag" class="form-check-input" id="holiday_entry_active_option" value="Y"
+                  <%=data.holiday_entry_flag=='Y' ? 'Checked' : '' %>
+                />
+                <label class="form-check-label" for="holiday_entry_active_option">Yes</label>
+              </div>
+            
+              <div class="form-check form-check-inline">
+                <input type="radio" name="holiday_entry_flag" class="form-check-input" id="holiday_entry_inactive_option" value="N"
+                  <%=data.holiday_entry_flag=='N' ? 'Checked' : '' %>
+                />
+                <label class="form-check-label" for="holiday_entry_inactive_option">No</label>
+              </div>
+            </div>
+
             <div class="form-group col-12">
               <label for="bank_address">Bank Address:</label>
               <textarea  name="bank_address"

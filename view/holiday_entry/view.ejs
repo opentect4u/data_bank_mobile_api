@@ -1,0 +1,208 @@
+<%
+  // Format a DB date as yyyy-mm-dd (local time) for <input type="date">
+  function toInputDate(dt) {
+    if (!dt) return '';
+    var d = new Date(dt);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  // Format a DB date as dd/mm/yyyy for display
+  function toDisplayDate(dt) {
+    if (!dt) return '';
+    var d = new Date(dt);
+    return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
+  }
+%>
+<style>
+  .holiday-drawer-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1040;
+    display: none;
+  }
+  .holiday-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 420px;
+    max-width: 100%;
+    height: 100%;
+    background: #fff;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+  }
+  .holiday-drawer.open {
+    transform: translateX(0);
+  }
+  .holiday-drawer .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-bottom: 1px solid #dee2e6;
+  }
+  .holiday-drawer .drawer-header h4 {
+    margin: 0;
+  }
+  .holiday-drawer .drawer-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+</style>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="card col-12">
+      <div class="card-body">
+        <div class="titleSec">
+          <button type="button" class="btn btn-primary" id="addHolidayBtn">Add</button>
+          <h2>Holiday Entry</h2>
+        </div>
+
+        <table id="example2" class="table table-striped table-bordered" style="width:100%">
+          <thead>
+            <tr>
+              <th>Sl. No.</th>
+              <th>From Date</th>
+              <th>To Date</th>
+              <th>Remarks</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (data.suc > 0) { data.msg.forEach(function(item, index) { %>
+            <tr>
+              <td><%= (index + 1) %></td>
+              <td><%= toDisplayDate(item.frm_dt) %></td>
+              <td><%= toDisplayDate(item.to_dt) %></td>
+              <td><%= item.remarks %></td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-info editHolidayBtn"
+                  data-id="<%= item.id %>"
+                  data-frm_dt="<%= toInputDate(item.frm_dt) %>"
+                  data-to_dt="<%= toInputDate(item.to_dt) %>"
+                  data-remarks="<%= item.remarks %>"
+                >Edit</button>
+                <button
+                  type="button"
+                  class="btn btn-danger deleteHolidayBtn"
+                  data-id="<%= item.id %>"
+                >Delete</button>
+              </td>
+            </tr>
+            <% }); } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer -->
+<div class="holiday-drawer-backdrop" id="holidayDrawerBackdrop"></div>
+<div class="holiday-drawer" id="holidayDrawer">
+  <div class="drawer-header">
+    <h4 id="holidayDrawerTitle">Add Holiday</h4>
+    <button type="button" class="close" id="closeHolidayDrawer">&times;</button>
+  </div>
+
+  <div class="drawer-body">
+    <form action="/bank/holiday_entry" method="post" id="holidayForm">
+      <input type="hidden" name="id" id="holiday_id" value="0" />
+      <div class="row">
+        <div class="form-group col-12">
+          <label for="frm_dt">From Date:</label>
+          <input type="date" name="frm_dt" id="frm_dt" class="form-control" required />
+        </div>
+
+        <div class="form-group col-12">
+          <label for="to_dt">To Date:</label>
+          <input type="date" name="to_dt" id="to_dt" class="form-control" required />
+        </div>
+
+        <div class="form-group col-12">
+          <label for="remarks">Remarks:</label>
+          <textarea name="remarks" id="remarks" class="form-control" rows="3" placeholder="Enter Remarks"></textarea>
+        </div>
+
+        <div class="form-group col-12">
+          <input type="submit" value="SUBMIT" class="btn btn-primary btn-block" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    function openDrawer(title) {
+      $("#holidayDrawerTitle").text(title);
+      $("#holidayDrawerBackdrop").fadeIn(200);
+      $("#holidayDrawer").addClass("open");
+    }
+
+    function closeDrawer() {
+      $("#holidayDrawer").removeClass("open");
+      $("#holidayDrawerBackdrop").fadeOut(200);
+    }
+
+    $("#addHolidayBtn").click(function () {
+      $("#holidayForm")[0].reset();
+      $("#holiday_id").val(0);
+      $("#to_dt").attr("min", "");
+      openDrawer("Add Holiday");
+    });
+
+    // Delegated so it keeps working across DataTable pages
+    $("#example2").on("click", ".editHolidayBtn", function () {
+      var btn = $(this);
+      $("#holiday_id").val(btn.data("id"));
+      $("#frm_dt").val(btn.data("frm_dt"));
+      $("#to_dt").val(btn.data("to_dt")).attr("min", btn.data("frm_dt"));
+      $("#remarks").val(btn.data("remarks"));
+      openDrawer("Edit Holiday");
+    });
+
+    $("#example2").on("click", ".deleteHolidayBtn", function () {
+      var id = $(this).data("id");
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to delete this holiday?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it",
+      }).then(function (result) {
+        if (result.isConfirmed) {
+          window.location.href = "/bank/delete_holiday?id=" + id;
+        }
+      });
+    });
+
+    $("#closeHolidayDrawer, #holidayDrawerBackdrop").click(closeDrawer);
+
+    $("#frm_dt").change(function () {
+      $("#to_dt").attr("min", $(this).val());
+      if ($("#to_dt").val() && $("#to_dt").val() < $(this).val()) {
+        $("#to_dt").val($(this).val());
+      }
+    });
+
+    $("#holidayForm").submit(function () {
+      if ($("#to_dt").val() < $("#frm_dt").val()) {
+        toastr.error("To Date cannot be earlier than From Date");
+        return false;
+      }
+    });
+  });
+</script>
